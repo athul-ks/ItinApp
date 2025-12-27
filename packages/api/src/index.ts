@@ -1,5 +1,5 @@
-import { createTRPCRouter, publicProcedure } from "./src/trpc";
 import { z } from "zod";
+import { createTRPCRouter, publicProcedure } from "./trpc";
 
 export const appRouter = createTRPCRouter({
   // A simple "hello" endpoint
@@ -12,9 +12,9 @@ export const appRouter = createTRPCRouter({
     }),
 
   // A generic "getUsers" endpoint to test the DB
-  getUsers: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.user.findMany();
-  }),
+  // getUsers: publicProcedure.query(async ({ ctx }) => {
+  //   return ctx.db.user.findMany();
+  // }),
 });
 
 // Export type definition of API

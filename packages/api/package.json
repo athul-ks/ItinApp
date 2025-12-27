@@ -2,22 +2,22 @@
   "name": "@itenapp/api",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsc -w",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
-    "format": "eslint . --ext ts,tsx --fix",
+    "dev": "tsx src/index.ts",
+    "lint": "eslint .",
+    "format": "eslint . --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.26.2",
   "dependencies": {
     "@itenapp/db": "workspace:*",
     "@trpc/server": "catalog:",
@@ -25,7 +25,10 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "@itenapp/configs": "workspace:*",
+    "eslint": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:"
   }
 }

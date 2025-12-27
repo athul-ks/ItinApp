@@ -1,5 +1,17 @@
 {
   "name": "@itenapp/configs",
-  "version": "1.0.0",
-  "private": true
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./eslint.config.mjs": {
+      "types": "./eslint.config.d.ts",
+      "import": "./eslint.config.mjs"
+    },
+    "./base.json": "./base.json"
+  },
+  "devDependencies": {
+    "eslint": "catalog:",
+    "eslint-plugin-turbo": "catalog:",
+    "turbo": "catalog:"
+  }
 }

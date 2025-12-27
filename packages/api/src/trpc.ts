@@ -1,4 +1,4 @@
-import { db } from "@itenapp/db";
+import { prisma as db } from "@itenapp/db";
 import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 

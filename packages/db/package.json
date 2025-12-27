@@ -1,15 +1,20 @@
 {
   "name": "@itenapp/db",
   "version": "1.0.0",
-  "description": "",
+  "private": true,
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./dist/index.js"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsc -w",
+    "watch": "tsc -w",
+    "dev": "tsx src/index.ts",
     "db:studio": "prisma studio",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
@@ -21,10 +26,6 @@
     "postinstall": "prisma generate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.26.2",
   "dependencies": {
     "@prisma/client": "catalog:"
   },
