@@ -1,0 +1,21 @@
+{
+  "name": "itenapp-root",
+  "version": "0.0.0",
+  "private": true,
+  "devDependencies": {
+    "husky": "catalog:",
+    "@commitlint/cli": "catalog:",
+    "@commitlint/config-conventional": "catalog:",
+    "commitizen": "catalog:",
+    "cz-conventional-changelog": "catalog:"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "scripts": {
+    "prepare": "husky",
+    "commit": "cz"
+  }
+}
