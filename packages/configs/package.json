@@ -7,7 +7,8 @@
       "types": "./eslint.config.d.ts",
       "import": "./eslint.config.mjs"
     },
-    "./base.json": "./base.json"
+    "./base.json": "./base.json",
+    "./styles.css": "./styles.css"
   },
   "devDependencies": {
     "eslint": "catalog:",

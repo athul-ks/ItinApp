@@ -21,6 +21,9 @@ build
 .env.local
 .DS_Store
 
+# TypeScript Cache
+*.tsbuildinfo
+
 # Testing
 coverage
 __tests__/__snapshots__
