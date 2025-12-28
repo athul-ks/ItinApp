@@ -1,0 +1,11 @@
+{
+  "extends": "@itenapp/configs/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "jsx": "preserve"
+  },
+  "include": ["src"]
+}

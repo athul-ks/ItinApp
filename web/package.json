@@ -1,6 +1,6 @@
 {
   "name": "@itenapp/web",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,10 +11,12 @@
   "dependencies": {
     "next": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "lucide-react": "catalog:"
   },
   "devDependencies": {
     "@itenapp/configs": "workspace:*",
+    "@itenapp/ui": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
