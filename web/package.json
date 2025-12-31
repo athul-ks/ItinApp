@@ -1,5 +1,5 @@
 {
-  "name": "@itenapp/web",
+  "name": "@itinapp/web",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -15,8 +15,8 @@
     "lucide-react": "catalog:"
   },
   "devDependencies": {
-    "@itenapp/configs": "workspace:*",
-    "@itenapp/ui": "workspace:*",
+    "@itinapp/configs": "workspace:*",
+    "@itinapp/ui": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",

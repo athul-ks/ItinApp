@@ -1,4 +1,4 @@
-import { sharedConfig } from "@itenapp/configs/eslint.config.mjs";
+import { sharedConfig } from "@itinapp/configs/eslint.config.mjs";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 

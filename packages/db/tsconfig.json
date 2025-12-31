@@ -1,5 +1,5 @@
 {
-  "extends": "@itenapp/configs/base.json",
+  "extends": "@itinapp/configs/base.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",

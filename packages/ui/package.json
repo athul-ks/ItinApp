@@ -1,5 +1,5 @@
 {
-  "name": "@itenapp/ui",
+  "name": "@itinapp/ui",
   "version": "0.0.0",
   "private": true,
   "exports": {
@@ -26,7 +26,7 @@
     "tailwind-merge": "catalog:"
   },
   "devDependencies": {
-    "@itenapp/configs": "workspace:*",
+    "@itinapp/configs": "workspace:*",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

@@ -3,7 +3,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@itenapp/ui/components/card";
+} from "@itinapp/ui/components/card";
 import { BotIcon, RouteIcon, SearchIcon } from "lucide-react";
 import { HeroSearch } from "../../components/hero-search";
 import Footer from "./_components/footer";
@@ -102,7 +102,7 @@ export default function HomePage() {
                   Seamless Hotel & Stay Bookings
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Book your hotels and stays directly through ItenApp, with
+                  Book your hotels and stays directly through ItinApp, with
                   curated recommendations.
                 </p>
               </div>

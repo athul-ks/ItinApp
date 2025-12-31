@@ -17,7 +17,7 @@ module.exports = {
   importOrder: [
     "^react$", // React imports first
     "<THIRD_PARTY_MODULES>", // Installed packages (zod, next, etc)
-    "^@itenapp/(.*)$", // Your internal packages
+    "^@itinapp/(.*)$", // Your internal packages
     "^@/(.*)$", // Absolute imports (from tsconfig paths)
     "^[./]", // Relative imports
   ],

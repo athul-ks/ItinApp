@@ -1,4 +1,4 @@
-# 🌍 ItenApp
+# 🌍 ItinApp
 
 **Smart Travel. Perfect Itineraries. Zero Stress.**
 
@@ -9,7 +9,7 @@
 
 ## 📖 About The Project
 
-**ItenApp** solves the "analysis paralysis" of modern travel planning. Instead of juggling dozens of browser tabs, blogs, and maps, users simply input their destination, travel dates, and budget. The application uses AI to generate a fully optimized, hour-by-hour itinerary that respects their financial constraints.
+**ItinApp** solves the "analysis paralysis" of modern travel planning. Instead of juggling dozens of browser tabs, blogs, and maps, users simply input their destination, travel dates, and budget. The application uses AI to generate a fully optimized, hour-by-hour itinerary that respects their financial constraints.
 
 Currently built as a high-performance Monorepo to ensure type safety from the database all the way to the frontend.
 
@@ -69,8 +69,8 @@ Follow these steps to set up the project locally.
 1.  **Clone the repository:**
 
     ```bash
-    git clone https:/`/github.com/yourusername/itenapp.git`
-    cd itenapp
+    git clone https:/`/github.com/athul-ks/ItinApp.git`
+    cd ItinApp
     ```
 
 2.  **Install dependencies:**
@@ -83,7 +83,7 @@ Follow these steps to set up the project locally.
     Create a `.env` file in the root of the project and add your database connection string:
 
     ```
-    DATABASE_URL="postgresql://user:password@localhost:5432/itenapp"
+    DATABASE_URL="postgresql://user:password@localhost:5432/itinapp"
     ```
 
 4.  **Initialize the Database:**

@@ -1,4 +1,4 @@
-import { sharedConfig } from "@itenapp/configs/eslint.config.mjs";
+import { sharedConfig } from "@itinapp/configs/eslint.config.mjs";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import { defineConfig, globalIgnores } from "eslint/config";

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@itenapp/ui/components/button";
+import { Button } from "@itinapp/ui/components/button";
 import {
   Command,
   CommandEmpty,
@@ -8,13 +8,13 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@itenapp/ui/components/command";
+} from "@itinapp/ui/components/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@itenapp/ui/components/popover";
-import { cn } from "@itenapp/ui/lib/utils";
+} from "@itinapp/ui/components/popover";
+import { cn } from "@itinapp/ui/lib/utils";
 import { Check, ChevronsUpDown, MapPinIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

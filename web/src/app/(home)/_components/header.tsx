@@ -1,4 +1,4 @@
-import { Button } from "@itenapp/ui/components/button";
+import { Button } from "@itinapp/ui/components/button";
 import { MountainIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -8,7 +8,7 @@ export default function Header() {
       <Link href="/" className="flex items-center justify-center">
         <MountainIcon className="h-6 w-6 text-primary" />
         <span className="ml-2 font-serif text-xl font-bold text-primary">
-          ItenApp
+          ItinApp
         </span>
       </Link>
       <nav className="ml-auto flex items-center gap-4 sm:gap-6">

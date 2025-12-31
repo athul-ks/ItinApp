@@ -1,5 +1,5 @@
 {
-  "name": "@itenapp/db",
+  "name": "@itinapp/db",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -30,7 +30,7 @@
     "@prisma/client": "catalog:"
   },
   "devDependencies": {
-    "@itenapp/configs": "workspace:*",
+    "@itinapp/configs": "workspace:*",
     "@types/node": "catalog:",
     "prisma": "catalog:",
     "tsx": "catalog:",
