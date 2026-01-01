@@ -1,21 +1,5 @@
-import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "./trpc";
+// Export the router and type for the client to use
+export { appRouter, type AppRouter } from "./root";
 
-export const appRouter = createTRPCRouter({
-  // A simple "hello" endpoint
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text} from tRPC!`,
-      };
-    }),
-
-  // A generic "getUsers" endpoint to test the DB
-  // getUsers: publicProcedure.query(async ({ ctx }) => {
-  //   return ctx.db.user.findMany();
-  // }),
-});
-
-// Export type definition of API
-export type AppRouter = typeof appRouter;
+// Export the context creator for the Next.js API route to use
+export { createTRPCContext } from "./trpc";
