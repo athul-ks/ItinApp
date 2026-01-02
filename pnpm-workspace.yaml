@@ -3,60 +3,53 @@ packages:
   - packages/*
 
 catalog:
-  # Workflow & Build Tools (Root)
-  "@commitlint/cli": "^20.2.0"
-  "@commitlint/config-conventional": "^20.2.0"
-  commitizen: "^4.3.1"
-  cz-conventional-changelog: "^3.3.0"
-  husky: "^9.1.7"
-  turbo: "^2.7.2"
-
-  # Core & Build Tools
-  "@types/node": "^25.0.3"
-  tsx: "^4.21.0"
-  typescript: "^5.9.3"
-
-  # React & UI
-  "@radix-ui/react-slot": "^1.2.4"
-  "@radix-ui/react-dialog": "^1.1.15"
-  "@radix-ui/react-popover": "^1.1.15"
-  "@tailwindcss/postcss": "^4"
-  "@tanstack/react-query": "^5.90.16"
-  "@types/react": "^19"
-  "@types/react-dom": "^19"
-  globals: "^16.5.0"
-  next: "16.1.1"
-  react: "19.2.3"
-  react-dom: "19.2.3"
-  tailwindcss: "^4"
-  class-variance-authority: "^0.7.1"
-  clsx: "^2.1.0"
-  cmdk: "^1.1.1"
-  lucide-react: "^0.562.0"
-  tailwind-merge: "^3.4.0"
-
-  # Backend, API & Data
-  "@prisma/client": "^6.19.1"
-  "@trpc/client": "^11.8.1"
-  "@trpc/server": "^11.8.1"
-  "@trpc/react-query": "^11.8.1"
-  prisma: "^6.19.1"
-  superjson: "^2.2.6"
-  zod: "^4.2.1"
-
-  # Linting & Config
-  "@trivago/prettier-plugin-sort-imports": "6.0.0"
-  eslint: "^9"
-  eslint-config-next: "16.1.1"
+  '@commitlint/cli': ^20.2.0
+  '@commitlint/config-conventional': ^20.2.0
+  '@hookform/resolvers': ^5.2.2
+  '@prisma/client': ^6.19.1
+  '@radix-ui/react-dialog': ^1.1.15
+  '@radix-ui/react-popover': ^1.1.15
+  '@radix-ui/react-slot': ^1.2.4
+  '@tailwindcss/postcss': ^4
+  '@tanstack/react-query': ^5.90.16
+  '@trivago/prettier-plugin-sort-imports': 6.0.0
+  '@trpc/client': ^11.8.1
+  '@trpc/react-query': ^11.8.1
+  '@trpc/server': ^11.8.1
+  '@types/node': ^25.0.3
+  '@types/react': ^19
+  '@types/react-dom': ^19
+  class-variance-authority: ^0.7.1
+  clsx: ^2.1.0
+  cmdk: ^1.1.1
+  commitizen: ^4.3.1
+  cz-conventional-changelog: ^3.3.0
+  date-fns: ^4.1.0
+  eslint: ^9
+  eslint-config-next: 16.1.1
   eslint-plugin-turbo: ^2.7.2
-  prettier: "^3.7.4"
-  prettier-plugin-tailwindcss: "0.7.2"
-  typescript-eslint: "^8.50.1"
-
-  # Testing
+  globals: ^16.5.0
+  husky: ^9.1.7
+  lucide-react: 0.562.0
+  next: 16.1.1
+  prettier: ^3.7.4
+  prettier-plugin-tailwindcss: 0.7.2
+  prisma: ^6.19.1
+  react: 19.2.3
+  react-dom: 19.2.3
+  react-day-picker: ^9.13.0
+  react-hook-form: ^7.69.0
+  superjson: ^2.2.6
+  tailwind-merge: ^3.4.0
+  tailwindcss: ^4
+  tsx: ^4.21.0
+  turbo: ^2.7.2
+  typescript: ^5.9.3
+  typescript-eslint: ^8.50.1
+  zod: 4.3.4
 
 onlyBuiltDependencies:
-  - "@prisma/engines"
+  - '@prisma/engines'
   - esbuild
   - prisma
   - sharp

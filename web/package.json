@@ -9,20 +9,25 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@hookform/resolvers": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@trpc/client": "catalog:",
     "@trpc/react-query": "catalog:",
     "@trpc/server": "catalog:",
+    "date-fns": "catalog:",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
+    "react-day-picker": "catalog:",
     "react-dom": "catalog:",
-    "superjson": "catalog:"
+    "react-hook-form": "catalog:",
+    "superjson": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
+    "@itinapp/api": "workspace:*",
     "@itinapp/configs": "workspace:*",
     "@itinapp/ui": "workspace:*",
-    "@itinapp/api": "workspace:*",
     "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
