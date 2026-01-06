@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
     // This tells Next.js: "Don't try to bundle these, just run them in Node"
-    serverComponentsExternalPackages: ["@itinapp/db"], 
+    serverComponentsExternalPackages: ["@itinapp/db", "@itinapp/api"], 
   },
 };
 
