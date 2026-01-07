@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { Check, ChevronsUpDown, MapPinIcon } from 'lucide-react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@itinapp/ui/components/button';
@@ -17,8 +18,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@itinapp/ui/components/popover';
 import { cn } from '@itinapp/ui/lib/utils';
 
-// MVP Data: Top travel destinations to simulate the experience.
-// Phase 2: We will replace this with a real API call (Google Places/Mapbox).
 const destinations = [
   { value: 'paris', label: 'Paris, France' },
   { value: 'tokyo', label: 'Tokyo, Japan' },
@@ -37,19 +36,27 @@ const destinations = [
 
 export function HeroSearch() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
 
   const handleSearch = () => {
     if (!value) return;
 
-    // Find the readable label to pass to the URL (optional, cleaner for users)
     const selected = destinations.find((d) => d.value === value);
     const destinationQuery = selected ? selected.label : value;
 
     const params = new URLSearchParams();
     params.set('destination', destinationQuery);
-    router.push(`/plan?${params.toString()}`);
+
+    const targetUrl = `/plan?${params.toString()}`;
+    if (session) {
+      router.push(targetUrl);
+    } else {
+      // This sends them to Google Login, and brings them back to
+      // the Plan page (with the destination params!) automatically.
+      signIn('google', { callbackUrl: targetUrl });
+    }
   };
 
   return (
@@ -90,7 +97,7 @@ export function HeroSearch() {
                     <CommandItem
                       key={destination.value}
                       value={destination.value}
-                      keywords={[destination.label]} // Helps fuzzy search
+                      keywords={[destination.label]}
                       onSelect={(currentValue) => {
                         setValue(currentValue === value ? '' : currentValue);
                         setOpen(false);

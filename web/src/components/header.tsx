@@ -28,7 +28,7 @@ export default function Header() {
             >
               My Trips
             </Link>
-            <Button onClick={() => signOut()} variant="secondary" size="sm">
+            <Button onClick={() => signOut({ callbackUrl: '/' })} variant="secondary" size="sm">
               Sign Out
             </Button>
           </>
