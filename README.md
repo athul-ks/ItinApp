@@ -2,10 +2,12 @@
 
 **Smart Travel. Perfect Itineraries. Zero Stress.**
 
-> _An AI-powered travel companion that turns your budget and dates into the perfect itinerary._
+> _An AI-powered travel companion that generates personalized, day-by-day itineraries in seconds._
 
-![Status](https://img.shields.io/badge/Status-In%20Development-blue)
-![Tech](https://img.shields.io/badge/Stack-Next.js%20%7C%20tRPC%20%7C%20Prisma-black)
+![Status](https://img.shields.io/badge/Status-Alpha-blue)
+![Tech](https://img.shields.io/badge/Stack-Next.js_15_%7C_tRPC_%7C_Prisma-black)
+![Auth](https://img.shields.io/badge/Auth-NextAuth.js-green)
+![AI](https://img.shields.io/badge/AI-OpenAI_GPT--4o-purple)
 
 ## 📖 About The Project
 
@@ -13,12 +15,13 @@
 
 Currently built as a high-performance Monorepo to ensure type safety from the database all the way to the frontend.
 
-### ✨ Key Features
+### ✨ Key Features (Implemented)
 
-- **🧠 AI-Generated Itineraries:** Personalized day-by-day plans based on user preferences.
-- **💰 Smart Budget Allocation:** Automatically estimates costs for food, transport, and activities to keep you on budget.
+- **🔐 Secure Authentication:** Robust Google Sign-In via NextAuth.js with protected route middleware.
+- **🧠 AI-Powered Engine:** Connects to OpenAI to generate context-aware travel plans based on "Vibe" (Relaxed, Balanced, Fast).
+- **⏳ Progressive UX:** Smart loading states that keep users engaged while the AI curates the trip.
+- **💰 Smart Budgeting:** Input your budget level (Economy, Standard, Luxury) to get tailored recommendations.
 - **⚡ End-to-End Type Safety:** Fully typed API communication using tRPC and Zod.
-- **🏗 Scalable Architecture:** Built with Turborepo to handle future microservices (flights/hotels).
 
 ---
 
@@ -27,29 +30,30 @@ Currently built as a high-performance Monorepo to ensure type safety from the da
 This project uses a modern, cutting-edge stack optimized for performance and developer experience.
 
 - **Monorepo Tool:** [Turborepo](https://turbo.build/)
-- **Package Manager:** [pnpm](https://pnpm.io/) (utilizing Workspaces & Catalogs)
+- **Package Manager:** [pnpm](https://pnpm.io/)
 - **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS v4
-- **API Layer:** [tRPC](https://trpc.io/) (with React Query)
-- **Database:** PostgreSQL
-- **ORM:** [Prisma](https://www.prisma.io/)
-- **Validation:** Zod
+- **Styling:** Tailwind CSS v4 + Shadcn UI
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/) (v4 Adapter)
+- **AI Provider:** OpenAI API
+- **API Layer:** [tRPC](https://trpc.io/)
+- **Database:** PostgreSQL with [Prisma ORM](https://www.prisma.io/)
 
 ---
 
 ## 📂 Project Structure
 
-The codebase is organized as a monorepo:
+The codebase is organized as a Turborepo monorepo:
 
 ```text
 .
+├── web/                # Main Next.js frontend application
 ├── packages/
-│   ├── api/        # tRPC router and API definition
-│   ├── db/         # Prisma schema and database client
-│   └── config/     # Shared TSConfig and ESLint settings
-├── web/            # Next.js frontend application
-└── turbo.json      # Build pipeline configuration
+│   ├── api/            # tRPC routers (Trip generation logic)
+│   ├── auth/           # NextAuth configuration & session logic
+│   ├── db/             # Prisma schema and database client
+│   ├── ui/             # Shared UI components (Shadcn/Radix)
+│   └── configs/        # Shared TSConfig and ESLint settings
+└── turbo.json          # Build pipeline configuration
 ```
 
 ---
@@ -62,7 +66,7 @@ Follow these steps to set up the project locally.
 
 - **Node.js**: `v20+`
 - **pnpm**: `v9+`
-- **PostgreSQL**: A local or cloud-hosted database instance.
+- **PostgreSQL**: Local or cloud instance (e.g., Supabase/Neon).
 
 ### Installation
 
@@ -84,6 +88,15 @@ Follow these steps to set up the project locally.
 
     ```
     DATABASE_URL="postgresql://user:password@localhost:5432/itinapp"
+
+    # Authentication (NextAuth)
+    NEXTAUTH_URL="http://localhost:3000"
+    NEXTAUTH_SECRET="your-super-secret-key"
+    AUTH_GOOGLE_ID="your-google-client-id"
+    AUTH_GOOGLE_SECRET="your-google-client-secret"
+
+    # AI
+    OPENAI_API_KEY="sk-..."
     ```
 
 4.  **Initialize the Database:**
@@ -104,11 +117,36 @@ Follow these steps to set up the project locally.
 
 ## 🗺️ Roadmap
 
-- [ ] **User Authentication** (NextAuth.js / Clerk)
-- [ ] **Integration with LLM Provider** (OpenAI / Anthropic)
-- [ ] **Interactive Map View** (Mapbox / Google Maps)
-- [ ] **"Save & Share" Itineraries**
-- [ ] **Flight & Hotel Price Estimation APIs**
+### ✅ Phase 1: Core Foundation (Completed)
+
+- [x] Monorepo Architecture Setup
+- [x] Database Schema Design (Users, Trips, Itineraries)
+- [x] Authentication (Google Login + Middleware Protection)
+- [x] Basic AI Trip Generation (OpenAI Integration)
+- [x] "Plan Trip" Form UI
+
+### 🚧 Phase 2: Visuals & Immersion (Current Focus)
+
+- [ ] **Dynamic Imagery:** Fetch destination photos via Unsplash/Google Places API.
+- [ ] **Interactive Maps:** Split-screen view with pins for daily activities.
+- [ ] **Day-by-Day UI:** Tabbed interface for easier itinerary navigation.
+
+### 🔮 Phase 3: The "Editor" Experience
+
+- [ ] **Drag-and-Drop:** Reorder activities within the timeline.
+- [ ] **Regenerate Item:** "Don't like this museum? Swap it."
+- [ ] **Custom Activities:** Manually add your own events (e.g., "Dinner with friends").
+
+### 📦 Phase 4: Persistence & Dashboard
+
+- [ ] **User Dashboard:** View past and upcoming trips.
+- [ ] **PDF Export:** Download itinerary for offline use.
+- [ ] **Trip Management:** Rename or delete generated trips.
+
+### 🚀 Phase 5: Social & Growth
+
+- [ ] **Shareable Links:** Public read-only pages for trips.
+- [ ] **Booking Integration:** "Find Hotels" links (Affiliate/API hooks).
 
 ---
 
