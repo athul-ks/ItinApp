@@ -2,7 +2,7 @@ import { ArrowLeft, Bed, Bus, Clock, Coffee, Moon, Utensils } from 'lucide-react
 
 import type { RouterOutputs } from '@/trpc/react';
 
-type TripPlan = RouterOutputs['trip']['generate'][number];
+type TripPlan = RouterOutputs['trip']['generate']['tripData'][number];
 type DayPlan = TripPlan['itinerary'][number];
 type DaySection = DayPlan['morning'];
 
@@ -22,7 +22,6 @@ export function ItineraryView({ plan, onBack }: ItineraryViewProps) {
         >
           <ArrowLeft className="h-4 w-4" /> Back to options
         </button>
-
         <div>
           <h1 className="text-3xl font-bold">{plan.title}</h1>
           <div className="mt-2 flex items-center gap-3 text-sm text-gray-600">
@@ -42,7 +41,7 @@ export function ItineraryView({ plan, onBack }: ItineraryViewProps) {
         {plan.itinerary.map((day) => (
           <div key={day.day} className="relative">
             {/* Sticky Date Header */}
-            <div className="bg-primary/90 sticky top-4 z-10 mb-6 rounded-lg border-b p-2 backdrop-blur">
+            <div className="bg-primary/90 sticky top-16 z-10 mb-6 rounded-lg border-b p-2 backdrop-blur">
               <h2 className="flex items-center gap-2 text-2xl font-bold">
                 <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-sm text-white">
                   {day.day}
@@ -59,7 +58,7 @@ export function ItineraryView({ plan, onBack }: ItineraryViewProps) {
               </div>
             </div>
 
-            <div className="space-y-8 border-l-2 border-gray-100 pl-4">
+            <div className="space-y-8 border-l-2 border-gray-100 pl-2">
               <DaySectionBlock
                 title="Morning"
                 icon={<Coffee className="h-5 w-5 text-orange-500" />}
@@ -80,11 +79,11 @@ export function ItineraryView({ plan, onBack }: ItineraryViewProps) {
               />
 
               {/* Accommodation For the Night */}
-              <div className="mt-8 flex items-start gap-4 rounded-xl border bg-slate-50 p-4">
-                <div className="rounded-full border bg-white p-2 shadow-sm">
+              <div className="relative mt-8">
+                <div className="absolute top-0 -left-6.25 rounded-full border-2 border-gray-200 bg-white p-1">
                   <Bed className="h-5 w-5 text-slate-700" />
                 </div>
-                <div>
+                <div className="ml-4 rounded-xl border bg-slate-50 p-4">
                   <h4 className="mb-1 text-sm font-bold tracking-wider text-slate-500 uppercase">
                     Rest your head
                   </h4>
@@ -117,7 +116,7 @@ function DaySectionBlock({
   if (data.activities.length === 0) return null;
 
   return (
-    <div className="relative">
+    <div className="relative mb-8">
       <div className="absolute top-0 -left-6.25 rounded-full border-2 border-gray-200 bg-white p-1">
         {icon}
       </div>
@@ -125,7 +124,7 @@ function DaySectionBlock({
       <h3 className="mb-4 ml-4 flex items-center gap-2 text-lg font-bold">{title}</h3>
 
       {/* Activities List */}
-      <div className="space-y-6">
+      <div className="ml-2 space-y-6">
         {data.activities.map((act, i) => (
           <div
             key={i}
@@ -153,7 +152,7 @@ function DaySectionBlock({
       </div>
 
       {/* Restaurant Suggestions Carousel/Grid */}
-      <div className="mt-4 border-t border-dashed pt-4">
+      <div className="mt-4 ml-2 border-t border-dashed pt-4">
         <h4 className="mb-3 text-xs font-bold tracking-widest text-gray-400 uppercase">
           {mealLabel}
         </h4>
@@ -169,8 +168,10 @@ function DaySectionBlock({
                   {resto.rating}
                 </span>
               </div>
-              <div className="mb-1 text-xs text-gray-500">{resto.cuisine}</div>
-              <div className="text-xs font-semibold text-gray-900">{resto.cost}</div>
+              <div className="flex items-start justify-between text-xs text-gray-500">
+                <span>{resto.cuisine}</span>
+                <span className="font-medium text-gray-900">{resto.cost}</span>
+              </div>
             </div>
           ))}
         </div>

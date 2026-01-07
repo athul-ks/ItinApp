@@ -1,7 +1,6 @@
 {
   "extends": "@itinapp/configs/base.json",
   "compilerOptions": {
-    "types": ["node"],
     "baseUrl": ".",
     "paths": {
       "*": ["src/*"]

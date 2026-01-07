@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Inter, JetBrains_Mono, Playfair_Display } from 'next/font/google';
 
+import Footer from '@/components/footer';
 import { TRPCReactProvider } from '@/trpc/react';
 
 import Header from '../components/header';
@@ -48,11 +49,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${jetbrainsMono.variable} ${playfair.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${jetbrainsMono.variable} ${playfair.variable} flex min-h-screen flex-col antialiased`}
       >
         <Providers>
-          <Header />
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <TRPCReactProvider>
+            <Header />
+            <div className="flex w-full flex-1 flex-col">{children}</div>
+            <Footer />
+          </TRPCReactProvider>
         </Providers>
       </body>
     </html>

@@ -15,8 +15,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@itinapp/auth": "workspace:*",
     "@itinapp/db": "workspace:*",
     "@trpc/server": "catalog:",
+    "next-auth": "catalog:",
     "openai": "catalog:",
     "superjson": "catalog:",
     "zod": "catalog:"

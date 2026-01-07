@@ -1,10 +1,22 @@
-@import "tailwindcss";
-@import "@itinapp/configs/styles.css";
+@import 'tailwindcss';
+@import '@itinapp/configs/styles.css';
 
-@source "../../../packages/configs";
+@source '../../../packages/configs';
 
 @media (prefers-color-scheme: dark) {
   html:not(.light) {
     color-scheme: dark;
+  }
+}
+
+@layer base {
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  button[aria-pressed='true'] {
+    cursor: default;
   }
 }

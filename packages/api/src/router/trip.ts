@@ -1,7 +1,8 @@
+import { TRPCError } from "@trpc/server";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -68,7 +69,7 @@ const TripResponseSchema = z.object({
 // --- 2. ROUTER ---
 
 export const tripRouter = createTRPCRouter({
-  generate: publicProcedure
+  generate: protectedProcedure
     .input(
       z.object({
         destination: z.string(),
@@ -76,7 +77,7 @@ export const tripRouter = createTRPCRouter({
         budget: z.enum(["low", "moderate", "high"]),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       let duration = Math.ceil(
         (input.dateRange.to.getTime() - input.dateRange.from.getTime()) /
           (1000 * 60 * 60 * 24)
@@ -127,14 +128,42 @@ export const tripRouter = createTRPCRouter({
         const parsedData = response.output_parsed;
         
         if (!parsedData?.options || parsedData.options.length !== 3) {
-           console.error(`Only received ${parsedData?.options?.length} options.`);
-           throw new Error("AI failed to generate all 3 options. Please try again.");
+          console.error(`Only received ${parsedData?.options?.length} options.`);
+          throw new Error("AI failed to generate all 3 options. Please try again.");
         }
 
-        return parsedData.options;
+        const savedTrip = await ctx.db.trip.create({
+          data: {
+            userId: ctx.session.user.id,
+            destination: input.destination,
+            startDate: input.dateRange.from,
+            endDate: input.dateRange.to,
+            budget: input.budget,
+            tripData: parsedData.options,
+          },
+        });
+
+        return { 
+          tripId: savedTrip.id, 
+          tripData: parsedData.options 
+        };
       } catch (error) {
         console.error("OpenAI Error:", error);
         throw new Error("Failed to generate trip options. Please try again.");
       }
+    }),
+
+    getById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const trip = await ctx.db.trip.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!trip) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Trip not found" });
+      }
+
+      return trip;
     }),
 });
