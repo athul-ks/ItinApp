@@ -6,6 +6,7 @@ import { CreditCard, DollarSign, Loader2, Wallet } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { DateRange } from 'react-day-picker';
 
+import { TripLoading } from '@/app/plan/trip-loading';
 import { DateRangePicker } from '@/components/date-range-picker';
 import { api } from '@/trpc/react';
 
@@ -38,6 +39,10 @@ export function PlanContents() {
       budget,
     });
   };
+
+  if (generateTrip.isPending) {
+    return <TripLoading destination={destination} />;
+  }
 
   return (
     <div className="w-full max-w-2xl">

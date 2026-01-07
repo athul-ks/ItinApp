@@ -2,7 +2,7 @@ import { BotIcon, RouteIcon, SearchIcon } from 'lucide-react';
 
 import { Card, CardDescription, CardHeader, CardTitle } from '@itinapp/ui/components/card';
 
-import { HeroSearch } from '../../components/hero-search';
+import { HeroSearch } from './hero-search';
 
 export default function HomePage() {
   return (
