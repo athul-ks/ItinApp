@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { DateRange } from 'react-day-picker';
 
 import { TripLoading } from '@/app/plan/trip-loading';
+import { UpgradeModal } from '@/app/plan/upgrade-modal';
 import { DateRangePicker } from '@/components/date-range-picker';
 import { api } from '@/trpc/react';
 
@@ -17,13 +18,18 @@ export function PlanContents() {
 
   const [dateRange, setDateRange] = useState<DateRange>();
   const [budget, setBudget] = useState<'low' | 'moderate' | 'high'>('moderate');
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const generateTrip = api.trip.generate.useMutation({
     onSuccess: (data) => {
       router.push(`/trip/${data.tripId}`);
     },
     onError: (error) => {
-      alert(`Error: ${error.message}`);
+      if (error.message.includes('INSUFFICIENT_CREDITS')) {
+        setShowUpgradeModal(true);
+      } else {
+        alert('Something went wrong: ' + error.message);
+      }
     },
   });
 
@@ -114,6 +120,7 @@ export function PlanContents() {
       <p className="text-muted-foreground mt-8 text-center text-sm">
         Powered by AI • Curated by Locals • Loved by Travelers
       </p>
+      <UpgradeModal open={showUpgradeModal} onOpenChange={setShowUpgradeModal} />
     </div>
   );
 }

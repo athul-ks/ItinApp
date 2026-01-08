@@ -6,6 +6,8 @@ import Link from 'next/link';
 
 import { Button } from '@itinapp/ui/components/button';
 
+import { CreditBadge } from './credit-badge';
+
 export default function Header() {
   const { data: session } = useSession();
 
@@ -28,6 +30,7 @@ export default function Header() {
             >
               My Trips
             </Link>
+            <CreditBadge />
             <Button onClick={() => signOut({ callbackUrl: '/' })} variant="secondary" size="sm">
               Sign Out
             </Button>
