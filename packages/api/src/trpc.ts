@@ -1,8 +1,9 @@
-import { getServerAuthSession } from "@itinapp/auth";
-import { prisma as db } from "@itinapp/db";
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
-import { ZodError } from "zod";
+import { TRPCError, initTRPC } from '@trpc/server';
+import superjson from 'superjson';
+import { ZodError } from 'zod';
+
+import { getServerAuthSession } from '@itinapp/auth';
+import { prisma as db } from '@itinapp/db';
 
 // 1. Context: Receives the Request object from Next.js
 export const createTRPCContext = async (opts: { req: Request }) => {
@@ -10,7 +11,7 @@ export const createTRPCContext = async (opts: { req: Request }) => {
   return {
     db,
     session,
-    token: opts.req.headers.get("authorization"), // Example: Access headers easily
+    token: opts.req.headers.get('authorization'), // Example: Access headers easily
     ...opts,
   };
 };
@@ -23,8 +24,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
+        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
     };
   },
@@ -33,7 +33,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 // 3. Auth Middleware
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
   return next({
     ctx: {

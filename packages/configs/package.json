@@ -13,6 +13,7 @@
   "devDependencies": {
     "eslint": "catalog:",
     "eslint-plugin-turbo": "catalog:",
-    "turbo": "catalog:"
+    "turbo": "catalog:",
+    "typescript-eslint": "catalog:"
   }
 }

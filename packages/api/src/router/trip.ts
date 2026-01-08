@@ -1,8 +1,9 @@
-import { TRPCError } from "@trpc/server";
-import OpenAI from "openai";
-import { zodTextFormat } from "openai/helpers/zod";
-import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { TRPCError } from '@trpc/server';
+import OpenAI from 'openai';
+import { zodTextFormat } from 'openai/helpers/zod';
+import { z } from 'zod';
+
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -13,11 +14,11 @@ const openai = new OpenAI({
 // A single place/activity
 const ActivitySchema = z.object({
   name: z.string(),
-  description: z.string().describe("Concise description of what to do"),
+  description: z.string().describe('Concise description of what to do'),
   startTime: z.string().describe("e.g., '09:00'"),
   endTime: z.string().describe("e.g., '10:30'"),
-  cost: z.number().describe("Ticket price in currency. 0 if free."),
-  travelTime: z.string().describe("Time to get here from previous spot"),
+  cost: z.number().describe('Ticket price in currency. 0 if free.'),
+  travelTime: z.string().describe('Time to get here from previous spot'),
 });
 
 // A restaurant option
@@ -31,7 +32,7 @@ const RestaurantSchema = z.object({
 // A section of the day
 const DaySectionSchema = z.object({
   activities: z.array(ActivitySchema),
-  restaurantSuggestions: z.array(RestaurantSchema).describe("Sugest 2-3 options"),
+  restaurantSuggestions: z.array(RestaurantSchema).describe('Sugest 2-3 options'),
 });
 
 // A full single day
@@ -56,14 +57,16 @@ const TripOptionSchema = z.object({
   title: z.string(),
   description: z.string(),
   totalCostEstimate: z.string(),
-  vibe: z.enum(["Fast Paced", "Balanced", "Relaxed"]),
+  vibe: z.enum(['Fast Paced', 'Balanced', 'Relaxed']),
   highlights: z.array(z.string()),
   itinerary: z.array(DayPlanSchema),
 });
 
 // FORCE EXACTLY 3 OPTIONS
 const TripResponseSchema = z.object({
-  options: z.array(TripOptionSchema).length(3, "You must generate exactly 3 options: Fast Paced, Balanced, and Relaxed."),
+  options: z
+    .array(TripOptionSchema)
+    .length(3, 'You must generate exactly 3 options: Fast Paced, Balanced, and Relaxed.'),
 });
 
 // --- 2. ROUTER ---
@@ -74,23 +77,42 @@ export const tripRouter = createTRPCRouter({
       z.object({
         destination: z.string(),
         dateRange: z.object({ from: z.date(), to: z.date() }),
-        budget: z.enum(["low", "moderate", "high"]),
+        budget: z.enum(['low', 'moderate', 'high']),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      let duration = Math.ceil(
-        (input.dateRange.to.getTime() - input.dateRange.from.getTime()) /
-          (1000 * 60 * 60 * 24)
-      ) + 1;
+      const { db, session } = ctx;
+
+      const user = await db.user.findUnique({
+        where: { id: session.user.id },
+        select: { credits: true },
+      });
+
+      if (!user || user.credits <= 0) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'INSUFFICIENT_CREDITS',
+        });
+      }
+
+      await db.user.update({
+        where: { id: session.user.id },
+        data: { credits: { decrement: 1 } },
+      });
+
+      let duration =
+        Math.ceil(
+          (input.dateRange.to.getTime() - input.dateRange.from.getTime()) / (1000 * 60 * 60 * 24)
+        ) + 1;
 
       // SAFETY: Cap duration at 5 days for this detailed mode to prevent timeout/token limits
       // If we need > 5 days, we would need to switch to "Lazy Loading" architecture.
-      if (duration > 5) duration = 5; 
+      if (duration > 5) duration = 5;
 
       const budgetMap = {
-        low: "Economy (Hostels, street food, public transport)",
-        moderate: "Standard (3-4 star hotels, casual dining, mix of transit)",
-        high: "Luxury (5-star hotels, fine dining, private transfers)",
+        low: 'Economy (Hostels, street food, public transport)',
+        moderate: 'Standard (3-4 star hotels, casual dining, mix of transit)',
+        high: 'Luxury (5-star hotels, fine dining, private transfers)',
       };
 
       const systemPrompt = `
@@ -115,26 +137,29 @@ export const tripRouter = createTRPCRouter({
 
       try {
         const response = await openai.responses.parse({
-          model: "gpt-4o-2024-08-06",
+          model: 'gpt-4o-2024-08-06',
           input: [
-            { role: "system", content: "You are a helpful travel assistant. You ALWAYS generate 3 options." },
-            { role: "user", content: systemPrompt },
+            {
+              role: 'system',
+              content: 'You are a helpful travel assistant. You ALWAYS generate 3 options.',
+            },
+            { role: 'user', content: systemPrompt },
           ],
           text: {
-            format: zodTextFormat(TripResponseSchema, "trip_options"),
+            format: zodTextFormat(TripResponseSchema, 'trip_options'),
           },
         });
 
         const parsedData = response.output_parsed;
-        
+
         if (!parsedData?.options || parsedData.options.length !== 3) {
           console.error(`Only received ${parsedData?.options?.length} options.`);
-          throw new Error("AI failed to generate all 3 options. Please try again.");
+          throw new Error('AI failed to generate all 3 options. Please try again.');
         }
 
-        const savedTrip = await ctx.db.trip.create({
+        const savedTrip = await db.trip.create({
           data: {
-            userId: ctx.session.user.id,
+            userId: session.user.id,
             destination: input.destination,
             startDate: input.dateRange.from,
             endDate: input.dateRange.to,
@@ -143,27 +168,32 @@ export const tripRouter = createTRPCRouter({
           },
         });
 
-        return { 
-          tripId: savedTrip.id, 
-          tripData: parsedData.options 
+        return {
+          tripId: savedTrip.id,
+          tripData: parsedData.options,
         };
       } catch (error) {
-        console.error("OpenAI Error:", error);
-        throw new Error("Failed to generate trip options. Please try again.");
+        await db.user.update({
+          where: { id: session.user.id },
+          data: { credits: { increment: 1 } },
+        });
+        console.error('Trip generation failed, credit refunded:', error);
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to generate trip. Your credit has been refunded.',
+        });
       }
     }),
 
-    getById: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const trip = await ctx.db.trip.findUnique({
-        where: { id: input.id },
-      });
+  getById: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const trip = await ctx.db.trip.findUnique({
+      where: { id: input.id },
+    });
 
-      if (!trip) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Trip not found" });
-      }
+    if (!trip) {
+      throw new TRPCError({ code: 'NOT_FOUND', message: 'Trip not found' });
+    }
 
-      return trip;
-    }),
+    return trip;
+  }),
 });
