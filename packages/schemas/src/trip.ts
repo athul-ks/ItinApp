@@ -41,7 +41,7 @@ const DayPlanSchema = z.object({
 });
 
 // The full Trip Option
-const TripOptionSchema = z.object({
+export const TripOptionSchema = z.object({
   id: z.string(),
   title: z.string(),
   description: z.string(),
