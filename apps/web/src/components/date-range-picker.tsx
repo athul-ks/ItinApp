@@ -7,10 +7,10 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { DateRange, DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 
-interface DatePickerProps {
+type DatePickerProps = {
   date: DateRange | undefined;
   setDate: (date: DateRange | undefined) => void;
-}
+};
 
 export function DateRangePicker({ date, setDate }: DatePickerProps) {
   const [isOpen, setIsOpen] = useState(false);

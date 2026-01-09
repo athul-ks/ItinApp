@@ -18,8 +18,8 @@ export default async function TripPage({ params }: { params: Promise<{ id: strin
     return notFound();
   }
 
-  const parsedTrip = TripSchema.parse(trip.tripData);
-  const image = await getDestinationImage(trip.destination);
+  const parsedTrip = TripSchema.parse(trip);
+  const image = await getDestinationImage(parsedTrip.destination);
 
   return <TripView trip={parsedTrip} image={image} />;
 }

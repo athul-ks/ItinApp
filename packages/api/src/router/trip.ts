@@ -14,6 +14,10 @@ const openai = new OpenAI({
 
 // FORCE EXACTLY 3 OPTIONS
 const TripResponseSchema = z.object({
+  destinationCoordinates: z.object({
+    lat: z.number().describe('Center latitude of the destination city'),
+    lng: z.number().describe('Center longitude of the destination city'),
+  }),
   options: TripOptionsSchema.length(
     3,
     'You must generate exactly 3 options: Fast Paced, Balanced, and Relaxed.'
@@ -71,11 +75,10 @@ export const tripRouter = createTRPCRouter({
         Duration: ${duration} Days.
         Budget: ${budgetMap[input.budget]}.
         
-        CRITICAL: YOU MUST GENERATE ALL 3 OPTIONS. DO NOT STOP AFTER THE FIRST ONE.
-        
-        1. **Option 1: Fast Paced** - High energy, maximum sights. Pack the schedule.
-        2. **Option 2: Balanced** - Moderate pace.
-        3. **Option 3: Relaxed** - Low stress, leisure focus.
+        CRITICAL INSTRUCTIONS:
+        1. **Coordinates**: You MUST provide accurate Latitude (lat) and Longitude (lng) for EVERY single activity and restaurant. This is required for the map.
+        2. **City Center**: Provide the central lat/lng for ${input.destination} as 'destinationCoordinates'.
+        3. **Completeness**: Generate ALL 3 options (Fast Paced, Balanced, Relaxed).
         
         For each option, provide a HIGHLY DETAILED day-by-day itinerary including:
         - Specific times (Morning/Afternoon/Evening).
@@ -112,6 +115,8 @@ export const tripRouter = createTRPCRouter({
           data: {
             userId: session.user.id,
             destination: input.destination,
+            destinationLat: parsedData.destinationCoordinates.lat,
+            destinationLng: parsedData.destinationCoordinates.lng,
             startDate: input.dateRange.from,
             endDate: input.dateRange.to,
             budget: input.budget,

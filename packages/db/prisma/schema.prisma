@@ -73,11 +73,13 @@ model Trip {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   
-  status      String   @default("generated") // generated, saved, booked
-  destination String
-  startDate   DateTime
-  endDate     DateTime
-  budget      String
+  status          String   @default("generated") // generated, saved, booked
+  destination     String
+  destinationLat  Float? 
+  destinationLng  Float?
+  startDate       DateTime
+  endDate         DateTime
+  budget          String
   
   // We store the huge AI JSON response here.
   // This allows us to save the complex structure without creating 20 different SQL tables.

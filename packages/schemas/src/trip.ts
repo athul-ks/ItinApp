@@ -8,6 +8,8 @@ const ActivitySchema = z.object({
   endTime: z.string().describe("e.g., '10:30'"),
   cost: z.number().describe('Ticket price in currency. 0 if free.'),
   travelTime: z.string().describe('Time to get here from previous spot'),
+  lat: z.number().describe('Latitude of the location'),
+  lng: z.number().describe('Longitude of the location'),
 });
 
 // A restaurant option
@@ -16,6 +18,8 @@ const RestaurantSchema = z.object({
   cuisine: z.string(),
   cost: z.string().describe("Approx cost (e.g. '£25')"),
   rating: z.string().describe("e.g. '4.5/5'"),
+  lat: z.number().describe('Latitude of the restaurant'),
+  lng: z.number().describe('Longitude of the restaurant'),
 });
 
 // A section of the day
@@ -57,6 +61,8 @@ export const TripSchema = z.object({
   id: z.string(),
   userId: z.string(),
   destination: z.string(),
+  destinationLat: z.number(),
+  destinationLng: z.number(),
   // Dates are strings when coming from JSON API, but Date objects in DB.
   // z.coerce.date() handles both nicely.
   startDate: z.coerce.date(),

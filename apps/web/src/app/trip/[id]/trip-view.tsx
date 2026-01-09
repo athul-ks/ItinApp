@@ -11,10 +11,10 @@ import { ItineraryView } from './itinerary-view';
 type Trip = RouterOutputs['trip']['getById'];
 type TripOption = RouterOutputs['trip']['generate']['tripData'][number];
 
-interface TripViewProps {
+type TripViewProps = {
   trip: NonNullable<Trip>;
   image: { url: string; alt: string; credit: { name: string; link: string } } | null;
-}
+};
 
 export default function TripView({ trip, image }: TripViewProps) {
   const [selectedOptionId, setSelectedOptionId] = useState<string>();
@@ -24,7 +24,14 @@ export default function TripView({ trip, image }: TripViewProps) {
   if (selectedPlan) {
     return (
       <div className="container mx-auto max-w-4xl py-8">
-        <ItineraryView plan={selectedPlan} onBack={() => setSelectedOptionId(undefined)} />
+        <ItineraryView
+          plan={selectedPlan}
+          destinationLocation={{
+            lat: trip.destinationLat ?? 0,
+            lng: trip.destinationLng ?? 0,
+          }}
+          onBack={() => setSelectedOptionId(undefined)}
+        />
       </div>
     );
   }

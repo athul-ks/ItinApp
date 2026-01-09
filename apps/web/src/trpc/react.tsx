@@ -9,7 +9,6 @@ import { type inferRouterInputs, type inferRouterOutputs } from '@trpc/server';
 import superjson from 'superjson';
 
 import type { AppRouter } from '@itinapp/api';
-import { env } from '@itinapp/env';
 
 export const api = createTRPCReact<AppRouter>();
 
@@ -35,7 +34,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
       links: [
         loggerLink({
           enabled: (op) =>
-            env.NODE_ENV === 'development' ||
+            process.env.NODE_ENV === 'development' ||
             (op.direction === 'down' && op.result instanceof Error),
         }),
         unstable_httpBatchStreamLink({

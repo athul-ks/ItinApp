@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 @import '@itinapp/configs/styles.css';
 
-@source '../../../packages/configs';
-@source '../../../packages/ui';
+@source '../../../../packages/configs';
+@source '../../../../packages/ui';
 
 @media (prefers-color-scheme: dark) {
   html:not(.light) {
