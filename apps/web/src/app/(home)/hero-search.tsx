@@ -18,21 +18,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@itinapp/ui/components/popover';
 import { cn } from '@itinapp/ui/lib/utils';
 
-const destinations = [
-  { value: 'paris', label: 'Paris, France' },
-  { value: 'tokyo', label: 'Tokyo, Japan' },
-  { value: 'new-york', label: 'New York, USA' },
-  { value: 'london', label: 'London, UK' },
-  { value: 'rome', label: 'Rome, Italy' },
-  { value: 'bali', label: 'Bali, Indonesia' },
-  { value: 'dubai', label: 'Dubai, UAE' },
-  { value: 'barcelona', label: 'Barcelona, Spain' },
-  { value: 'sydney', label: 'Sydney, Australia' },
-  { value: 'cape-town', label: 'Cape Town, South Africa' },
-  { value: 'kyoto', label: 'Kyoto, Japan' },
-  { value: 'amsterdam', label: 'Amsterdam, Netherlands' },
-  { value: 'santorini', label: 'Santorini, Greece' },
-];
+import { POPULAR_DESTINATIONS } from '@/lib/destinations';
 
 export function HeroSearch() {
   const router = useRouter();
@@ -43,7 +29,7 @@ export function HeroSearch() {
   const handleSearch = () => {
     if (!value) return;
 
-    const selected = destinations.find((d) => d.value === value);
+    const selected = POPULAR_DESTINATIONS.find((d) => d.value === value);
     const destinationQuery = selected ? selected.label : value;
 
     const params = new URLSearchParams();
@@ -73,7 +59,7 @@ export function HeroSearch() {
               {value ? (
                 <span className="text-foreground flex items-center gap-2">
                   <MapPinIcon className="text-primary h-4 w-4" />
-                  {destinations.find((d) => d.value === value)?.label}
+                  {POPULAR_DESTINATIONS.find((d) => d.value === value)?.label}
                 </span>
               ) : (
                 <span className="text-muted-foreground flex items-center gap-2">
@@ -85,7 +71,7 @@ export function HeroSearch() {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-            <Command className="bg-background">
+            <Command className="bg-background max-h-75 overflow-y-auto">
               <CommandInput
                 placeholder="Search destination..."
                 className="px-2 focus:ring-0 focus:outline-none"
@@ -93,13 +79,13 @@ export function HeroSearch() {
               <CommandList>
                 <CommandEmpty>No destination found.</CommandEmpty>
                 <CommandGroup>
-                  {destinations.map((destination) => (
+                  {POPULAR_DESTINATIONS.map((destination) => (
                     <CommandItem
                       key={destination.value}
-                      value={destination.value}
+                      value={destination.label}
                       keywords={[destination.label]}
-                      onSelect={(currentValue) => {
-                        setValue(currentValue === value ? '' : currentValue);
+                      onSelect={() => {
+                        setValue(destination.value);
                         setOpen(false);
                       }}
                       className="hover:bg-primary/30 py-1"
