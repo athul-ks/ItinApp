@@ -10,10 +10,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    // This tells Next.js: "Don't try to bundle these, just run them in Node"
-    serverComponentsExternalPackages: ['@itinapp/db', '@itinapp/api'],
-  },
+  serverExternalPackages: ['@itinapp/db', '@itinapp/api'],
 };
 
 export default withSentryConfig(nextConfig, {
