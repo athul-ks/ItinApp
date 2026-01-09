@@ -53,6 +53,7 @@ catalog:
   typescript: ^5.9.3
   typescript-eslint: 8.51.0
   vitest: ^4.0.16
+  vitest-mock-extended: ^3.1.0
   zod: 4.3.4
 
 onlyBuiltDependencies:
