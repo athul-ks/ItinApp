@@ -3,73 +3,24 @@ import OpenAI from 'openai';
 import { zodTextFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 
+import { env } from '@itinapp/env';
+import { TripOptionsSchema, TripSchema } from '@itinapp/schemas';
+
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-// --- 1. SCHEMAS ---
-
-// A single place/activity
-const ActivitySchema = z.object({
-  name: z.string(),
-  description: z.string().describe('Concise description of what to do'),
-  startTime: z.string().describe("e.g., '09:00'"),
-  endTime: z.string().describe("e.g., '10:30'"),
-  cost: z.number().describe('Ticket price in currency. 0 if free.'),
-  travelTime: z.string().describe('Time to get here from previous spot'),
-});
-
-// A restaurant option
-const RestaurantSchema = z.object({
-  name: z.string(),
-  cuisine: z.string(),
-  cost: z.string().describe("Approx cost (e.g. '£25')"),
-  rating: z.string().describe("e.g. '4.5/5'"),
-});
-
-// A section of the day
-const DaySectionSchema = z.object({
-  activities: z.array(ActivitySchema),
-  restaurantSuggestions: z.array(RestaurantSchema).describe('Sugest 2-3 options'),
-});
-
-// A full single day
-const DayPlanSchema = z.object({
-  day: z.number(),
-  theme: z.string(),
-  accommodation: z.object({
-    name: z.string(),
-    location: z.string(),
-    reason: z.string(),
-  }),
-  morning: DaySectionSchema,
-  afternoon: DaySectionSchema,
-  evening: DaySectionSchema,
-  dailyFoodBudget: z.number(),
-  dailyTransportBudget: z.number(),
-});
-
-// The full Trip Option
-const TripOptionSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string(),
-  totalCostEstimate: z.string(),
-  vibe: z.enum(['Fast Paced', 'Balanced', 'Relaxed']),
-  highlights: z.array(z.string()),
-  itinerary: z.array(DayPlanSchema),
+  apiKey: env.OPENAI_API_KEY,
 });
 
 // FORCE EXACTLY 3 OPTIONS
 const TripResponseSchema = z.object({
-  options: z
-    .array(TripOptionSchema)
-    .length(3, 'You must generate exactly 3 options: Fast Paced, Balanced, and Relaxed.'),
+  options: TripOptionsSchema.length(
+    3,
+    'You must generate exactly 3 options: Fast Paced, Balanced, and Relaxed.'
+  ),
 });
 
-// --- 2. ROUTER ---
+// --- ROUTER ---
 
 export const tripRouter = createTRPCRouter({
   generate: protectedProcedure
@@ -194,6 +145,7 @@ export const tripRouter = createTRPCRouter({
       throw new TRPCError({ code: 'NOT_FOUND', message: 'Trip not found' });
     }
 
-    return trip;
+    const parsedTrip = TripSchema.parse(trip);
+    return parsedTrip;
   }),
 });

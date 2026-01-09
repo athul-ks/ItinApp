@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { prisma } from '@itinapp/db';
+import { TripSchema } from '@itinapp/schemas';
 
 import { getDestinationImage } from '@/lib/unsplash';
 
@@ -17,7 +18,8 @@ export default async function TripPage({ params }: { params: Promise<{ id: strin
     return notFound();
   }
 
+  const parsedTrip = TripSchema.parse(trip.tripData);
   const image = await getDestinationImage(trip.destination);
 
-  return <TripView trip={trip} image={image} />;
+  return <TripView trip={parsedTrip} image={image} />;
 }

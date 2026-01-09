@@ -2,12 +2,12 @@ import { ArrowLeft, Bed, Bus, Clock, Coffee, Moon, Utensils } from 'lucide-react
 
 import type { RouterOutputs } from '@/trpc/react';
 
-type TripPlan = RouterOutputs['trip']['generate']['tripData'][number];
-type DayPlan = TripPlan['itinerary'][number];
+type TripOption = RouterOutputs['trip']['generate']['tripData'][number];
+type DayPlan = TripOption['itinerary'][number];
 type DaySection = DayPlan['morning'];
 
 interface ItineraryViewProps {
-  plan: TripPlan;
+  plan: TripOption;
   onBack: () => void;
 }
 

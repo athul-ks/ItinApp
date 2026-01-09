@@ -36,6 +36,9 @@ catalogs:
     '@sentry/nextjs':
       specifier: ^10.32.1
       version: 10.32.1
+    '@t3-oss/env-nextjs':
+      specifier: ^0.13.10
+      version: 0.13.10
     '@tailwindcss/postcss':
       specifier: ^4
       version: 4.1.18
@@ -197,6 +200,12 @@ importers:
       '@itinapp/db':
         specifier: workspace:*
         version: link:../db
+      '@itinapp/env':
+        specifier: workspace:*
+        version: link:../env
+      '@itinapp/schemas':
+        specifier: workspace:*
+        version: link:../schemas
       '@trpc/server':
         specifier: 'catalog:'
         version: 11.8.1(typescript@5.9.3)
@@ -240,6 +249,9 @@ importers:
       '@itinapp/db':
         specifier: workspace:*
         version: link:../db
+      '@itinapp/env':
+        specifier: workspace:*
+        version: link:../env
       next-auth:
         specifier: 'catalog:'
         version: 4.24.13(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -265,6 +277,9 @@ importers:
 
   packages/db:
     dependencies:
+      '@itinapp/env':
+        specifier: workspace:*
+        version: link:../env
       '@prisma/client':
         specifier: 'catalog:'
         version: 6.19.1(prisma@6.19.1(typescript@5.9.3))(typescript@5.9.3)
@@ -281,6 +296,41 @@ importers:
       tsx:
         specifier: 'catalog:'
         version: 4.21.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/env:
+    dependencies:
+      '@t3-oss/env-nextjs':
+        specifier: 'catalog:'
+        version: 0.13.10(typescript@5.9.3)(zod@4.3.4)
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.4
+    devDependencies:
+      '@itinapp/configs':
+        specifier: workspace:*
+        version: link:../configs
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.0.3
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.2(jiti@2.6.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/schemas:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.4
+    devDependencies:
+      '@itinapp/configs':
+        specifier: workspace:*
+        version: link:../configs
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -357,6 +407,12 @@ importers:
       '@itinapp/db':
         specifier: workspace:*
         version: link:../packages/db
+      '@itinapp/env':
+        specifier: workspace:*
+        version: link:../packages/env
+      '@itinapp/schemas':
+        specifier: workspace:*
+        version: link:../packages/schemas
       '@sentry/nextjs':
         specifier: 'catalog:'
         version: 10.32.1(@opentelemetry/context-async-hooks@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.2.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.2.0(@opentelemetry/api@1.9.0))(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)(webpack@5.104.1)
@@ -1873,6 +1929,40 @@ packages:
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
+
+  '@t3-oss/env-core@0.13.10':
+    resolution: {integrity: sha512-NNFfdlJ+HmPHkLi2HKy7nwuat9SIYOxei9K10lO2YlcSObDILY7mHZNSHsieIM3A0/5OOzw/P/b+yLvPdaG52g==}
+    peerDependencies:
+      arktype: ^2.1.0
+      typescript: '>=5.0.0'
+      valibot: ^1.0.0-beta.7 || ^1.0.0
+      zod: ^3.24.0 || ^4.0.0
+    peerDependenciesMeta:
+      arktype:
+        optional: true
+      typescript:
+        optional: true
+      valibot:
+        optional: true
+      zod:
+        optional: true
+
+  '@t3-oss/env-nextjs@0.13.10':
+    resolution: {integrity: sha512-JfSA2WXOnvcc/uMdp31paMsfbYhhdvLLRxlwvrnlPE9bwM/n0Z+Qb9xRv48nPpvfMhOrkrTYw1I5Yc06WIKBJQ==}
+    peerDependencies:
+      arktype: ^2.1.0
+      typescript: '>=5.0.0'
+      valibot: ^1.0.0-beta.7 || ^1.0.0
+      zod: ^3.24.0 || ^4.0.0
+    peerDependenciesMeta:
+      arktype:
+        optional: true
+      typescript:
+        optional: true
+      valibot:
+        optional: true
+      zod:
+        optional: true
 
   '@tailwindcss/node@4.1.18':
     resolution: {integrity: sha512-DoR7U1P7iYhw16qJ49fgXUlry1t4CpXeErJHnQ44JgTSKMaZUdf17cfn5mHchfJ4KRBZRFA/Coo+MUF5+gOaCQ==}
@@ -6197,6 +6287,18 @@ snapshots:
   '@swc/helpers@0.5.15':
     dependencies:
       tslib: 2.8.1
+
+  '@t3-oss/env-core@0.13.10(typescript@5.9.3)(zod@4.3.4)':
+    optionalDependencies:
+      typescript: 5.9.3
+      zod: 4.3.4
+
+  '@t3-oss/env-nextjs@0.13.10(typescript@5.9.3)(zod@4.3.4)':
+    dependencies:
+      '@t3-oss/env-core': 0.13.10(typescript@5.9.3)(zod@4.3.4)
+    optionalDependencies:
+      typescript: 5.9.3
+      zod: 4.3.4
 
   '@tailwindcss/node@4.1.18':
     dependencies:

@@ -1,6 +1,8 @@
 import * as Sentry from '@sentry/nextjs';
 import 'server-only';
 
+import { env } from '@itinapp/env';
+
 type UnsplashImage = {
   url: string;
   alt: string;
@@ -11,12 +13,7 @@ type UnsplashImage = {
 };
 
 export async function getDestinationImage(query: string): Promise<UnsplashImage | null> {
-  const accessKey = process.env.UNSPLASH_ACCESS_KEY;
-
-  if (!accessKey) {
-    Sentry.captureMessage('Missing UNSPLASH_ACCESS_KEY in environment');
-    return null;
-  }
+  const accessKey = env.UNSPLASH_ACCESS_KEY;
 
   try {
     const response = await fetch(

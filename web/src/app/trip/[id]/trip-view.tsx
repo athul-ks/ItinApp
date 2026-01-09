@@ -9,7 +9,7 @@ import type { RouterOutputs } from '@/trpc/react';
 import { ItineraryView } from './itinerary-view';
 
 type Trip = RouterOutputs['trip']['getById'];
-type TripPlan = RouterOutputs['trip']['generate']['tripData'][number];
+type TripOption = RouterOutputs['trip']['generate']['tripData'][number];
 
 interface TripViewProps {
   trip: NonNullable<Trip>;
@@ -18,7 +18,7 @@ interface TripViewProps {
 
 export default function TripView({ trip, image }: TripViewProps) {
   const [selectedOptionId, setSelectedOptionId] = useState<string>();
-  const tripOptions = trip.tripData as unknown as TripPlan[];
+  const tripOptions = trip.tripData as TripOption[];
   const selectedPlan = tripOptions.find((t) => t.id === selectedOptionId);
 
   if (selectedPlan) {

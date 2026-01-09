@@ -17,6 +17,8 @@
   "dependencies": {
     "@itinapp/auth": "workspace:*",
     "@itinapp/db": "workspace:*",
+    "@itinapp/env": "workspace:*",
+    "@itinapp/schemas": "workspace:*",
     "@trpc/server": "catalog:",
     "next-auth": "catalog:",
     "openai": "catalog:",

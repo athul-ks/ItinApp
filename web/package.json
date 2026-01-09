@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@itinapp/db": "workspace:*",
+    "@itinapp/env": "workspace:*",
+    "@itinapp/schemas": "workspace:*",
     "@auth/prisma-adapter": "catalog:",
     "@hookform/resolvers": "catalog:",
     "@sentry/nextjs": "catalog:",
