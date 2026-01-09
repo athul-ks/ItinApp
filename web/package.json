@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@itinapp/db": "workspace:*",
     "@auth/prisma-adapter": "catalog:",
     "@hookform/resolvers": "catalog:",
     "@sentry/nextjs": "catalog:",
