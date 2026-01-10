@@ -1,0 +1,17 @@
+services:
+  # The Database Service
+  db:
+    image: postgres:15-alpine
+    container_name: itinapp-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: itinapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
