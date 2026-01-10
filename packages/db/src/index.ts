@@ -1,6 +1,6 @@
-import { env } from '@itinapp/env';
+import { PrismaClient } from '@prisma/client';
 
-import { PrismaClient } from './generated/client';
+import { env } from '@itinapp/env';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
@@ -13,4 +13,4 @@ export const prisma =
 
 if (env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
-export * from './generated/client';
+export * from '@prisma/client';

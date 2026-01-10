@@ -9,7 +9,7 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "prisma generate",
     "watch": "tsc -w",
     "dev": "tsx --env-file .env src/index.ts",
     "db:studio": "prisma studio",

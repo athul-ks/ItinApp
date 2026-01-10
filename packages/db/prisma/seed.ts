@@ -1,11 +1,8 @@
 // Load Environment Variables explicitly
 // We must do this before importing anything that relies on them
-import { config } from 'dotenv';
-
 // Loads .env from the monorepo root
-
-// Import PrismaClient directly from the generated folder
-import { PrismaClient } from '../src/generated/client';
+import { PrismaClient } from '@prisma/client';
+import { config } from 'dotenv';
 
 config({ path: '../../.env' });
 
