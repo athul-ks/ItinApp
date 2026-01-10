@@ -15,7 +15,9 @@
     "db:generate": "turbo db:generate",
     "db:push": "turbo db:push",
     "prepare": "husky",
-    "commit": "cz"
+    "commit": "cz",
+    "test": "turbo test",
+    "type-check": "turbo type-check"
   },
   "packageManager": "pnpm@10.26.2",
   "devDependencies": {

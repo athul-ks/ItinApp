@@ -5,9 +5,11 @@
   "scripts": {
     "test": "playwright test",
     "ui": "playwright test --ui",
-    "codegen": "playwright codegen"
+    "codegen": "playwright codegen",
+    "type-check": "tsc --noEmit"
   },
   "devDependencies": {
+    "@itinapp/configs": "workspace:*",
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:"

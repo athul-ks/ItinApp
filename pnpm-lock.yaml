@@ -37,7 +37,7 @@ catalogs:
       specifier: ^1.2.10
       version: 1.2.10
     '@radix-ui/react-slot':
-      specifier: ^1.2.4
+      specifier: 1.2.4
       version: 1.2.4
     '@sentry/nextjs':
       specifier: ^10.32.1
@@ -209,6 +209,9 @@ importers:
 
   apps/e2e:
     devDependencies:
+      '@itinapp/configs':
+        specifier: workspace:*
+        version: link:../../packages/configs
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.57.0
@@ -392,6 +395,9 @@ importers:
         specifier: 'catalog:'
         version: 4.24.13(next@16.1.1(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
+      '@itinapp/configs':
+        specifier: workspace:*
+        version: link:../configs
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

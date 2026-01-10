@@ -13,7 +13,8 @@
     "lint": "eslint .",
     "format": "eslint . --fix",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@itinapp/auth": "workspace:*",

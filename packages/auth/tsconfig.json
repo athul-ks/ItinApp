@@ -1,0 +1,13 @@
+{
+  "extends": "@itinapp/configs/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@itinapp/auth": ["./src"],
+      "@itinapp/auth/*": ["./src/*"]
+    },
+    "noEmit": true
+  },
+  "include": ["src", "**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

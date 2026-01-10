@@ -5,13 +5,13 @@ import { ZodError } from 'zod';
 import { getServerAuthSession } from '@itinapp/auth';
 import { prisma as db } from '@itinapp/db';
 
-// 1. Context: Receives the Request object from Next.js
-export const createTRPCContext = async (opts: { req: Request }) => {
+// 1. Context: Updated to accept 'headers' (Standard for App Router)
+// This works for both Client Requests (API Route) and Server Requests (RSC)
+export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await getServerAuthSession();
   return {
     db,
     session,
-    token: opts.req.headers.get('authorization'), // Example: Access headers easily
     ...opts,
   };
 };
@@ -46,3 +46,4 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
 export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+export const createCallerFactory = t.createCallerFactory;

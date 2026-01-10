@@ -6,6 +6,6 @@ process.env.NEXTAUTH_SECRET = 'mock-nextauth-secret';
 process.env.NEXTAUTH_URL = 'http://localhost:3000';
 process.env.GOOGLE_CLIENT_ID = 'mock-google-id';
 process.env.GOOGLE_CLIENT_SECRET = 'mock-google-secret';
-process.env.NODE_ENV = 'test';
+process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY = 'mock-google-maps-key';
 
 // Optional: specific global mocks if needed later

@@ -1,1 +1,5 @@
-pnpm turbo lint
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+pnpm turbo lint type-check
+pnpm test --filter '!@itinapp/e2e'

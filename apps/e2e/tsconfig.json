@@ -1,0 +1,13 @@
+{
+  "extends": "@itinapp/configs/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["**/*.ts", "**/*.tsx", "playwright.config.ts"],
+  "exclude": ["node_modules"]
+}

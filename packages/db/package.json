@@ -21,7 +21,8 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma migrate reset --force",
     "postinstall": "prisma generate",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo 'No tests in db package' && exit 0",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@itinapp/env": "workspace:*",

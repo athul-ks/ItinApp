@@ -153,4 +153,17 @@ export const tripRouter = createTRPCRouter({
     const parsedTrip = TripSchema.parse(trip);
     return parsedTrip;
   }),
+
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const trips = await ctx.db.trip.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return trips.map((trip) => TripSchema.parse(trip));
+  }),
 });

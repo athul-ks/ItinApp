@@ -48,8 +48,7 @@ describe('tripRouter', () => {
     return tripRouter.createCaller({
       db: mockDb as unknown as PrismaClient,
       session: session,
-      token: null,
-      req: {} as Request,
+      headers: new Headers(),
     });
   };
 
@@ -90,7 +89,10 @@ describe('tripRouter', () => {
 
       // Use the hoisted spy directly
       mocks.parse.mockResolvedValue({
-        output_parsed: { options: mockTripData },
+        output_parsed: {
+          destinationCoordinates: { lat: 48.8566, lng: 2.3522 },
+          options: mockTripData,
+        },
       });
 
       mockDb.trip.create.mockResolvedValue({

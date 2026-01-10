@@ -3,6 +3,7 @@
 import { MountainIcon } from 'lucide-react';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { Button } from '@itinapp/ui/components/button';
 
@@ -10,6 +11,7 @@ import { CreditBadge } from './credit-badge';
 
 export default function Header() {
   const { data: session } = useSession();
+  const pathname = usePathname();
 
   return (
     <header className="border-border/40 bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 flex h-14 w-full items-center border-b px-4 backdrop-blur lg:px-6">
@@ -24,12 +26,14 @@ export default function Header() {
             <span className="text-muted-foreground hidden text-sm font-medium sm:inline-block">
               {session.user?.name ? `Hi, ${session.user.name.split(' ')[0]}` : 'Welcome'}
             </span>
-            <Link
-              href="/dashboard"
-              className="text-muted-foreground text-sm font-medium underline-offset-4 hover:underline"
-            >
-              My Trips
-            </Link>
+            {pathname !== '/dashboard' && (
+              <Link
+                href="/dashboard"
+                className="text-muted-foreground text-sm font-medium underline-offset-4 hover:underline"
+              >
+                My Trips
+              </Link>
+            )}
             <CreditBadge />
             <Button onClick={() => signOut({ callbackUrl: '/' })} variant="secondary" size="sm">
               Sign Out

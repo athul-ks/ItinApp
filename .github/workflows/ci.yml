@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: CI
 on:
   push:
     branches: [main, master]
@@ -15,20 +15,33 @@ jobs:
       OPENAI_API_KEY: "mock-key"
       GOOGLE_CLIENT_ID: "mock-id"
       GOOGLE_CLIENT_SECRET: "mock-secret"
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Install pnpm
         uses: pnpm/action-setup@v2
+
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: "pnpm"
+
       - name: Install dependencies
         run: pnpm install
+
+      - name: Lint & Type Check
+        run: pnpm turbo lint type-check
+
+      - name: Run Unit & Integration Tests
+        run: pnpm turbo test --filter '!@itinapp/e2e'
+
       - name: Install Playwright Browsers
         run: pnpm --filter @itinapp/e2e exec playwright install --with-deps
+
       - name: Run Playwright tests
         run: pnpm --filter @itinapp/e2e test
+
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
