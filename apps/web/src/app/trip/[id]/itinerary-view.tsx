@@ -1,5 +1,7 @@
 'use client';
 
+import { useState } from 'react';
+
 import { ArrowLeft, Bed, Bus, Clock, Coffee, Moon, Utensils } from 'lucide-react';
 
 import { ScrollArea } from '@itinapp/ui/components/scroll-area';
@@ -18,6 +20,20 @@ interface ItineraryViewProps {
 }
 
 export function ItineraryView({ plan, destinationLocation, onBack }: ItineraryViewProps) {
+  const [hoveredActivity, setHoveredActivity] = useState<string>();
+
+  const handleMarkerClick = (activityName: string) => {
+    // Create a safe ID from the name (matches what we set in the list below)
+    const elementId = `activity-${activityName.replace(/\s+/g, '-').toLowerCase()}`;
+    const element = document.getElementById(elementId);
+
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Highlight it briefly to show user where they jumped to
+      setHoveredActivity(activityName);
+    }
+  };
+
   // Flatten activities for the Map
   const allActivities = plan.itinerary.flatMap((day) => [
     ...day.morning.activities,
@@ -59,7 +75,7 @@ export function ItineraryView({ plan, destinationLocation, onBack }: ItineraryVi
 
         {/* Scrollable Content */}
         <ScrollArea className="flex-1">
-          <div className="space-y-6 p-6 pb-12">
+          <div className="space-y-6 p-6 pb-24">
             <p className="leading-relaxed text-gray-600">{plan.description}</p>
 
             <div className="space-y-12">
@@ -89,18 +105,24 @@ export function ItineraryView({ plan, destinationLocation, onBack }: ItineraryVi
                       icon={<Coffee className="h-5 w-5 text-orange-500" />}
                       data={day.morning}
                       mealLabel="Breakfast Spots"
+                      onHover={setHoveredActivity}
+                      highlightedActivity={hoveredActivity}
                     />
                     <DaySectionBlock
                       title="Afternoon"
                       icon={<Utensils className="h-5 w-5 text-blue-500" />}
                       data={day.afternoon}
                       mealLabel="Lunch Spots"
+                      onHover={setHoveredActivity}
+                      highlightedActivity={hoveredActivity}
                     />
                     <DaySectionBlock
                       title="Evening"
                       icon={<Moon className="h-5 w-5 text-indigo-500" />}
                       data={day.evening}
                       mealLabel="Dinner Options"
+                      onHover={setHoveredActivity}
+                      highlightedActivity={hoveredActivity}
                     />
 
                     {/* Accommodation */}
@@ -129,7 +151,12 @@ export function ItineraryView({ plan, destinationLocation, onBack }: ItineraryVi
 
       {/* --- RIGHT COLUMN: MAP --- */}
       <div className="hidden h-full w-[45%] bg-slate-100 lg:block">
-        <MapView center={mapCenter} activities={allActivities} />
+        <MapView
+          center={mapCenter}
+          activities={allActivities}
+          hoveredActivityName={hoveredActivity}
+          onMarkerClick={handleMarkerClick}
+        />
       </div>
     </div>
   );
@@ -140,11 +167,15 @@ function DaySectionBlock({
   icon,
   data,
   mealLabel,
+  highlightedActivity,
+  onHover,
 }: {
   title: string;
   icon: React.ReactNode;
   data: DaySection;
   mealLabel: string;
+  highlightedActivity?: string;
+  onHover: (name: string | undefined) => void;
 }) {
   if (data.activities.length === 0) return null;
 
@@ -158,30 +189,42 @@ function DaySectionBlock({
 
       {/* Activities List */}
       <div className="ml-2 space-y-4">
-        {data.activities.map((act, i) => (
-          <div
-            key={i}
-            className="group hover:border-primary/50 relative rounded-xl border bg-white p-4 shadow-sm transition-all hover:shadow-md"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="mb-1 flex items-center gap-2 text-xs font-bold text-blue-600">
-                  <Clock className="h-3 w-3" /> {act.startTime} - {act.endTime}
+        {data.activities.map((act, i) => {
+          const isHighlighted = highlightedActivity === act.name;
+          return (
+            <div
+              key={i}
+              id={`activity-${act.name.replace(/\s+/g, '-').toLowerCase()}`}
+              onMouseEnter={() => onHover(act.name)}
+              onMouseLeave={() => onHover(undefined)}
+              className={`group relative cursor-pointer rounded-xl border p-4 shadow-sm transition-all ${
+                isHighlighted
+                  ? 'border-primary ring-primary bg-blue-50/30 shadow-md ring-1'
+                  : 'hover:border-primary/50 bg-white hover:shadow-md'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="mb-1 flex items-center gap-2 text-xs font-bold text-blue-600">
+                    <Clock className="h-3 w-3" /> {act.startTime} - {act.endTime}
+                  </div>
+                  <h4 className="font-bold">{act.name}</h4>
+                  <p className="mt-1 text-sm leading-snug text-slate-600">{act.description}</p>
                 </div>
-                <h4 className="font-bold">{act.name}</h4>
-                <p className="mt-1 text-sm leading-snug text-slate-600">{act.description}</p>
+                <div className="shrink-0 text-right">
+                  <div className="text-sm font-bold">
+                    {act.cost === 0 ? 'Free' : `$${act.cost}`}
+                  </div>
+                </div>
               </div>
-              <div className="shrink-0 text-right">
-                <div className="text-sm font-bold">{act.cost === 0 ? 'Free' : `$${act.cost}`}</div>
-              </div>
+              {act.travelTime && (
+                <div className="mt-3 inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-1 text-xs tracking-wide text-slate-500 uppercase">
+                  <Bus className="h-3 w-3" /> {act.travelTime}
+                </div>
+              )}
             </div>
-            {act.travelTime && (
-              <div className="mt-3 inline-flex items-center gap-1 rounded bg-slate-100 px-2 py-1 text-xs tracking-wide text-slate-500 uppercase">
-                <Bus className="h-3 w-3" /> {act.travelTime}
-              </div>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Restaurant Suggestions Carousel/Grid */}

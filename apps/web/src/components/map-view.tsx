@@ -16,9 +16,11 @@ type Activity = {
 type MapViewProps = {
   center: Coordinate;
   activities: Activity[];
+  hoveredActivityName?: string;
+  onMarkerClick?: (activityName: string) => void;
 };
 
-export function MapView({ center, activities }: MapViewProps) {
+export function MapView({ center, activities, hoveredActivityName, onMarkerClick }: MapViewProps) {
   // Use a unique key to force re-render if the destination changes drastically
   const mapKey = `${center.lat}-${center.lng}`;
 
@@ -34,15 +36,25 @@ export function MapView({ center, activities }: MapViewProps) {
           disableDefaultUI={true} // Cleaner look
           zoomControl={true} // Keep zoom buttons
         >
-          {activities.map((activity, index) => (
-            <AdvancedMarker
-              key={`${activity.name}-${index}`}
-              position={{ lat: activity.lat, lng: activity.lng }}
-              title={activity.name}
-            >
-              <Pin background={'#2563eb'} borderColor={'#1e40af'} glyphColor={'white'} />
-            </AdvancedMarker>
-          ))}
+          {activities.map((activity, index) => {
+            const isHovered = hoveredActivityName === activity.name;
+            return (
+              <AdvancedMarker
+                key={`${activity.name}-${index}`}
+                position={{ lat: activity.lat, lng: activity.lng }}
+                title={activity.name}
+                zIndex={isHovered ? 50 : 1}
+                onClick={() => onMarkerClick?.(activity.name)}
+              >
+                <Pin
+                  background={isHovered ? '#ef4444' : '#2563eb'}
+                  borderColor={isHovered ? '#b91c1c' : '#1e40af'}
+                  glyphColor={'white'}
+                  scale={isHovered ? 1.2 : 1.0}
+                />
+              </AdvancedMarker>
+            );
+          })}
         </Map>
       </APIProvider>
     </div>
