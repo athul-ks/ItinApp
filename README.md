@@ -5,7 +5,7 @@
 > _An AI-powered travel companion that generates personalized, day-by-day itineraries in seconds._
 
 ![Status](https://img.shields.io/badge/Status-Alpha-blue)
-![Tech](https://img.shields.io/badge/Stack-Next.js_15_%7C_tRPC_%7C_Prisma-black)
+![Tech](https://img.shields.io/badge/Stack-Next.js_16_%7C_tRPC_%7C_Prisma-black)
 ![Auth](https://img.shields.io/badge/Auth-NextAuth.js-green)
 ![AI](https://img.shields.io/badge/AI-OpenAI_GPT--4o-purple)
 
@@ -34,7 +34,7 @@ Built with the **T3 Stack** philosophy, optimized for deployment and scale.
 
 - **Monorepo Tool:** [Turborepo](https://turbo.build/)
 - **Package Manager:** [pnpm](https://pnpm.io/)
-- **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
 - **Styling:** Tailwind CSS v4 + Shadcn UI
 - **Authentication:** [NextAuth.js](https://next-auth.js.org/) (v4 Adapter)
 - **AI Provider:** OpenAI API

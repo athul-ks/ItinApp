@@ -55,6 +55,7 @@ export function HeroSearch() {
               variant="outline"
               role="combobox"
               aria-expanded={open}
+              aria-label="Select destination"
               className="border-muted-foreground/20 hover:border-primary/50 flex w-full justify-between px-4 py-3 text-base font-normal shadow-sm transition-colors"
             >
               {value ? (

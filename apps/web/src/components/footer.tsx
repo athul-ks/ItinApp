@@ -1,33 +1,34 @@
-import { GithubIcon, LinkedinIcon, TwitterIcon } from "lucide-react";
-import Link from "next/link";
+import { GithubIcon, LinkedinIcon, TwitterIcon } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-      <p className="text-xs text-muted-foreground">
-        &copy; 2025 ItinApp. All rights reserved.
-      </p>
-      <div className="sm:ml-auto flex gap-4 sm:gap-6">
+    <footer className="flex w-full shrink-0 flex-col items-center gap-2 border-t px-4 py-6 sm:flex-row md:px-6">
+      <p className="text-muted-foreground text-xs">&copy; 2025 ItinApp. All rights reserved.</p>
+      <div className="flex gap-4 sm:ml-auto sm:gap-6">
         <Link
           href="#"
-          className="text-xs hover:underline underline-offset-4"
+          className="text-xs underline-offset-4 hover:underline"
           prefetch={false}
+          aria-label="Twitter"
         >
-          <TwitterIcon className="w-5 h-5" />
+          <TwitterIcon className="h-5 w-5" />
         </Link>
         <Link
           href="#"
-          className="text-xs hover:underline underline-offset-4"
+          className="text-xs underline-offset-4 hover:underline"
           prefetch={false}
+          aria-label="Github"
         >
-          <GithubIcon className="w-5 h-5" />
+          <GithubIcon className="h-5 w-5" />
         </Link>
         <Link
           href="#"
-          className="text-xs hover:underline underline-offset-4"
+          className="text-xs underline-offset-4 hover:underline"
           prefetch={false}
+          aria-label="LinkedIn"
         >
-          <LinkedinIcon className="w-5 h-5" />
+          <LinkedinIcon className="h-5 w-5" />
         </Link>
       </div>
     </footer>
