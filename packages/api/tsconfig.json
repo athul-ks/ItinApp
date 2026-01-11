@@ -5,8 +5,9 @@
     "paths": {
       "*": ["src/*"]
     },
-    "noEmit": true
+    "noEmit": true,
+    "types": ["node", "vitest/globals"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "vitest.setup.ts", "vitest.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

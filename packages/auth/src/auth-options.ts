@@ -38,4 +38,27 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+
+  events: {
+    createUser: async ({ user }) => {
+      const webhookUrl = env.DISCORD_WEBHOOK_URL;
+      // Send the message to Discord
+      await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: '🚀 **New User Signed Up!**',
+          embeds: [
+            {
+              title: user.name || 'Unknown Name',
+              description: `Email: ${user.email}`,
+              color: 5814783,
+              thumbnail: { url: user.image },
+              timestamp: new Date().toISOString(),
+            },
+          ],
+        }),
+      });
+    },
+  },
 };

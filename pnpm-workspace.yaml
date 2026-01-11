@@ -25,6 +25,7 @@ catalog:
   '@types/node': 25.0.3
   '@types/react': ^19
   '@types/react-dom': ^19
+  '@vercel/analytics': ^1.6.1
   '@vis.gl/react-google-maps': ^1.7.1
   class-variance-authority: ^0.7.1
   clsx: ^2.1.0
