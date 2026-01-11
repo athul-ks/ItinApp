@@ -13,12 +13,15 @@
 
 **ItinApp** solves the "analysis paralysis" of modern travel planning. Instead of juggling dozens of browser tabs, blogs, and maps, users simply input their destination, travel dates, and budget. The application uses AI to generate a fully optimized, hour-by-hour itinerary that respects their financial constraints.
 
-Currently built as a high-performance Monorepo to ensure type safety from the database all the way to the frontend.
+It is engineered as a high-performance **Monorepo** to ensure strict type safety from the database schema (Prisma) all the way to the frontend client (Next.js), deployed on a **Serverless** architecture.
 
 ### ✨ Key Features (Implemented)
 
 - **🔐 Secure Authentication:** Robust Google Sign-In via NextAuth.js with protected route middleware.
 - **🧠 AI-Powered Engine:** Connects to OpenAI to generate context-aware travel plans based on "Vibe" (Relaxed, Balanced, Fast).
+- **⚡ Serverless Infrastructure:** Deployed on Vercel with Supabase Connection Pooling (PgBouncer) for massive scalability.
+- **🛡️ Enterprise-Grade Safety:** Real-time error tracking via Sentry and automated testing pipelines (Vitest for logic, Playwright for E2E).
+- **📊 Observability:** Built-in Vercel Analytics and Real-time Discord Alerts for new user signups.
 - **⏳ Progressive UX:** Smart loading states that keep users engaged while the AI curates the trip.
 - **💰 Smart Budgeting:** Input your budget level (Economy, Standard, Luxury) to get tailored recommendations.
 - **⚡ End-to-End Type Safety:** Fully typed API communication using tRPC and Zod.
@@ -27,7 +30,7 @@ Currently built as a high-performance Monorepo to ensure type safety from the da
 
 ## 🛠 Tech Stack
 
-This project uses a modern, cutting-edge stack optimized for performance and developer experience.
+Built with the **T3 Stack** philosophy, optimized for deployment and scale.
 
 - **Monorepo Tool:** [Turborepo](https://turbo.build/)
 - **Package Manager:** [pnpm](https://pnpm.io/)
@@ -37,6 +40,8 @@ This project uses a modern, cutting-edge stack optimized for performance and dev
 - **AI Provider:** OpenAI API
 - **API Layer:** [tRPC](https://trpc.io/)
 - **Database:** PostgreSQL with [Prisma ORM](https://www.prisma.io/)
+- **Testing:** [Vitest](https://vitest.dev/) (Unit) & [Playwright](https://playwright.dev/) (E2E)
+- **Monitoring:** [Sentry](https://sentry.io/) & Vercel Analytics
 
 ---
 
@@ -84,7 +89,7 @@ Follow these steps to set up the project locally.
     ```
 
 3.  **Set up Environment Variables:**
-    Create a `.env` file in the root of the project and add your database connection string:
+    Create a .env file with your credentials (see .env.example). You will need API keys for OpenAI, Google OAuth, and a Supabase database URL.
 
     ```
     DATABASE_URL="postgresql://user:password@localhost:5432/itinapp"
@@ -127,8 +132,8 @@ Follow these steps to set up the project locally.
 
 ### 🚧 Phase 2: Visuals & Immersion (Current Focus)
 
-- [ ] **Dynamic Imagery:** Fetch destination photos via Unsplash/Google Places API.
-- [ ] **Interactive Maps:** Split-screen view with pins for daily activities.
+- [x] **Dynamic Imagery:** Fetch destination photos via Unsplash/Google Places API.
+- [x] **Interactive Maps:** Split-screen view with pins for daily activities.
 - [ ] **Day-by-Day UI:** Tabbed interface for easier itinerary navigation.
 
 ### 🔮 Phase 3: The "Editor" Experience
@@ -139,7 +144,7 @@ Follow these steps to set up the project locally.
 
 ### 📦 Phase 4: Persistence & Dashboard
 
-- [ ] **User Dashboard:** View past and upcoming trips.
+- [x] **User Dashboard:** View past and upcoming trips.
 - [ ] **PDF Export:** Download itinerary for offline use.
 - [ ] **Trip Management:** Rename or delete generated trips.
 
