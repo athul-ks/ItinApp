@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('landing page loads, selects destination, and redirects to login', async ({ page }) => {
+test('landing page loads, selects destination, and redirects to auth modal', async ({ page }) => {
   // Go to Home
   await page.goto('/');
 
@@ -26,5 +26,5 @@ test('landing page loads, selects destination, and redirects to login', async ({
   // 3. Verify Redirect
   // CORRECT WAY: expect(page).toHaveURL(...)
   // This automatically waits/retries until the URL matches
-  await expect(page).toHaveURL(/signin/);
+  await expect(page).toHaveURL(/auth=login/);
 });

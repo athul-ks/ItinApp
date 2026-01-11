@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Routing and Protection', () => {
-  test('redirects unauthenticated user from /plan to /signin', async ({ page }) => {
+  test('redirects unauthenticated user from /plan to auth modal', async ({ page }) => {
     await page.goto('/plan');
-    await expect(page).toHaveURL(/signin/);
+    await expect(page).toHaveURL(/auth=login/);
   });
 
   test('preserves destination query param when redirecting', async ({ page }) => {
@@ -16,8 +16,8 @@ test.describe('Routing and Protection', () => {
     await expect(page).toHaveURL(/Dubai/);
   });
 
-  test('unknown routes redirect guests to signin', async ({ page }) => {
+  test('unknown routes redirect guests to auth modal', async ({ page }) => {
     await page.goto('/some-random-page-that-does-not-exist');
-    await expect(page).toHaveURL(/signin/);
+    await expect(page).toHaveURL(/auth=login/);
   });
 });
