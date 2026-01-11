@@ -1,9 +1,9 @@
-import { withAuth } from "next-auth/middleware";
+import { withAuth } from 'next-auth/middleware';
 
 export default withAuth({
   callbacks: {
-    // "authorized" is the logic function. 
-    // If it returns true, the user sees the page. 
+    // "authorized" is the logic function.
+    // If it returns true, the user sees the page.
     // If false, they are redirected to login.
     authorized: ({ req, token }) => {
       const pathname = req.nextUrl.pathname;
@@ -12,7 +12,7 @@ export default withAuth({
       if (token) return true;
 
       // If user is NOT logged in, ONLY allow the Home Page.
-      if (pathname === "/") {
+      if (pathname === '/') {
         return true;
       }
 
@@ -21,7 +21,7 @@ export default withAuth({
     },
   },
   pages: {
-    signIn: "/api/auth/signin", // Default NextAuth sign-in page
+    signIn: '/?auth=login',
   },
 });
 
@@ -34,6 +34,6 @@ export const config = {
      * - static files (_next/static, _next/image)
      * - favicon
      */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };

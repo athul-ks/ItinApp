@@ -1,11 +1,11 @@
 'use client';
 
 import { MountainIcon } from 'lucide-react';
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { Button } from '@itinapp/ui/components/button';
+import { Button, buttonVariants } from '@itinapp/ui/components/button';
 
 import { CreditBadge } from './credit-badge';
 
@@ -42,13 +42,14 @@ export default function Header() {
         ) : (
           /* LOGGED OUT VIEW */
           <>
-            <button
-              onClick={() => signIn('google')}
-              className="text-muted-foreground text-sm font-medium underline-offset-4 hover:underline"
-            >
-              Sign In
-            </button>
-            <Button onClick={() => signIn('google')}>Get Started</Button>
+            <Link href="?auth=login" scroll={false}>
+              <button className="text-muted-foreground text-sm font-medium underline-offset-4 hover:underline">
+                Sign In
+              </button>
+            </Link>
+            <Link href="?auth=login" scroll={false} className={buttonVariants()}>
+              Get Started
+            </Link>
           </>
         )}
       </nav>

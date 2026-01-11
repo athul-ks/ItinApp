@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { Check, ChevronsUpDown, MapPinIcon } from 'lucide-react';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@itinapp/ui/components/button';
@@ -41,7 +41,8 @@ export function HeroSearch() {
     } else {
       // This sends them to Google Login, and brings them back to
       // the Plan page (with the destination params!) automatically.
-      signIn('google', { callbackUrl: targetUrl });
+      const authUrl = `?auth=login&callbackUrl=${encodeURIComponent(targetUrl)}`;
+      router.push(authUrl);
     }
   };
 

@@ -1,6 +1,9 @@
+import { Suspense } from 'react';
+
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Inter, JetBrains_Mono, Playfair_Display } from 'next/font/google';
 
+import { AuthModal } from '@/components/auth-modal';
 import Footer from '@/components/footer';
 import { TRPCReactProvider } from '@/trpc/react';
 
@@ -55,6 +58,9 @@ export default function RootLayout({
           <TRPCReactProvider>
             <Header />
             <div className="flex w-full flex-1 flex-col">{children}</div>
+            <Suspense fallback={null}>
+              <AuthModal />
+            </Suspense>
             <Footer />
           </TRPCReactProvider>
         </Providers>
