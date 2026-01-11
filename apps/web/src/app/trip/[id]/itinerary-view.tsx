@@ -5,8 +5,9 @@ import { useState } from 'react';
 import { ArrowLeft, Bed, Bus, Clock, Coffee, Moon, Utensils } from 'lucide-react';
 
 import { ScrollArea } from '@itinapp/ui/components/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@itinapp/ui/components/tabs';
 
-import { MapView } from '@/components/map-view';
+import { MapView } from '@/app/trip/[id]/map-view';
 import type { RouterOutputs } from '@/trpc/react';
 
 type TripOption = RouterOutputs['trip']['generate']['tripData'][number];
@@ -21,17 +22,37 @@ interface ItineraryViewProps {
 
 export function ItineraryView({ plan, destinationLocation, onBack }: ItineraryViewProps) {
   const [hoveredActivity, setHoveredActivity] = useState<string>();
+  const [activeDay, setActiveDay] = useState<string>(`day-${plan.itinerary[0]?.day}`);
+
+  const findDayForActivity = (activityName: string) => {
+    return plan.itinerary.find((day) => {
+      const allDayActivities = [
+        ...day.morning.activities,
+        ...day.afternoon.activities,
+        ...day.evening.activities,
+      ];
+      return allDayActivities.some((act) => act.name === activityName);
+    });
+  };
 
   const handleMarkerClick = (activityName: string) => {
-    // Create a safe ID from the name (matches what we set in the list below)
-    const elementId = `activity-${activityName.replace(/\s+/g, '-').toLowerCase()}`;
-    const element = document.getElementById(elementId);
-
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Highlight it briefly to show user where they jumped to
-      setHoveredActivity(activityName);
+    const dayData = findDayForActivity(activityName);
+    if (dayData) {
+      setActiveDay(`day-${dayData.day}`);
     }
+
+    // Wait a tiny bit for the Tab to render, then scroll
+    setTimeout(() => {
+      // Create a safe ID from the name (matches what we set in the list below)
+      const elementId = `activity-${activityName.replace(/\s+/g, '-').toLowerCase()}`;
+      const element = document.getElementById(elementId);
+
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Highlight it briefly to show user where they jumped to
+        setHoveredActivity(activityName);
+      }
+    }, 100);
   };
 
   // Flatten activities for the Map
@@ -73,22 +94,41 @@ export function ItineraryView({ plan, destinationLocation, onBack }: ItineraryVi
           </div>
         </div>
 
-        {/* Scrollable Content */}
-        <ScrollArea className="flex-1">
-          <div className="space-y-6 p-6 pb-24">
-            <p className="leading-relaxed text-gray-600">{plan.description}</p>
+        {/* 3. Tabbed Content Area */}
+        <Tabs
+          value={activeDay}
+          onValueChange={setActiveDay}
+          className="flex flex-1 flex-col overflow-hidden"
+        >
+          {/* Scrollable Tab List (Horizontal) */}
+          <div className="border-b bg-gray-50/50 px-6 py-2">
+            <div className="w-full overflow-x-auto scroll-smooth whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <TabsList className="h-auto bg-transparent p-0">
+                {plan.itinerary.map((day) => (
+                  <TabsTrigger
+                    key={day.day}
+                    value={`day-${day.day}`}
+                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border border-transparent px-4 py-2 text-sm font-medium text-slate-600 transition-all hover:bg-gray-200 data-[state=active]:shadow-md"
+                  >
+                    Day {day.day}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
+          </div>
 
-            <div className="space-y-12">
+          {/* Scrollable Day Content */}
+          <ScrollArea className="flex-1">
+            <div className="p-6 pb-24">
               {plan.itinerary.map((day) => (
-                <div key={day.day} className="relative">
-                  {/* Date Header */}
-                  <div className="sticky top-0 z-10 mb-6 rounded-lg border border-slate-100 bg-slate-50 p-3 shadow-sm">
-                    <h2 className="flex items-center gap-2 text-xl font-bold text-slate-900">
-                      <span className="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold">
-                        {day.day}
-                      </span>
-                      {day.theme}
-                    </h2>
+                <TabsContent
+                  key={day.day}
+                  value={`day-${day.day}`}
+                  className="animate-in fade-in-50 slide-in-from-bottom-2 m-0 space-y-8 duration-300"
+                >
+                  {/* Day Header */}
+                  <div className="mb-6 rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
+                    <h2 className="text-xl font-bold text-slate-900">{day.theme}</h2>
                     <div className="mt-2 flex flex-wrap gap-4 text-xs font-medium text-slate-500">
                       <span className="flex items-center gap-1">
                         <Utensils className="h-3 w-3" /> Food: ${day.dailyFoodBudget}
@@ -99,7 +139,7 @@ export function ItineraryView({ plan, destinationLocation, onBack }: ItineraryVi
                     </div>
                   </div>
 
-                  <div className="ml-2 space-y-8 border-l-2 border-gray-100 pl-2">
+                  <div className="ml-2 space-y-8 border-l-2 border-gray-100 pl-4">
                     <DaySectionBlock
                       title="Morning"
                       icon={<Coffee className="h-5 w-5 text-orange-500" />}
@@ -127,7 +167,7 @@ export function ItineraryView({ plan, destinationLocation, onBack }: ItineraryVi
 
                     {/* Accommodation */}
                     <div className="relative mt-8">
-                      <div className="absolute top-0 -left-6.25 rounded-full border-2 border-gray-200 bg-white p-1.5 shadow-sm">
+                      <div className="absolute top-0 -left-8.5 rounded-full border-2 border-gray-200 bg-white p-1.5 shadow-sm">
                         <Bed className="h-5 w-5 text-slate-700" />
                       </div>
                       <div className="ml-4 rounded-xl border bg-slate-50 p-4">
@@ -142,11 +182,11 @@ export function ItineraryView({ plan, destinationLocation, onBack }: ItineraryVi
                       </div>
                     </div>
                   </div>
-                </div>
+                </TabsContent>
               ))}
             </div>
-          </div>
-        </ScrollArea>
+          </ScrollArea>
+        </Tabs>
       </div>
 
       {/* --- RIGHT COLUMN: MAP --- */}
@@ -181,7 +221,7 @@ function DaySectionBlock({
 
   return (
     <div className="relative mb-8">
-      <div className="absolute top-0 -left-6.25 rounded-full border-2 border-gray-200 bg-white p-1.5 shadow-sm">
+      <div className="absolute top-0 -left-8.5 rounded-full border-2 border-gray-200 bg-white p-1.5 shadow-sm">
         {icon}
       </div>
 
