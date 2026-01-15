@@ -21,6 +21,7 @@
     "@itinapp/db": "workspace:*",
     "@itinapp/env": "workspace:*",
     "@itinapp/schemas": "workspace:*",
+    "@sentry/nextjs": "catalog:",
     "@trpc/server": "catalog:",
     "next-auth": "catalog:",
     "openai": "catalog:",

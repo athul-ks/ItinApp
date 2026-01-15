@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs';
 import { TRPCError, initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
@@ -42,8 +43,19 @@ const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
+const errorLoggingMiddleware = t.middleware(async ({ path, type, next }) => {
+  const result = await next();
+  if (!result.ok) {
+    console.error(`tRPC failed on ${path}: ${result.error.message}`);
+    Sentry.captureException(result.error, {
+      extra: { path, type },
+    });
+  }
+  return result;
+});
+
 // 4. Exports
 export const createTRPCRouter = t.router;
-export const publicProcedure = t.procedure;
-export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+export const publicProcedure = t.procedure.use(errorLoggingMiddleware);
+export const protectedProcedure = t.procedure.use(errorLoggingMiddleware).use(enforceUserIsAuthed);
 export const createCallerFactory = t.createCallerFactory;
