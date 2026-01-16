@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Inter, JetBrains_Mono, Playfair_Display } from 'next/font/google';
 
@@ -60,6 +61,7 @@ export default function RootLayout({
             <Header />
             <div className="flex w-full flex-1 flex-col">{children}</div>
             <Analytics />
+            <SpeedInsights />
             <Suspense fallback={null}>
               <AuthModal />
             </Suspense>

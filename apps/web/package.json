@@ -21,6 +21,7 @@
     "@trpc/react-query": "catalog:",
     "@trpc/server": "catalog:",
     "@vercel/analytics": "catalog:",
+    "@vercel/speed-insights": "catalog:",
     "@vis.gl/react-google-maps": "catalog:",
     "date-fns": "catalog:",
     "lucide-react": "catalog:",
