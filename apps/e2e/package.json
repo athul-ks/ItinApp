@@ -2,16 +2,23 @@
   "name": "@itinapp/e2e",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "test": "playwright test",
     "ui": "playwright test --ui",
     "codegen": "playwright codegen",
     "type-check": "tsc --noEmit"
   },
+  "dependencies": {
+    "@itinapp/env": "workspace:*",
+    "@itinapp/schemas": "workspace:*"
+  },
   "devDependencies": {
     "@itinapp/configs": "workspace:*",
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
+    "dotenv": "catalog:",
+    "next-auth": "catalog:",
     "typescript": "catalog:"
   }
 }

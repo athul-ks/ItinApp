@@ -19,6 +19,7 @@
     "db:deploy": "prisma migrate deploy",
     "db:pull": "prisma db pull",
     "db:seed": "tsx prisma/seed.ts",
+    "db:seed:test": "tsx prisma/seed-test.ts",
     "db:reset": "prisma migrate reset --force",
     "postinstall": "prisma generate",
     "test": "echo 'No tests in db package' && exit 0",
@@ -26,6 +27,7 @@
   },
   "dependencies": {
     "@itinapp/env": "workspace:*",
+    "@itinapp/schemas": "workspace:*",
     "@prisma/client": "catalog:"
   },
   "devDependencies": {

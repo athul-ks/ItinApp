@@ -10,6 +10,22 @@ jobs:
     name: Run Tests & Lint
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: itinapp
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
       DATABASE_URL: "postgresql://postgres:password@localhost:5432/itinapp"
       NEXTAUTH_SECRET: "dummy-secret-for-ci-tests"
@@ -33,11 +49,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Turbo Repo Cache
+        uses: dtinth/setup-github-actions-caching-for-turbo@v1
+
       - name: Lint & Type Check
         run: pnpm turbo lint type-check
 
       - name: Run Unit & Integration Tests
         run: pnpm turbo test --filter '!@itinapp/e2e'
+
+      - name: Push Database Schema
+        run: pnpm --filter @itinapp/db db:push
+
+      - name: Seed Test Data
+        run: pnpm --filter @itinapp/db db:seed:test
+
+      - name: Build App
+        run: pnpm build
 
       - name: Install Playwright Browsers
         run: pnpm --filter @itinapp/e2e exec playwright install --with-deps

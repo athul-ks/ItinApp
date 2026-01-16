@@ -27,12 +27,13 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session: async ({ session, token }) => {
-      if (token && session.user) {
-        session.user.id = token.id as string;
+      const userId = (token.id as string) || (token.sub as string);
+      if (token && session.user && userId) {
+        session.user.id = userId;
 
         // Fetch fresh credits from DB every time session is checked
         // (This ensures the UI updates after a page reload)
-        const user = await db.user.findUnique({ where: { id: token.id as string } });
+        const user = await db.user.findUnique({ where: { id: userId } });
         session.user.credits = user?.credits ?? 0;
       }
       return session;

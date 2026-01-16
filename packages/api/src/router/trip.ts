@@ -4,7 +4,7 @@ import { zodTextFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 
 import { env } from '@itinapp/env';
-import { TripOptionsSchema, TripSchema } from '@itinapp/schemas';
+import { E2E_CONSTANTS, MOCK_TRIP_DATA, TripOptionsSchema, TripSchema } from '@itinapp/schemas';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -36,6 +36,13 @@ export const tripRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      if (process.env.NODE_ENV !== 'production' && ctx.headers.get('x-e2e-mock') === 'true') {
+        return {
+          tripId: E2E_CONSTANTS.TRIP_ID,
+          tripData: MOCK_TRIP_DATA,
+        };
+      }
+
       const { db, session } = ctx;
 
       const user = await db.user.findUnique({
