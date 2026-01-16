@@ -21,6 +21,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     DISCORD_WEBHOOK_URL: z.url(),
+    ENABLE_E2E_MOCKS: z.enum(['true', 'false']).optional(),
   },
 
   /**
@@ -47,6 +48,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
+    ENABLE_E2E_MOCKS: process.env.ENABLE_E2E_MOCKS,
   },
 
   /**

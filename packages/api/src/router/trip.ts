@@ -36,7 +36,10 @@ export const tripRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      if (process.env.NODE_ENV !== 'production' && ctx.headers.get('x-e2e-mock') === 'true') {
+      const areMocksEnabled =
+        process.env.NODE_ENV !== 'production' || process.env.ENABLE_E2E_MOCKS === 'true';
+
+      if (areMocksEnabled && ctx.headers.get('x-e2e-mock') === 'true') {
         return {
           tripId: E2E_CONSTANTS.TRIP_ID,
           tripData: MOCK_TRIP_DATA,
