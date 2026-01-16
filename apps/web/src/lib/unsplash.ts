@@ -13,6 +13,17 @@ type UnsplashImage = {
 };
 
 export async function getDestinationImage(query: string): Promise<UnsplashImage | null> {
+  if (env.ENABLE_E2E_MOCKS === 'true') {
+    return {
+      url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80',
+      alt: 'E2E Mock Destination Image',
+      credit: {
+        name: 'E2E Test',
+        link: 'https://unsplash.com',
+      },
+    };
+  }
+
   const accessKey = env.UNSPLASH_ACCESS_KEY;
 
   try {
