@@ -66,10 +66,7 @@ describe('tripRouter', () => {
 
     it('should throw FORBIDDEN if user has insufficient credits', async () => {
       const caller = createCaller();
-      mockDb.user.findUnique.mockResolvedValue({
-        id: 'user_1',
-        credits: 0,
-      } as any);
+      mockDb.user.updateMany.mockResolvedValue({ count: 0 });
 
       await expect(caller.generate(validInput)).rejects.toThrow('INSUFFICIENT_CREDITS');
     });
@@ -77,8 +74,8 @@ describe('tripRouter', () => {
     it('should generate a trip and decrement credits on success', async () => {
       const caller = createCaller();
 
-      // Mock DB: User exists with credits
-      mockDb.user.findUnique.mockResolvedValue({ id: 'user_1', credits: 5 } as any);
+      // Mock DB: Credits check and deduct
+      mockDb.user.updateMany.mockResolvedValue({ count: 1 });
 
       // Mock OpenAI: Success
       const mockTripData = [
@@ -103,15 +100,15 @@ describe('tripRouter', () => {
       const result = await caller.generate(validInput);
 
       expect(result.tripId).toBe('trip_123');
-      expect(mockDb.user.update).toHaveBeenCalledWith({
-        where: { id: 'user_1' },
+      expect(mockDb.user.updateMany).toHaveBeenCalledWith({
+        where: { id: 'user_1', credits: { gt: 0 } },
         data: { credits: { decrement: 1 } },
       });
     });
 
     it('should REFUND credits if OpenAI fails', async () => {
       const caller = createCaller();
-      mockDb.user.findUnique.mockResolvedValue({ id: 'user_1', credits: 5 } as any);
+      mockDb.user.updateMany.mockResolvedValue({ count: 1 });
 
       // Mock OpenAI: Failure
       mocks.parse.mockRejectedValue(new Error('AI Service Down'));
