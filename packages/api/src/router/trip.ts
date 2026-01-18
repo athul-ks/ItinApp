@@ -48,22 +48,22 @@ export const tripRouter = createTRPCRouter({
 
       const { db, session } = ctx;
 
-      const user = await db.user.findUnique({
-        where: { id: session.user.id },
-        select: { credits: true },
+      const result = await db.user.updateMany({
+        where: {
+          id: session.user.id,
+          credits: { gt: 0 },
+        },
+        data: {
+          credits: { decrement: 1 },
+        },
       });
 
-      if (!user || user.credits <= 0) {
+      if (result.count === 0) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'INSUFFICIENT_CREDITS',
         });
       }
-
-      await db.user.update({
-        where: { id: session.user.id },
-        data: { credits: { decrement: 1 } },
-      });
 
       let duration =
         Math.ceil(
