@@ -160,6 +160,13 @@ export const tripRouter = createTRPCRouter({
       throw new TRPCError({ code: 'NOT_FOUND', message: 'Trip not found' });
     }
 
+    if (trip.userId !== ctx.session.user.id) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'You are not authorized to view this trip',
+      });
+    }
+
     const parsedTrip = TripSchema.parse(trip);
     return parsedTrip;
   }),
