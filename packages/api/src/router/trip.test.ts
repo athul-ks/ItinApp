@@ -58,6 +58,53 @@ describe('tripRouter', () => {
     budget: 'moderate' as const,
   };
 
+  describe('getById', () => {
+    it('should throw FORBIDDEN if user tries to access another users trip', async () => {
+      const caller = createCaller();
+      const tripId = 'trip_of_user_2';
+
+      mockDb.trip.findUnique.mockResolvedValue({
+        id: tripId,
+        userId: 'user_2', // Different user
+        destination: 'London',
+        destinationLat: 51.5,
+        destinationLng: -0.12,
+        startDate: new Date(),
+        endDate: new Date(),
+        budget: 'moderate',
+        tripData: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as any);
+
+      await expect(caller.getById({ id: tripId })).rejects.toThrow(
+        'You are not authorized to view this trip'
+      );
+    });
+
+    it('should return trip if it belongs to the user', async () => {
+      const caller = createCaller();
+      const tripId = 'trip_123';
+
+      mockDb.trip.findUnique.mockResolvedValue({
+        id: tripId,
+        userId: 'user_1', // Matches mockSession
+        destination: 'Paris',
+        destinationLat: 48.8566,
+        destinationLng: 2.3522,
+        startDate: new Date(),
+        endDate: new Date(),
+        budget: 'moderate',
+        tripData: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as any);
+
+      const result = await caller.getById({ id: tripId });
+      expect(result.id).toBe(tripId);
+    });
+  });
+
   describe('generate', () => {
     it('should throw UNAUTHORIZED if no session', async () => {
       const caller = createCaller(null);
