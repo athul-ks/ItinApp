@@ -30,7 +30,14 @@ export const tripRouter = createTRPCRouter({
   generate: protectedProcedure
     .input(
       z.object({
-        destination: z.string(),
+        destination: z
+          .string()
+          .trim()
+          .min(2, 'Destination must be at least 2 characters')
+          .max(100, 'Destination must be under 100 characters')
+          .refine((val) => !/[\r\n]/.test(val), {
+            message: 'Destination cannot contain newlines (security restriction)',
+          }),
         dateRange: z.object({ from: z.date(), to: z.date() }),
         budget: z.enum(['low', 'moderate', 'high']),
       })

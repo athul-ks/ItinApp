@@ -106,6 +106,28 @@ describe('tripRouter', () => {
   });
 
   describe('generate', () => {
+    describe('Input Validation', () => {
+      it('should throw if destination is too short', async () => {
+        const caller = createCaller();
+        await expect(caller.generate({ ...validInput, destination: 'A' })).rejects.toThrow();
+      });
+
+      it('should throw if destination is too long', async () => {
+        const caller = createCaller();
+        const longDestination = 'A'.repeat(101);
+        await expect(
+          caller.generate({ ...validInput, destination: longDestination })
+        ).rejects.toThrow();
+      });
+
+      it('should throw if destination contains newlines', async () => {
+        const caller = createCaller();
+        await expect(
+          caller.generate({ ...validInput, destination: 'Paris\nFrance' })
+        ).rejects.toThrow('Destination cannot contain newlines');
+      });
+    });
+
     it('should throw UNAUTHORIZED if no session', async () => {
       const caller = createCaller(null);
       await expect(caller.generate(validInput)).rejects.toThrow(TRPCError);
