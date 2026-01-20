@@ -7,16 +7,17 @@ export const env = createEnv({
    * These are NOT available on the client.
    */
   server: {
-    DATABASE_URL: z.string().url(),
+    DATABASE_URL: z.url(),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     OPENAI_API_KEY: z.string().min(1),
     UNSPLASH_ACCESS_KEY: z.string().min(1),
     SENTRY_AUTH_TOKEN: z.string().optional(),
     NEXTAUTH_SECRET: z.string().min(1),
     NEXTAUTH_URL: z.preprocess(
-      // This allows Vercel deployments to work without setting NEXTAUTH_URL manually
-      (str) => (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : str),
-      z.string().url().optional()
+      (str) =>
+        process.env.NEXTAUTH_URL ??
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : str),
+      z.url().optional()
     ),
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),

@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'itinapp.vercel.app' }],
+        destination: 'https://itinapp.athulk.dev/:path*',
+        permanent: true,
+      },
+    ];
+  },
   serverExternalPackages: ['@itinapp/db', '@itinapp/api'],
 };
 
