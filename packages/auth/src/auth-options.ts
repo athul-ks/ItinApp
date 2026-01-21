@@ -41,9 +41,10 @@ export const authOptions: NextAuthOptions = {
   },
 
   events: {
-    createUser: async ({ user }) => {
+    createUser: async () => {
       const webhookUrl = env.DISCORD_WEBHOOK_URL;
       // Send the message to Discord
+      // SAFETY: We strictly avoid sending PII (name, email, image) to external webhooks
       await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,10 +52,9 @@ export const authOptions: NextAuthOptions = {
           content: '🚀 **New User Signed Up!**',
           embeds: [
             {
-              title: user.name || 'Unknown Name',
-              description: `Email: ${user.email}`,
+              title: 'New Registration',
+              description: 'A new user has joined the platform.',
               color: 5814783,
-              thumbnail: { url: user.image },
               timestamp: new Date().toISOString(),
             },
           ],
