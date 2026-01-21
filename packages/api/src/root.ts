@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { authRouter } from './router/auth';
 import { tripRouter } from './router/trip';
 import { createCallerFactory, createTRPCRouter, publicProcedure } from './trpc';
 
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   }),
 
   // Sub-routers
+  auth: authRouter,
   trip: tripRouter,
 });
 
