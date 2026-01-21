@@ -104,7 +104,7 @@ export default async function DashboardPage() {
         <div className="bg-destructive/10 border-destructive/20 flex flex-col items-start justify-between gap-4 rounded-xl border p-6 sm:flex-row sm:items-center">
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-gray-100">Delete Account</h3>
-            <p className="text-muted-foreground mt-1 text-sm">
+            <p className="text-destructive-foreground/80 mt-1 text-sm">
               Permanently remove your account and all associated data. This action cannot be undone.
             </p>
           </div>
