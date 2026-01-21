@@ -43,7 +43,6 @@ export const authOptions: NextAuthOptions = {
   events: {
     createUser: async () => {
       const webhookUrl = env.DISCORD_WEBHOOK_URL;
-      // Send the message to Discord
       // SAFETY: We strictly avoid sending PII (name, email, image) to external webhooks
       await fetch(webhookUrl, {
         method: 'POST',
