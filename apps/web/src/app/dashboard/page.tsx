@@ -103,7 +103,7 @@ export default async function DashboardPage() {
         <h2 className="text-destructive mb-4 text-2xl font-bold">Danger Zone</h2>
         <div className="bg-destructive/10 border-destructive/20 flex flex-col items-start justify-between gap-4 rounded-xl border p-6 sm:flex-row sm:items-center">
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Delete Account</h3>
+            <h3 className="font-semibold">Delete Account</h3>
             <p className="text-muted-foreground mt-1 text-sm">
               Permanently remove your account and all associated data. This action cannot be undone.
             </p>
