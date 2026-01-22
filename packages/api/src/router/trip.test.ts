@@ -126,6 +126,13 @@ describe('tripRouter', () => {
           caller.generate({ ...validInput, destination: 'Paris\nFrance' })
         ).rejects.toThrow('Destination cannot contain newlines');
       });
+
+      it('should throw if destination contains triple quotes', async () => {
+        const caller = createCaller();
+        await expect(
+          caller.generate({ ...validInput, destination: 'Evil """ Injection' })
+        ).rejects.toThrow('Destination cannot contain triple quotes');
+      });
     });
 
     it('should throw UNAUTHORIZED if no session', async () => {
