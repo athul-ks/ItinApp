@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { CreditCard, DollarSign, Loader2, Wallet } from 'lucide-react';
+import { Armchair, Coffee, CreditCard, DollarSign, Loader2, Wallet, Zap } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { DateRange } from 'react-day-picker';
 
@@ -18,6 +18,7 @@ export function PlanContents() {
 
   const [dateRange, setDateRange] = useState<DateRange>();
   const [budget, setBudget] = useState<'low' | 'moderate' | 'high'>('moderate');
+  const [vibe, setVibe] = useState<'packed' | 'moderate' | 'relaxed'>('moderate');
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const generateTrip = api.trip.generate.useMutation({
@@ -43,6 +44,7 @@ export function PlanContents() {
       destination,
       dateRange: { from: dateRange.from, to: dateRange.to },
       budget,
+      vibe,
     });
   };
 
@@ -77,27 +79,55 @@ export function PlanContents() {
               What is your budget?
             </label>
             <div className="mt-1 grid grid-cols-3 gap-3">
-              <BudgetOption
+              <OptionButton
                 label="Economy"
                 value="low"
                 current={budget}
                 onClick={setBudget}
                 icon={<DollarSign className="h-4 w-4" />}
               />
-              <BudgetOption
+              <OptionButton
                 label="Standard"
                 value="moderate"
                 current={budget}
                 onClick={setBudget}
                 icon={<Wallet className="h-4 w-4" />}
               />
-              <BudgetOption
+              <OptionButton
                 label="Luxury"
                 value="high"
                 current={budget}
                 onClick={setBudget}
                 icon={<CreditCard className="h-4 w-4" />}
               />
+            </div>
+            <div className="space-y-3">
+              <label className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
+                What&apos;s your pace?
+              </label>
+              <div className="mt-1 grid grid-cols-3 gap-3">
+                <OptionButton
+                  label="Packed"
+                  value="packed"
+                  current={vibe}
+                  onClick={setVibe}
+                  icon={<Zap className="h-4 w-4" />}
+                />
+                <OptionButton
+                  label="Balanced"
+                  value="moderate"
+                  current={vibe}
+                  onClick={setVibe}
+                  icon={<Coffee className="h-4 w-4" />}
+                />
+                <OptionButton
+                  label="Relaxed"
+                  value="relaxed"
+                  current={vibe}
+                  onClick={setVibe}
+                  icon={<Armchair className="h-4 w-4" />}
+                />
+              </div>
             </div>
           </div>
           <button
@@ -125,7 +155,7 @@ export function PlanContents() {
   );
 }
 
-function BudgetOption({
+function OptionButton<T extends string>({
   label,
   value,
   current,
@@ -133,9 +163,9 @@ function BudgetOption({
   icon,
 }: {
   label: string;
-  value: 'low' | 'moderate' | 'high';
-  current: string;
-  onClick: (val: 'low' | 'moderate' | 'high') => void;
+  value: T;
+  current: T;
+  onClick: (val: T) => void;
   icon: React.ReactNode;
 }) {
   const isSelected = current === value;

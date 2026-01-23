@@ -56,6 +56,7 @@ describe('tripRouter', () => {
     destination: 'Paris',
     dateRange: { from: new Date('2024-06-01'), to: new Date('2024-06-03') },
     budget: 'moderate' as const,
+    vibe: 'relaxed' as const,
   };
 
   describe('getById', () => {
@@ -155,8 +156,6 @@ describe('tripRouter', () => {
 
       // Mock OpenAI: Success
       const mockTripData = [
-        { id: '1', title: 'Fast', vibe: 'Fast Paced', highlights: [], itinerary: [] },
-        { id: '2', title: 'Balanced', vibe: 'Balanced', highlights: [], itinerary: [] },
         { id: '3', title: 'Relaxed', vibe: 'Relaxed', highlights: [], itinerary: [] },
       ];
 
@@ -164,7 +163,7 @@ describe('tripRouter', () => {
       mocks.parse.mockResolvedValue({
         output_parsed: {
           destinationCoordinates: { lat: 48.8566, lng: 2.3522 },
-          options: mockTripData,
+          itinerary: mockTripData,
         },
       });
 
