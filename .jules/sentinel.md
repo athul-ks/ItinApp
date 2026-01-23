@@ -23,3 +23,9 @@
 **Vulnerability:** The `destination` input was unbounded and unsanitized, allowing for Prompt Injection (via newlines/control chars) and Denial of Service (token exhaustion).
 **Learning:** Inputs passed to LLM prompts via template literals are high-risk. Zod's `string()` defaults are insufficient for security.
 **Prevention:** Enforce strict length limits (`max(100)`) and content validation (`refine` to ban newlines/control characters) on all inputs used in AI prompts.
+
+## 2026-02-05 - Authorization Bypass in Server Components
+
+**Vulnerability:** Direct database access (`prisma.trip.findUnique`) in Next.js Server Components bypassed the authorization logic centralized in tRPC routers.
+**Learning:** Server Components have direct DB access, tempting developers to skip the API layer. This creates a parallel data access path lacking security guards.
+**Prevention:** Always fetch data in Server Components via the tRPC server caller (`api.trip.getById`) to reuse `protectedProcedure` authorization logic.
