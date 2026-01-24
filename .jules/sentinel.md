@@ -12,7 +12,7 @@
 
 ## 📓 HISTORICAL SECURITY ENTRIES (APPEND ONLY)
 
-## 2024-05-23 - IDOR Vulnerability in Trip Access
+## 2026-01-18 - IDOR Vulnerability in Trip Access
 
 **Vulnerability:** Insecure Direct Object Reference (IDOR) in `tripRouter.getById`.
 **Learning:** `protectedProcedure` only ensures the user is logged in. It does not automatically check if the user owns the resource they are requesting.
@@ -24,8 +24,14 @@
 **Learning:** Inputs passed to LLM prompts via template literals are high-risk. Zod's `string()` defaults are insufficient for security.
 **Prevention:** Enforce strict length limits (`max(100)`) and content validation (`refine` to ban newlines/control characters) on all inputs used in AI prompts.
 
-## 2026-06-03 - Indirect Prompt Injection in Trip Generation
+## 2026-01-22 - Indirect Prompt Injection in Trip Generation
 
 **Vulnerability:** User input was directly interpolated into the system prompt without delimiters, allowing potential indirect prompt injection attacks where the AI could be instructed to ignore safety rules.
 **Learning:** Even with length limits and newline restrictions, malicious instructions can still be injected if the LLM cannot distinguish user input from system instructions.
 **Prevention:** Use clear delimiters (like `"""` or XML tags) around user input in prompts and explicitly instruct the LLM to ignore instructions found within those delimiters. Validate inputs to reject the delimiter itself.
+
+## 2026-01-23 - Authorization Bypass in Server Components
+
+**Vulnerability:** Direct database access (`prisma.trip.findUnique`) in Next.js Server Components bypassed the authorization logic centralized in tRPC routers.
+**Learning:** Server Components have direct DB access, tempting developers to skip the API layer. This creates a parallel data access path lacking security guards.
+**Prevention:** Always fetch data in Server Components via the tRPC server caller (`api.trip.getById`) to reuse `protectedProcedure` authorization logic.
