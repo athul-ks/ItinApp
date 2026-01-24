@@ -23,3 +23,9 @@
 **Vulnerability:** The `destination` input was unbounded and unsanitized, allowing for Prompt Injection (via newlines/control chars) and Denial of Service (token exhaustion).
 **Learning:** Inputs passed to LLM prompts via template literals are high-risk. Zod's `string()` defaults are insufficient for security.
 **Prevention:** Enforce strict length limits (`max(100)`) and content validation (`refine` to ban newlines/control characters) on all inputs used in AI prompts.
+
+## 2026-06-03 - Indirect Prompt Injection in Trip Generation
+
+**Vulnerability:** User input was directly interpolated into the system prompt without delimiters, allowing potential indirect prompt injection attacks where the AI could be instructed to ignore safety rules.
+**Learning:** Even with length limits and newline restrictions, malicious instructions can still be injected if the LLM cannot distinguish user input from system instructions.
+**Prevention:** Use clear delimiters (like `"""` or XML tags) around user input in prompts and explicitly instruct the LLM to ignore instructions found within those delimiters. Validate inputs to reject the delimiter itself.
