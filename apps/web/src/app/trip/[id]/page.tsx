@@ -14,7 +14,7 @@ export default async function TripPage({ params }: { params: Promise<{ id: strin
   try {
     trip = await api.trip.getById({ id });
     image = await getDestinationImage(trip.destination);
-  } catch (_error) {
+  } catch {
     // We treat both NOT_FOUND and FORBIDDEN as 404 to avoid leaking existence of trips.
     return notFound();
   }
