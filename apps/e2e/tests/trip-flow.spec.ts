@@ -51,10 +51,7 @@ test.describe('Trip Generation Happy Path', () => {
       timeout: 10000,
     });
 
-    const balancedCard = page.locator('.group').filter({ hasText: 'Balanced Paris Adventure' });
-    await expect(balancedCard).toBeVisible();
-
-    await balancedCard.getByRole('button', { name: /view itinerary/i }).click();
+    await expect(page.getByText('Balanced Paris Adventure')).toBeVisible();
     await expect(page.getByText('£1200')).toBeVisible();
     await expect(page.getByText('Eiffel Tower')).toBeVisible();
     await expect(page.getByText('Cafe Central')).toBeVisible();

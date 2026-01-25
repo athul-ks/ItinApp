@@ -2,13 +2,14 @@ import { notFound } from 'next/navigation';
 
 import { getDestinationImage } from '@/lib/unsplash';
 import { api } from '@/trpc/server';
+import { Trip } from '@/types/trpc';
 
-import TripView from './trip-view';
+import { TripView } from './trip-view';
 
 export default async function TripPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  let trip;
+  let trip: Trip;
   let image;
 
   try {
@@ -19,5 +20,26 @@ export default async function TripPage({ params }: { params: Promise<{ id: strin
     return notFound();
   }
 
-  return <TripView trip={trip} image={image} />;
+  const tripOption = trip.tripData[0];
+
+  if (!tripOption) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <p className="text-muted-foreground">No itinerary found for this trip.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto max-w-4xl py-8">
+      <TripView
+        plan={tripOption}
+        image={image}
+        destinationLocation={{
+          lat: trip.destinationLat ?? 0,
+          lng: trip.destinationLng ?? 0,
+        }}
+      />
+    </div>
+  );
 }
