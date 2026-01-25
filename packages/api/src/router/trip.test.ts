@@ -121,11 +121,26 @@ describe('tripRouter', () => {
         ).rejects.toThrow();
       });
 
-      it('should throw if destination contains newlines', async () => {
+      it('should throw if destination contains control characters', async () => {
         const caller = createCaller();
         await expect(
           caller.generate({ ...validInput, destination: 'Paris\nFrance' })
-        ).rejects.toThrow('Destination cannot contain newlines');
+        ).rejects.toThrow('Destination cannot contain control characters');
+
+        await expect(
+          caller.generate({ ...validInput, destination: 'Paris\0France' })
+        ).rejects.toThrow('Destination cannot contain control characters');
+      });
+
+      it('should throw if dateRange is invalid (end before start)', async () => {
+        const caller = createCaller();
+        const invalidDateRange = {
+          from: new Date('2024-06-05'),
+          to: new Date('2024-06-01'),
+        };
+        await expect(
+          caller.generate({ ...validInput, dateRange: invalidDateRange })
+        ).rejects.toThrow('End date must be after start date');
       });
 
       it('should throw if destination contains triple quotes', async () => {

@@ -41,3 +41,8 @@
 **Vulnerability:** The Sentry initialization wizard (or default copy-paste config) set `sendDefaultPii: true` in `sentry.server.config.ts`, `sentry.edge.config.ts`, and `instrumentation-client.ts`, violating the UK Data Use and Access Act 2025 zero-leak policy.
 **Learning:** Third-party tools often default to "maximum data collection" which can silently violate strict privacy compliance requirements.
 **Prevention:** Manually audit all third-party telemetry configuration files for PII collection settings immediately after installation or generation.
+
+## 2026-05-21 - Logic Validation in Duration Calculation
+**Vulnerability:** Business logic flaw allowing negative duration calculation if `endDate` < `startDate`, potentially confusing AI safety checks.
+**Learning:** Simple type validation (e.g., `z.date()`) is insufficient for dependent fields.
+**Prevention:** Use Zod's `.refine()` on the parent object to enforce relationships between fields (e.g., `start <= end`).
