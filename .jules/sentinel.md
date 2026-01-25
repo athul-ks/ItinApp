@@ -36,7 +36,7 @@
 **Learning:** Server Components have direct DB access, tempting developers to skip the API layer. This creates a parallel data access path lacking security guards.
 **Prevention:** Always fetch data in Server Components via the tRPC server caller (`api.trip.getById`) to reuse `protectedProcedure` authorization logic.
 
-## 2026-01-28 - Compliance Violation in Sentry Default Config
+## 2026-01-25 - Compliance Violation in Sentry Default Config
 
 **Vulnerability:** The Sentry initialization wizard (or default copy-paste config) set `sendDefaultPii: true` in `sentry.server.config.ts`, `sentry.edge.config.ts`, and `instrumentation-client.ts`, violating the UK Data Use and Access Act 2025 zero-leak policy.
 **Learning:** Third-party tools often default to "maximum data collection" which can silently violate strict privacy compliance requirements.
