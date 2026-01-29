@@ -82,8 +82,8 @@ export const tripRouter = createTRPCRouter({
           (input.dateRange.to.getTime() - input.dateRange.from.getTime()) / (1000 * 60 * 60 * 24)
         ) + 1;
 
-      // SAFETY: Cap duration at 5 days for this detailed mode to prevent timeout/token limits
-      // If we need > 5 days, we would need to switch to "Lazy Loading" architecture.
+      // SAFETY: Cap duration at 10 days for this detailed mode to prevent timeout/token limits
+      // If we need > 10 days, we would need to switch to "Lazy Loading" architecture.
       if (duration > 10) duration = 10;
 
       const budgetMap = {
