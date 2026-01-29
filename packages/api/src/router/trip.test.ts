@@ -211,5 +211,37 @@ describe('tripRouter', () => {
         data: { credits: { increment: 1 } },
       });
     });
+
+    it('should cap duration at 5 days (SAFETY LIMIT)', async () => {
+      const caller = createCaller();
+      mockDb.user.updateMany.mockResolvedValue({ count: 1 });
+
+      const longDateRange = {
+        from: new Date('2024-06-01'),
+        to: new Date('2024-06-16'), // 15 days
+      };
+
+      mocks.parse.mockResolvedValue({
+        output_parsed: {
+          destinationCoordinates: { lat: 48.8566, lng: 2.3522 },
+          itinerary: [],
+        },
+      });
+
+      mockDb.trip.create.mockResolvedValue({
+        id: 'trip_123',
+        tripData: [],
+      } as any);
+
+      await caller.generate({ ...validInput, dateRange: longDateRange });
+
+      const calls = mocks.parse.mock.calls;
+      const lastCall = calls[calls.length - 1];
+      const inputArg = lastCall[0].input;
+      const userMessage = inputArg.find((msg: any) => msg.role === 'user').content;
+
+      // Safety limit caps at 5 days
+      expect(userMessage).toContain('Duration: 5 Days');
+    });
   });
 });

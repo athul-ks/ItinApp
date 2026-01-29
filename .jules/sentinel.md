@@ -46,3 +46,8 @@
 **Vulnerability:** Business logic flaw allowing negative duration calculation if `endDate` < `startDate`, potentially confusing AI safety checks.
 **Learning:** Simple type validation (e.g., `z.date()`) is insufficient for dependent fields.
 **Prevention:** Use Zod's `.refine()` on the parent object to enforce relationships between fields (e.g., `start <= end`).
+
+## 2026-05-22 - DoS Risk from Safety Logic Mismatch
+**Vulnerability:** Code implementation capped trip duration at 10 days despite a safety comment explicitly stating a 5-day limit to prevent token exhaustion/timeouts.
+**Learning:** Discrepancies between safety comments and actual code (often from "temporary" debugging changes left in) create hidden availability risks.
+**Prevention:** When defining safety limits (like duration/size caps) in comments, explicitly verify the accompanying code enforces that exact limit during code reviews.

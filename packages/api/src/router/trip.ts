@@ -84,7 +84,7 @@ export const tripRouter = createTRPCRouter({
 
       // SAFETY: Cap duration at 5 days for this detailed mode to prevent timeout/token limits
       // If we need > 5 days, we would need to switch to "Lazy Loading" architecture.
-      if (duration > 10) duration = 10;
+      if (duration > 5) duration = 5;
 
       const budgetMap = {
         low: 'Economy (Hostels, street food, free walking tours, public transit)',
