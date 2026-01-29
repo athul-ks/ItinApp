@@ -212,7 +212,7 @@ describe('tripRouter', () => {
       });
     });
 
-    it('should cap duration at 5 days (SAFETY LIMIT)', async () => {
+    it('should cap duration at 10 days (SAFETY LIMIT)', async () => {
       const caller = createCaller();
       mockDb.user.updateMany.mockResolvedValue({ count: 1 });
 
@@ -240,8 +240,8 @@ describe('tripRouter', () => {
       const inputArg = lastCall[0].input;
       const userMessage = inputArg.find((msg: any) => msg.role === 'user').content;
 
-      // Safety limit caps at 5 days
-      expect(userMessage).toContain('Duration: 5 Days');
+      // Safety limit caps at 10 days
+      expect(userMessage).toContain('Duration: 10 Days');
     });
   });
 });
