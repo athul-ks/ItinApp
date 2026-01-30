@@ -68,11 +68,10 @@ export const tripRouter = createTRPCRouter({
 
       if (lastTrip) {
         const timeSinceLastTrip = Date.now() - lastTrip.createdAt.getTime();
-        // 1 minute cooldown
         if (timeSinceLastTrip < 60 * 1000) {
           throw new TRPCError({
             code: 'TOO_MANY_REQUESTS',
-            message: 'Please wait a minute before generating another trip.',
+            message: 'Please wait before generating another trip.',
           });
         }
       }

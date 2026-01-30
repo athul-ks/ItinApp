@@ -167,7 +167,7 @@ describe('tripRouter', () => {
       } as any);
 
       await expect(caller.generate(validInput)).rejects.toThrow(
-        'Please wait a minute before generating another trip'
+        'Please wait before generating another trip'
       );
     });
 
