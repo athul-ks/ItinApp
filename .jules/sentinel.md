@@ -51,3 +51,8 @@
 **Vulnerability:** Code implementation capped trip duration at 10 days despite a safety comment explicitly stating a 5-day limit to prevent token exhaustion/timeouts.
 **Learning:** Discrepancies between safety comments and actual code (often from "temporary" debugging changes left in) create hidden availability risks.
 **Prevention:** When defining safety limits (like duration/size caps) in comments, explicitly verify the accompanying code enforces that exact limit during code reviews.
+
+## 2026-06-03 - DoS Protection via Rate Limiting
+**Vulnerability:** The expensive `trip.generate` endpoint (using OpenAI) lacked rate limiting, allowing credit exhaustion or DoS attacks.
+**Learning:** In serverless environments (Next.js), simple in-memory rate limiting is ineffective. Without external stores (Redis), the database can be used as a rate limiter for critical, low-frequency actions.
+**Prevention:** Implement "check-then-act" logic using `createdAt` timestamps from the database to enforce cooldowns on resource-intensive endpoints.

@@ -156,6 +156,21 @@ describe('tripRouter', () => {
       await expect(caller.generate(validInput)).rejects.toThrow(TRPCError);
     });
 
+    it('should throw TOO_MANY_REQUESTS if last trip was created < 1 min ago', async () => {
+      const caller = createCaller();
+
+      // Mock that a trip was created 30 seconds ago
+      mockDb.trip.findFirst.mockResolvedValue({
+        id: 'recent_trip',
+        userId: 'user_1',
+        createdAt: new Date(Date.now() - 30 * 1000), // 30s ago
+      } as any);
+
+      await expect(caller.generate(validInput)).rejects.toThrow(
+        'Please wait before generating another trip'
+      );
+    });
+
     it('should throw FORBIDDEN if user has insufficient credits', async () => {
       const caller = createCaller();
       mockDb.user.updateMany.mockResolvedValue({ count: 0 });
