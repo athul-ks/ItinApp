@@ -60,6 +60,23 @@ export const tripRouter = createTRPCRouter({
 
       const { db, session } = ctx;
 
+      const lastTrip = await db.trip.findFirst({
+        where: { userId: session.user.id },
+        orderBy: { createdAt: 'desc' },
+        select: { createdAt: true },
+      });
+
+      if (lastTrip) {
+        const timeSinceLastTrip = Date.now() - lastTrip.createdAt.getTime();
+        // 1 minute cooldown
+        if (timeSinceLastTrip < 60 * 1000) {
+          throw new TRPCError({
+            code: 'TOO_MANY_REQUESTS',
+            message: 'Please wait a minute before generating another trip.',
+          });
+        }
+      }
+
       const result = await db.user.updateMany({
         where: {
           id: session.user.id,
