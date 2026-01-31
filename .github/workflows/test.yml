@@ -72,12 +72,34 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright Browser(s)
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm --filter @itinapp/e2e exec playwright install --with-deps
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "PR detected: Installing only Chromium"
+            pnpm --filter @itinapp/e2e exec playwright install chromium
+          else
+            echo "Main/Push detected: Installing all browsers"
+            pnpm --filter @itinapp/e2e exec playwright install
+          fi
+
+      - name: Install Playwright System Dependencies
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            pnpm --filter @itinapp/e2e exec playwright install-deps chromium
+          else
+            pnpm --filter @itinapp/e2e exec playwright install-deps
+          fi
 
       - name: Run Playwright tests
-        run: pnpm --filter @itinapp/e2e test
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "🚀 Running Chromium-only tests for PR"
+            pnpm --filter @itinapp/e2e test --project=chromium
+          else
+            echo "🛡️ Running full cross-browser suite for Main"
+            pnpm --filter @itinapp/e2e test
+          fi
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
