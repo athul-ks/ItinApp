@@ -36,6 +36,7 @@ catalog:
   cz-conventional-changelog: ^3.3.0
   date-fns: ^4.1.0
   dotenv: 17.2.3
+  dotenv-cli: ^11.0.0
   eslint: 9.39.2
   eslint-config-next: 16.1.1
   eslint-plugin-turbo: ^2.7.2

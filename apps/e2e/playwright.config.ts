@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.resolve(__dirname, '../web/.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -30,7 +30,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.NEXTAUTH_URL || 'http://localhost:3000',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -79,6 +79,8 @@ export default defineConfig({
     command: process.env.CI ? 'pnpm --filter @itinapp/web start' : 'pnpm --filter @itinapp/web dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
+    stdout: 'pipe',
+    stderr: 'pipe',
     timeout: 120 * 1000,
   },
 });

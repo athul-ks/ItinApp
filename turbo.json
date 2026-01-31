@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalDependencies": [".env"],
   "globalEnv": [
     "NODE_ENV",
     "PORT",
@@ -18,7 +19,7 @@
   ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "db:generate", "db:deploy"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
@@ -26,13 +27,14 @@
       "dependsOn": []
     },
     "test": {
-      "dependsOn": [],
+      "dependsOn": ["db:generate", "db:seed:test"],
       "outputs": []
     },
     "type-check": {
       "dependsOn": ["^type-check"]
     },
     "dev": {
+      "dependsOn": ["db:generate"],
       "cache": false,
       "persistent": true
     },
@@ -40,11 +42,28 @@
       "cache": false
     },
     "db:push": {
-      "cache": false
+      "cache": false,
+      "inputs": ["prisma/schema.prisma"]
     },
     "db:studio": {
       "cache": false,
       "persistent": true
+    },
+    "db:seed": {
+      "dependsOn": ["^db:generate"],
+      "cache": false,
+      "inputs": ["prisma/seed.ts", "prisma/schema.prisma"]
+    },
+    "db:seed:test": {
+      "dependsOn": ["^db:generate", "db:push"],
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false,
+      "interactive": true
+    },
+    "db:deploy": {
+      "cache": false
     }
   }
 }

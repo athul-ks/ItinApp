@@ -1,33 +1,31 @@
-// Load Environment Variables explicitly
-// We must do this before importing anything that relies on them
-// Loads .env from the monorepo root
 import { PrismaClient } from '@prisma/client';
-import { config } from 'dotenv';
 
-config({ path: '../../.env' });
-
-// Instantiate a local client for seeding
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Starting seed...');
 
-  // 1. Cleanup existing data
-  await prisma.trip.deleteMany();
-  await prisma.session.deleteMany();
-  await prisma.account.deleteMany();
-  await prisma.user.deleteMany();
+  // 1. Transactional Cleanup (Order matters for Foreign Keys!)
+  console.log('🧹 Cleaning up database...');
+  await prisma.$transaction([
+    prisma.trip.deleteMany(),
+    prisma.session.deleteMany(),
+    prisma.account.deleteMany(),
+    prisma.user.deleteMany(),
+  ]);
 
-  // 2. Create a Test User
-  const user = await prisma.user.create({
-    data: {
+  // 2. Upsert Test User (Safe for repeated runs)
+  const user = await prisma.user.upsert({
+    where: { email: 'test@example.com' },
+    update: {}, // If user exists, do nothing
+    create: {
       email: 'test@example.com',
       name: 'Test Traveler',
       image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix',
       credits: 100,
     },
   });
-  console.log(`👤 Created user: ${user.email}`);
+  console.log(`👤 Verified user: ${user.email}`);
 
   // 3. Create a Trip with embedded JSON data
   const mockItinerary = {
@@ -76,6 +74,7 @@ async function main() {
     ],
   };
 
+  // 4. Create Trip
   const trip = await prisma.trip.create({
     data: {
       userId: user.id,
@@ -97,7 +96,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error(e);
+    console.error('❌ Seed failed:', e);
     await prisma.$disconnect();
     process.exit(1);
   });

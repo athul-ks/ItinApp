@@ -62,14 +62,8 @@ jobs:
       - name: Run Unit & Integration Tests
         run: pnpm turbo test --filter '!@itinapp/e2e'
 
-      - name: Push Database Schema
-        run: pnpm --filter @itinapp/db db:push
-
-      - name: Seed Test Data
-        run: pnpm --filter @itinapp/db db:seed:test
-
       - name: Build App
-        run: pnpm build
+        run: pnpm build --filter=@itinapp/web
 
       - name: Cache Playwright Browsers
         uses: actions/cache@v4
@@ -79,6 +73,7 @@ jobs:
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm --filter @itinapp/e2e exec playwright install --with-deps
 
       - name: Run Playwright tests

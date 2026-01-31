@@ -18,7 +18,12 @@ async function main() {
 
   await prisma.trip.upsert({
     where: { id: E2E_CONSTANTS.TRIP_ID },
-    update: { userId: E2E_CONSTANTS.USER_ID, destination: 'Paris', tripData: MOCK_TRIP_DATA },
+    update: {
+      userId: E2E_CONSTANTS.USER_ID,
+      destination: 'Paris',
+      tripData: MOCK_TRIP_DATA,
+      status: 'generated',
+    },
     create: {
       id: E2E_CONSTANTS.TRIP_ID,
       userId: E2E_CONSTANTS.USER_ID,
@@ -29,6 +34,7 @@ async function main() {
       endDate: new Date(),
       budget: 'moderate',
       tripData: MOCK_TRIP_DATA,
+      status: 'generated'
     },
   });
 

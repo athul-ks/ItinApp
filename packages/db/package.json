@@ -11,7 +11,7 @@
   "scripts": {
     "build": "prisma generate",
     "watch": "tsc -w",
-    "dev": "tsx --env-file .env src/index.ts",
+    "dev": "tsx src/index.ts",
     "db:studio": "prisma studio",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
