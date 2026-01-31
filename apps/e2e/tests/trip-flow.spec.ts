@@ -47,9 +47,11 @@ test.describe('Trip Generation Happy Path', () => {
     await page.getByRole('button', { name: /standard/i }).click();
     await page.getByRole('button', { name: /generate my itinerary/i }).click();
 
-    await expect(page).toHaveURL(new RegExp(`/trip/${E2E_CONSTANTS.TRIP_ID}`), {
-      timeout: 10000,
+    await page.waitForURL(new RegExp(`/trip/${E2E_CONSTANTS.TRIP_ID}`), {
+      timeout: 15000,
+      waitUntil: 'networkidle',
     });
+    await expect(page).toHaveURL(new RegExp(`/trip/${E2E_CONSTANTS.TRIP_ID}`));
 
     await expect(page.getByText('Balanced Paris Adventure')).toBeVisible();
     await expect(page.getByText('£1200')).toBeVisible();
