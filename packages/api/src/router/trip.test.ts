@@ -37,6 +37,21 @@ describe('tripRouter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockDb = mockDeep<PrismaClient>();
+
+    // MOCK TRANSACTION
+    // Execute callback immediately
+    mockDb.$transaction.mockImplementation(async (arg: any) => {
+      if (typeof arg === 'function') {
+        return arg(mockDb);
+      }
+      if (Array.isArray(arg)) {
+        return Promise.all(arg);
+      }
+      return arg;
+    });
+
+    // MOCK QUERYRAW
+    mockDb.$queryRaw.mockResolvedValue([1]);
   });
 
   const mockSession = {
@@ -169,6 +184,9 @@ describe('tripRouter', () => {
       await expect(caller.generate(validInput)).rejects.toThrow(
         'Please wait before generating another trip'
       );
+
+      // Verify User Locking was called
+      expect(mockDb.$queryRaw).toHaveBeenCalled();
     });
 
     it('should throw FORBIDDEN if user has insufficient credits', async () => {
@@ -185,21 +203,37 @@ describe('tripRouter', () => {
       mockDb.user.updateMany.mockResolvedValue({ count: 1 });
 
       // Mock OpenAI: Success
-      const mockTripData = [
-        { id: '3', title: 'Relaxed', vibe: 'Relaxed', highlights: [], itinerary: [] },
-      ];
+      const mockTripItinerary = {
+        id: '3',
+        title: 'Relaxed',
+        description: 'Desc',
+        totalCostEstimate: '$100',
+        vibe: 'Relaxed' as const,
+        highlights: [],
+        itinerary: []
+      };
 
       // Use the hoisted spy directly
       mocks.parse.mockResolvedValue({
         output_parsed: {
           destinationCoordinates: { lat: 48.8566, lng: 2.3522 },
-          itinerary: mockTripData,
+          itinerary: mockTripItinerary,
         },
       });
 
+      // Mock Create Pending
+      const pendingTripId = 'trip_123';
       mockDb.trip.create.mockResolvedValue({
-        id: 'trip_123',
-        tripData: mockTripData,
+        id: pendingTripId,
+        status: 'generating',
+        tripData: [],
+      } as any);
+
+      // Mock Update Success
+      mockDb.trip.update.mockResolvedValue({
+        id: pendingTripId,
+        status: 'generated',
+        tripData: [mockTripItinerary],
       } as any);
 
       const result = await caller.generate(validInput);
@@ -209,11 +243,28 @@ describe('tripRouter', () => {
         where: { id: 'user_1', credits: { gt: 0 } },
         data: { credits: { decrement: 1 } },
       });
+      // Verify Create Pending
+      expect(mockDb.trip.create).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({
+          status: 'generating',
+        }),
+      }));
+      // Verify Update Final
+      expect(mockDb.trip.update).toHaveBeenCalledWith(expect.objectContaining({
+        where: { id: pendingTripId },
+        data: expect.objectContaining({
+          status: 'generated',
+        }),
+      }));
     });
 
     it('should REFUND credits if OpenAI fails', async () => {
       const caller = createCaller();
       mockDb.user.updateMany.mockResolvedValue({ count: 1 });
+
+      // Mock Create Pending
+      const pendingTripId = 'trip_123';
+      mockDb.trip.create.mockResolvedValue({ id: pendingTripId } as any);
 
       // Mock OpenAI: Failure
       mocks.parse.mockRejectedValue(new Error('AI Service Down'));
@@ -224,6 +275,10 @@ describe('tripRouter', () => {
       expect(mockDb.user.update).toHaveBeenCalledWith({
         where: { id: 'user_1' },
         data: { credits: { increment: 1 } },
+      });
+      // Verify Deletion of Pending Trip
+      expect(mockDb.trip.delete).toHaveBeenCalledWith({
+          where: { id: pendingTripId }
       });
     });
 
@@ -239,7 +294,7 @@ describe('tripRouter', () => {
       mocks.parse.mockResolvedValue({
         output_parsed: {
           destinationCoordinates: { lat: 48.8566, lng: 2.3522 },
-          itinerary: [],
+          itinerary: { id: '1', title: 'A', description: 'B', totalCostEstimate: 'C', vibe: 'Balanced', highlights: [], itinerary: [] },
         },
       });
 
@@ -247,6 +302,8 @@ describe('tripRouter', () => {
         id: 'trip_123',
         tripData: [],
       } as any);
+
+      mockDb.trip.update.mockResolvedValue({} as any);
 
       await caller.generate({ ...validInput, dateRange: longDateRange });
 

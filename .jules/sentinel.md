@@ -56,3 +56,8 @@
 **Vulnerability:** The expensive `trip.generate` endpoint (using OpenAI) lacked rate limiting, allowing credit exhaustion or DoS attacks.
 **Learning:** In serverless environments (Next.js), simple in-memory rate limiting is ineffective. Without external stores (Redis), the database can be used as a rate limiter for critical, low-frequency actions.
 **Prevention:** Implement "check-then-act" logic using `createdAt` timestamps from the database to enforce cooldowns on resource-intensive endpoints.
+
+## 2026-06-04 - Rate Limit Bypass via Race Condition
+**Vulnerability:** The rate limit check (read last trip -> check time) was not atomic, allowing parallel requests to bypass the cooldown and potentially exhaust credits/resources.
+**Learning:** In high-concurrency environments, "Check-then-Act" logic is vulnerable to TOCTOU (Time-of-Check to Time-of-Use) attacks unless serialized.
+**Prevention:** Use database transactions with explicit row locking (`SELECT ... FOR UPDATE`) to serialize requests for the same user, or implement atomic "token bucket" logic.
