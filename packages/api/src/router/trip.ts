@@ -60,38 +60,59 @@ export const tripRouter = createTRPCRouter({
 
       const { db, session } = ctx;
 
-      const lastTrip = await db.trip.findFirst({
-        where: { userId: session.user.id },
-        orderBy: { createdAt: 'desc' },
-        select: { createdAt: true },
-      });
+      // 1. Transaction: Lock User, Check Limit, Deduct Credit, Create Pending Trip
+      const pendingTrip = await db.$transaction(async (tx) => {
+        // Lock the user to serialize requests
+        // This prevents parallel requests from bypassing the rate limit check
+        await tx.$queryRaw`SELECT 1 FROM "User" WHERE id = ${session.user.id} FOR UPDATE`;
 
-      if (lastTrip) {
-        const timeSinceLastTrip = Date.now() - lastTrip.createdAt.getTime();
-        if (timeSinceLastTrip < 60 * 1000) {
+        const lastTrip = await tx.trip.findFirst({
+          where: { userId: session.user.id },
+          orderBy: { createdAt: 'desc' },
+          select: { createdAt: true },
+        });
+
+        if (lastTrip) {
+          const timeSinceLastTrip = Date.now() - lastTrip.createdAt.getTime();
+          if (timeSinceLastTrip < 60 * 1000) {
+            throw new TRPCError({
+              code: 'TOO_MANY_REQUESTS',
+              message: 'Please wait before generating another trip.',
+            });
+          }
+        }
+
+        const result = await tx.user.updateMany({
+          where: {
+            id: session.user.id,
+            credits: { gt: 0 },
+          },
+          data: {
+            credits: { decrement: 1 },
+          },
+        });
+
+        if (result.count === 0) {
           throw new TRPCError({
-            code: 'TOO_MANY_REQUESTS',
-            message: 'Please wait before generating another trip.',
+            code: 'FORBIDDEN',
+            message: 'INSUFFICIENT_CREDITS',
           });
         }
-      }
 
-      const result = await db.user.updateMany({
-        where: {
-          id: session.user.id,
-          credits: { gt: 0 },
-        },
-        data: {
-          credits: { decrement: 1 },
-        },
-      });
-
-      if (result.count === 0) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'INSUFFICIENT_CREDITS',
+        return tx.trip.create({
+          data: {
+            userId: session.user.id,
+            destination: input.destination,
+            destinationLat: 0, // Placeholder
+            destinationLng: 0, // Placeholder
+            startDate: input.dateRange.from,
+            endDate: input.dateRange.to,
+            budget: input.budget,
+            tripData: [], // Placeholder
+            status: 'generating',
+          },
         });
-      }
+      });
 
       let duration =
         Math.ceil(
@@ -178,28 +199,31 @@ export const tripRouter = createTRPCRouter({
           throw new Error('AI failed to generate the itinerary.');
         }
 
-        const savedTrip = await db.trip.create({
+        const updatedTrip = await db.trip.update({
+          where: { id: pendingTrip.id },
           data: {
-            userId: session.user.id,
-            destination: input.destination,
             destinationLat: parsedData.destinationCoordinates.lat,
             destinationLng: parsedData.destinationCoordinates.lng,
-            startDate: input.dateRange.from,
-            endDate: input.dateRange.to,
-            budget: input.budget,
             tripData: [parsedData.itinerary],
+            status: 'generated',
           },
         });
 
         return {
-          tripId: savedTrip.id,
+          tripId: updatedTrip.id,
           tripData: [parsedData.itinerary],
         };
       } catch (error) {
-        await db.user.update({
-          where: { id: session.user.id },
-          data: { credits: { increment: 1 } },
-        });
+        await db.$transaction([
+          db.user.update({
+            where: { id: session.user.id },
+            data: { credits: { increment: 1 } },
+          }),
+          db.trip.delete({
+            where: { id: pendingTrip.id },
+          }),
+        ]);
+
         console.error('Trip generation failed, credit refunded:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
