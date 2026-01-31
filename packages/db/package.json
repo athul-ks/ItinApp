@@ -10,6 +10,7 @@
   },
   "scripts": {
     "build": "prisma generate",
+    "build:ci": "prisma generate",
     "watch": "tsc -w",
     "dev": "tsx src/index.ts",
     "db:studio": "prisma studio",

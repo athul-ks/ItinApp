@@ -63,7 +63,7 @@ jobs:
         run: pnpm turbo test --filter '!@itinapp/e2e'
 
       - name: Build App
-        run: pnpm build --filter=@itinapp/web
+        run: pnpm build:ci --filter=@itinapp/web
 
       - name: Cache Playwright Browsers
         uses: actions/cache@v4
