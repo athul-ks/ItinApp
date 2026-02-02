@@ -61,3 +61,8 @@
 **Vulnerability:** The rate limit check (read last trip -> check time) was not atomic, allowing parallel requests to bypass the cooldown and potentially exhaust credits/resources.
 **Learning:** In high-concurrency environments, "Check-then-Act" logic is vulnerable to TOCTOU (Time-of-Check to Time-of-Use) attacks unless serialized.
 **Prevention:** Use database transactions with explicit row locking (`SELECT ... FOR UPDATE`) to serialize requests for the same user, or implement atomic "token bucket" logic.
+
+## 2026-06-15 - CSP Configuration for T3 Stack
+**Vulnerability:** Missing Content Security Policy (CSP) allowed potential XSS and injection attacks.
+**Learning:** Implementing CSP in Next.js with Vercel and Sentry requires specific allowlists (`va.vercel-scripts.com`, `ingest.de.sentry.io`) and currently relies on `'unsafe-inline'`/`'unsafe-eval'` for compatibility.
+**Prevention:** Use a centralized, strict CSP configuration in `next.config.ts` that explicitly whitelists required infrastructure domains while blocking everything else (`default-src 'self'`).
