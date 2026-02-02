@@ -43,26 +43,37 @@
 **Prevention:** Manually audit all third-party telemetry configuration files for PII collection settings immediately after installation or generation.
 
 ## 2026-05-21 - Logic Validation in Duration Calculation
+
 **Vulnerability:** Business logic flaw allowing negative duration calculation if `endDate` < `startDate`, potentially confusing AI safety checks.
 **Learning:** Simple type validation (e.g., `z.date()`) is insufficient for dependent fields.
 **Prevention:** Use Zod's `.refine()` on the parent object to enforce relationships between fields (e.g., `start <= end`).
 
 ## 2026-05-22 - DoS Risk from Safety Logic Mismatch
+
 **Vulnerability:** Code implementation capped trip duration at 10 days despite a safety comment explicitly stating a 5-day limit to prevent token exhaustion/timeouts.
 **Learning:** Discrepancies between safety comments and actual code (often from "temporary" debugging changes left in) create hidden availability risks.
 **Prevention:** When defining safety limits (like duration/size caps) in comments, explicitly verify the accompanying code enforces that exact limit during code reviews.
 
 ## 2026-06-03 - DoS Protection via Rate Limiting
+
 **Vulnerability:** The expensive `trip.generate` endpoint (using OpenAI) lacked rate limiting, allowing credit exhaustion or DoS attacks.
 **Learning:** In serverless environments (Next.js), simple in-memory rate limiting is ineffective. Without external stores (Redis), the database can be used as a rate limiter for critical, low-frequency actions.
 **Prevention:** Implement "check-then-act" logic using `createdAt` timestamps from the database to enforce cooldowns on resource-intensive endpoints.
 
 ## 2026-01-31 - Rate Limit Bypass via Race Condition
+
 **Vulnerability:** The rate limit check (read last trip -> check time) was not atomic, allowing parallel requests to bypass the cooldown and potentially exhaust credits/resources.
 **Learning:** In high-concurrency environments, "Check-then-Act" logic is vulnerable to TOCTOU (Time-of-Check to Time-of-Use) attacks unless serialized.
 **Prevention:** Use database transactions with explicit row locking (`SELECT ... FOR UPDATE`) to serialize requests for the same user, or implement atomic "token bucket" logic.
 
 ## 2026-06-15 - CSP Configuration for T3 Stack
+
 **Vulnerability:** Missing Content Security Policy (CSP) allowed potential XSS and injection attacks.
 **Learning:** Implementing CSP in Next.js with Vercel and Sentry requires specific allowlists (`va.vercel-scripts.com`, `ingest.de.sentry.io`) and currently relies on `'unsafe-inline'`/`'unsafe-eval'` for compatibility.
 **Prevention:** Use a centralized, strict CSP configuration in `next.config.ts` that explicitly whitelists required infrastructure domains while blocking everything else (`default-src 'self'`).
+
+## 2026-06-20 - Defense in Depth via Permissions-Policy
+
+**Vulnerability:** The application lacked a `Permissions-Policy` header, implicitly allowing usage of powerful browser features (camera, microphone, geolocation) by the document or third-party scripts if compromised (XSS).
+**Learning:** CSP is not enough; `Permissions-Policy` provides an additional layer of defense by explicitly disabling unused features at the browser level.
+**Prevention:** Configure a strict `Permissions-Policy` (e.g., `camera=(), microphone=(), geolocation=()`) in `next.config.ts` to reduce the potential impact of a successful XSS attack.
