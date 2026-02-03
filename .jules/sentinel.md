@@ -77,3 +77,9 @@
 **Vulnerability:** The application lacked a `Permissions-Policy` header, implicitly allowing usage of powerful browser features (camera, microphone, geolocation) by the document or third-party scripts if compromised (XSS).
 **Learning:** CSP is not enough; `Permissions-Policy` provides an additional layer of defense by explicitly disabling unused features at the browser level.
 **Prevention:** Configure a strict `Permissions-Policy` (e.g., `camera=(), microphone=(), geolocation=()`) in `next.config.ts` to reduce the potential impact of a successful XSS attack.
+
+## 2026-06-25 - Rate Limit Bypass via Failure
+
+**Vulnerability:** Users could bypass the "1 trip per minute" rate limit by intentionally causing the generation to fail (e.g., via prompt injection or cancellation), as the failed trip record was deleted, removing the `createdAt` timestamp used for the cooldown check.
+**Learning:** "Check-then-Act" rate limiting relying on database records fails if the "Act" (record creation) is rolled back on failure. The record of the *attempt* must persist.
+**Prevention:** Never delete the audit/tracking record on failure. Update its status to `failed` instead, so the timestamp remains available for rate limiting logic. Filter these failed records from the UI if necessary.
