@@ -219,8 +219,9 @@ export const tripRouter = createTRPCRouter({
             where: { id: session.user.id },
             data: { credits: { increment: 1 } },
           }),
-          db.trip.delete({
+          db.trip.update({
             where: { id: pendingTrip.id },
+            data: { status: 'failed' },
           }),
         ]);
 
@@ -256,6 +257,7 @@ export const tripRouter = createTRPCRouter({
     const trips = await ctx.db.trip.findMany({
       where: {
         userId: ctx.session.user.id,
+        status: { not: 'failed' },
       },
       orderBy: {
         createdAt: 'desc',

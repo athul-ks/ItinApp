@@ -74,6 +74,24 @@ describe('tripRouter', () => {
     vibe: 'relaxed' as const,
   };
 
+  describe('getAll', () => {
+    it('should not return failed trips', async () => {
+      const caller = createCaller();
+      mockDb.trip.findMany.mockResolvedValue([]);
+
+      await caller.getAll();
+
+      expect(mockDb.trip.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            userId: 'user_1',
+            status: { not: 'failed' },
+          }),
+        })
+      );
+    });
+  });
+
   describe('getById', () => {
     it('should throw FORBIDDEN if user tries to access another users trip', async () => {
       const caller = createCaller();
@@ -276,10 +294,27 @@ describe('tripRouter', () => {
         where: { id: 'user_1' },
         data: { credits: { increment: 1 } },
       });
-      // Verify Deletion of Pending Trip
-      expect(mockDb.trip.delete).toHaveBeenCalledWith({
-          where: { id: pendingTripId }
+      // Verify Status Update to 'failed' (instead of deletion, for rate limiting)
+      expect(mockDb.trip.update).toHaveBeenCalledWith({
+        where: { id: pendingTripId },
+        data: { status: 'failed' },
       });
+    });
+
+    it('should rate limit subsequent requests even if the previous trip failed', async () => {
+      const caller = createCaller();
+
+      // Mock that a trip was created 30 seconds ago (and FAILED)
+      mockDb.trip.findFirst.mockResolvedValue({
+        id: 'recent_failed_trip',
+        userId: 'user_1',
+        status: 'failed',
+        createdAt: new Date(Date.now() - 30 * 1000), // 30s ago
+      } as any);
+
+      await expect(caller.generate(validInput)).rejects.toThrow(
+        'Please wait before generating another trip'
+      );
     });
 
     it('should cap duration at 10 days (SAFETY LIMIT)', async () => {
