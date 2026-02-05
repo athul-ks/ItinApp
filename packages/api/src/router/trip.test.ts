@@ -234,11 +234,20 @@ describe('tripRouter', () => {
         const caller = createCaller();
         await expect(
           caller.generate({ ...validInput, destination: 'Paris\nFrance' })
-        ).rejects.toThrow('Destination cannot contain control characters');
+        ).rejects.toThrow('Destination cannot contain invisible or control characters');
 
         await expect(
           caller.generate({ ...validInput, destination: 'Paris\0France' })
-        ).rejects.toThrow('Destination cannot contain control characters');
+        ).rejects.toThrow('Destination cannot contain invisible or control characters');
+
+        // SECURITY: Check for invisible characters and Right-to-Left Override
+        await expect(
+          caller.generate({ ...validInput, destination: 'Paris\u200BFrance' })
+        ).rejects.toThrow('Destination cannot contain invisible or control characters');
+
+        await expect(
+          caller.generate({ ...validInput, destination: 'Paris\u202EFrance' })
+        ).rejects.toThrow('Destination cannot contain invisible or control characters');
       });
 
       it('should throw if dateRange is invalid (end before start)', async () => {
@@ -304,7 +313,7 @@ describe('tripRouter', () => {
         totalCostEstimate: '$100',
         vibe: 'Relaxed' as const,
         highlights: [],
-        itinerary: []
+        itinerary: [],
       };
 
       // Use the hoisted spy directly
@@ -338,18 +347,22 @@ describe('tripRouter', () => {
         data: { credits: { decrement: 1 } },
       });
       // Verify Create Pending
-      expect(mockDb.trip.create).toHaveBeenCalledWith(expect.objectContaining({
-        data: expect.objectContaining({
-          status: 'generating',
-        }),
-      }));
+      expect(mockDb.trip.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            status: 'generating',
+          }),
+        })
+      );
       // Verify Update Final
-      expect(mockDb.trip.update).toHaveBeenCalledWith(expect.objectContaining({
-        where: { id: pendingTripId },
-        data: expect.objectContaining({
-          status: 'generated',
-        }),
-      }));
+      expect(mockDb.trip.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: pendingTripId },
+          data: expect.objectContaining({
+            status: 'generated',
+          }),
+        })
+      );
     });
 
     it('should REFUND credits if OpenAI fails', async () => {
@@ -405,7 +418,15 @@ describe('tripRouter', () => {
       mocks.parse.mockResolvedValue({
         output_parsed: {
           destinationCoordinates: { lat: 48.8566, lng: 2.3522 },
-          itinerary: { id: '1', title: 'A', description: 'B', totalCostEstimate: 'C', vibe: 'Balanced', highlights: [], itinerary: [] },
+          itinerary: {
+            id: '1',
+            title: 'A',
+            description: 'B',
+            totalCostEstimate: 'C',
+            vibe: 'Balanced',
+            highlights: [],
+            itinerary: [],
+          },
         },
       });
 

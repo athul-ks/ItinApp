@@ -6,10 +6,9 @@ import { Badge } from '@itinapp/ui/components/badge';
 import { Button } from '@itinapp/ui/components/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@itinapp/ui/components/card';
 
+import { DeleteAccountButton } from '@/components/delete-account-button';
 import { auth } from '@/server/auth';
 import { api } from '@/trpc/server';
-
-import { DeleteAccountButton } from '@/components/delete-account-button';
 
 export default async function DashboardPage() {
   const session = await auth();

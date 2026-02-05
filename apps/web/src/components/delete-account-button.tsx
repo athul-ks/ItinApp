@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { signOut } from "next-auth/react";
-import { Trash2 } from "lucide-react";
+import { useState } from 'react';
 
-import { Button } from "@itinapp/ui/components/button";
+import { Trash2 } from 'lucide-react';
+import { signOut } from 'next-auth/react';
+
+import { Button } from '@itinapp/ui/components/button';
 import {
   Dialog,
   DialogContent,
@@ -13,14 +14,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@itinapp/ui/components/dialog";
-import { api } from "@/trpc/react";
+} from '@itinapp/ui/components/dialog';
+
+import { api } from '@/trpc/react';
 
 export function DeleteAccountButton() {
   const [open, setOpen] = useState(false);
   const deleteAccount = api.auth.deleteAccount.useMutation({
     onSuccess: async () => {
-      await signOut({ callbackUrl: "/" });
+      await signOut({ callbackUrl: '/' });
     },
   });
 
@@ -36,8 +38,8 @@ export function DeleteAccountButton() {
         <DialogHeader>
           <DialogTitle>Delete Account</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete your account? This action cannot be undone.
-            All your trips and data will be permanently removed.
+            Are you sure you want to delete your account? This action cannot be undone. All your
+            trips and data will be permanently removed.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -49,7 +51,7 @@ export function DeleteAccountButton() {
             onClick={() => deleteAccount.mutate()}
             disabled={deleteAccount.isPending}
           >
-            {deleteAccount.isPending ? "Deleting..." : "Yes, delete my account"}
+            {deleteAccount.isPending ? 'Deleting...' : 'Yes, delete my account'}
           </Button>
         </DialogFooter>
       </DialogContent>

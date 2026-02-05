@@ -34,7 +34,7 @@ async function main() {
       endDate: new Date(),
       budget: 'moderate',
       tripData: MOCK_TRIP_DATA,
-      status: 'generated'
+      status: 'generated',
     },
   });
 
