@@ -90,6 +90,58 @@ describe('tripRouter', () => {
         })
       );
     });
+
+    it('should handle corrupted trip data gracefully', async () => {
+      const caller = createCaller();
+      // Corrupted trip: itinerary is missing required fields (e.g. empty object)
+      const corruptedTrip = {
+        id: 'corrupted',
+        userId: 'user_1',
+        destination: 'Nowhere',
+        destinationLat: 0,
+        destinationLng: 0,
+        startDate: new Date(),
+        endDate: new Date(),
+        budget: 'low',
+        tripData: [{}], // Invalid TripOption
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: 'generated',
+      };
+
+      const validTrip = {
+        id: 'valid',
+        userId: 'user_1',
+        destination: 'Paris',
+        destinationLat: 0,
+        destinationLng: 0,
+        startDate: new Date(),
+        endDate: new Date(),
+        budget: 'low',
+        tripData: [
+          {
+            id: '1',
+            title: 'Valid',
+            description: 'Desc',
+            totalCostEstimate: '$100',
+            vibe: 'Relaxed',
+            highlights: [],
+            itinerary: [],
+          },
+        ],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: 'generated',
+      };
+
+      mockDb.trip.findMany.mockResolvedValue([corruptedTrip, validTrip] as any);
+
+      const result = await caller.getAll();
+
+      // SECURITY: Expect the corrupted trip to be filtered out
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('valid');
+    });
   });
 
   describe('getById', () => {
@@ -136,6 +188,30 @@ describe('tripRouter', () => {
 
       const result = await caller.getById({ id: tripId });
       expect(result.id).toBe(tripId);
+    });
+
+    it('should throw INTERNAL_SERVER_ERROR if trip data is corrupted', async () => {
+      const caller = createCaller();
+      const tripId = 'corrupted_trip';
+
+      mockDb.trip.findUnique.mockResolvedValue({
+        id: tripId,
+        userId: 'user_1',
+        destination: 'Paris',
+        destinationLat: 48.8566,
+        destinationLng: 2.3522,
+        startDate: new Date(),
+        endDate: new Date(),
+        budget: 'moderate',
+        tripData: [{}], // Invalid data
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      } as any);
+
+      // SECURITY: Expect a safe, generic error message
+      await expect(caller.getById({ id: tripId })).rejects.toThrow(
+        'Trip data is corrupted and cannot be displayed.'
+      );
     });
   });
 

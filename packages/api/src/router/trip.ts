@@ -225,7 +225,11 @@ export const tripRouter = createTRPCRouter({
           }),
         ]);
 
-        console.error('Trip generation failed, credit refunded:', error);
+        // SECURITY: Sanitize error logs to prevent PII leakage (UK Data Use and Access Act 2025)
+        // We do not log the full error object as it might contain the prompt (with destination) or raw AI response.
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Trip generation failed, credit refunded. Error:', errorMessage);
+
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to generate trip. Your credit has been refunded.',
@@ -249,8 +253,18 @@ export const tripRouter = createTRPCRouter({
       });
     }
 
-    const parsedTrip = TripSchema.parse(trip);
-    return parsedTrip;
+    const result = TripSchema.safeParse(trip);
+
+    if (!result.success) {
+      // SECURITY: Log the validation error sanitized, but do not expose details to user
+      console.error(`Data corruption detected for trip ${trip.id}:`, result.error.message);
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Trip data is corrupted and cannot be displayed.',
+      });
+    }
+
+    return result.data;
   }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
@@ -264,6 +278,16 @@ export const tripRouter = createTRPCRouter({
       },
     });
 
-    return trips.map((trip) => TripSchema.parse(trip));
+    // SECURITY: Filter out corrupted trips instead of crashing the entire request.
+    // This prevents a persistent Denial of Service if one trip has invalid JSON.
+    return trips.reduce((acc, trip) => {
+      const result = TripSchema.safeParse(trip);
+      if (result.success) {
+        acc.push(result.data);
+      } else {
+        console.error(`Data corruption detected for trip ${trip.id}:`, result.error.message);
+      }
+      return acc;
+    }, [] as z.infer<typeof TripSchema>[]);
   }),
 });
