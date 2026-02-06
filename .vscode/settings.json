@@ -14,5 +14,9 @@
     "source.organizeImports": "explicit"
   },
   // Tells VS Code to look for the prettier config in the root
-  "prettier.configPath": "prettier.config.cjs"
+  "prettier.configPath": "prettier.config.cjs",
+  "sonarlint.connectedMode.project": {
+    "connectionId": "athul-ks",
+    "projectKey": "athul-ks_ItinApp"
+  }
 }

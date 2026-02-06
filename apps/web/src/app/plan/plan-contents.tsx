@@ -69,15 +69,15 @@ export function PlanContents() {
       <div className="bg-card rounded-2xl border p-8 shadow-xl">
         <div className="space-y-8 text-center">
           <div className="mx-auto max-w-sm space-y-3">
-            <label className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
+            <p className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
               When are you going?
-            </label>
+            </p>
             <DateRangePicker date={dateRange} setDate={setDateRange} />
           </div>
           <div className="space-y-3">
-            <label className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
+            <p className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
               What is your budget?
-            </label>
+            </p>
             <div className="mt-1 grid grid-cols-3 gap-3">
               <OptionButton
                 label="Economy"
@@ -102,9 +102,9 @@ export function PlanContents() {
               />
             </div>
             <div className="space-y-3">
-              <label className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
+              <p className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
                 What&apos;s your pace?
-              </label>
+              </p>
               <div className="mt-1 grid grid-cols-3 gap-3">
                 <OptionButton
                   label="Packed"
