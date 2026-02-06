@@ -1,14 +1,7 @@
 name: Snyk Security Scan
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
-
-permissions:
-  security-events: write
-  contents: read
+  workflow_call:
 
 jobs:
   snyk:

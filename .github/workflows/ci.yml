@@ -1,0 +1,32 @@
+name: 🧪 Continuous Integration
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  security-events: write
+  checks: write
+  pull-requests: write
+
+jobs:
+  # 1. Run the CI (Build & Test)
+  ci:
+    name: 🏗️ Build & Test
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+
+  # 2. Run SonarQube
+  sonar:
+    name: 🔮 SonarQube Analysis
+    uses: ./.github/workflows/sonarqube.yml
+    secrets: inherit
+
+  # 3. Run Snyk Security
+  snyk:
+    name: 🐶 Snyk Security
+    uses: ./.github/workflows/snyk.yml
+    secrets: inherit
