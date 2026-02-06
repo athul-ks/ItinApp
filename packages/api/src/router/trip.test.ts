@@ -234,11 +234,20 @@ describe('tripRouter', () => {
         const caller = createCaller();
         await expect(
           caller.generate({ ...validInput, destination: 'Paris\nFrance' })
-        ).rejects.toThrow('Destination cannot contain control characters');
+        ).rejects.toThrow('Destination cannot contain invisible or control characters');
 
         await expect(
           caller.generate({ ...validInput, destination: 'Paris\0France' })
-        ).rejects.toThrow('Destination cannot contain control characters');
+        ).rejects.toThrow('Destination cannot contain invisible or control characters');
+
+        // SECURITY: Check for invisible characters and Right-to-Left Override
+        await expect(
+          caller.generate({ ...validInput, destination: 'Paris\u200BFrance' })
+        ).rejects.toThrow('Destination cannot contain invisible or control characters');
+
+        await expect(
+          caller.generate({ ...validInput, destination: 'Paris\u202EFrance' })
+        ).rejects.toThrow('Destination cannot contain invisible or control characters');
       });
 
       it('should throw if dateRange is invalid (end before start)', async () => {

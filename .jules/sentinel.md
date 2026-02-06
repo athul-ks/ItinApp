@@ -88,3 +88,8 @@
 **Vulnerability:** A single corrupted record in the database (violating the Zod schema) caused the `getAll` endpoint to crash with a 500 error for the user, effectively locking them out of their dashboard.
 **Learning:** Strict schema validation on read (`.parse()`) is a double-edged sword. While it guarantees data integrity for the application, it creates a "Fragile Read" vulnerability where one bad apple spoils the bunch.
 **Prevention:** On list endpoints (`findMany`), use `.safeParse()` inside a `reduce` or `filter` operation to gracefully skip corrupted records while logging the anomaly for administrative repair, rather than crashing the entire request.
+
+## 2026-07-25 - Input Validation Bypass via Unicode Control Characters
+**Vulnerability:** The input validation for `destination` used an ASCII-only regex `[\x00-\x1F\x7F]` to block control characters, failing to detect Unicode control characters (like Zero Width Space `\u200B` or Right-to-Left Override `\u202E`) which could be used for obfuscation or prompt injection.
+**Learning:** ASCII-range regexes are insufficient for modern applications handling Unicode input. Attackers can use invisible characters to bypass filters or manipulate text display.
+**Prevention:** Use Unicode Property Escapes in regex (e.g., `[\p{C}]` with the `u` flag) to strictly match all Unicode control characters, ensuring comprehensive input sanitization.
