@@ -44,13 +44,27 @@ export function AuthModal() {
     };
   }, [isOpen]);
 
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        closeModal();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
       {/* Backdrop with Blur */}
-      <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
+      <button
+        type="button"
+        aria-label="Close modal"
+        className="absolute inset-0 h-full w-full bg-black/30 backdrop-blur-sm transition-opacity cursor-default border-none"
         onClick={closeModal}
       />
 
