@@ -9,6 +9,9 @@
 ![Auth](https://img.shields.io/badge/Auth-NextAuth.js-green)
 ![AI](https://img.shields.io/badge/AI-OpenAI_GPT--4o-purple)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=athul-ks_ItinApp&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=athul-ks_ItinApp)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=athul-ks_ItinApp&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=athul-ks_ItinApp)
+
 ## 📖 About The Project
 
 **ItinApp** solves the "analysis paralysis" of modern travel planning. Instead of juggling dozens of browser tabs, blogs, and maps, users simply input their destination, travel dates, and budget. The application uses AI to generate a fully optimized, hour-by-hour itinerary that respects their financial constraints.
