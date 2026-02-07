@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "format": "prettier --check . --ignore-path ../../.prettierignore",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "test:watch": "vitest"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@itinapp/configs": "workspace:*",
+    "@vitest/coverage-v8": "^4.0.18",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }
