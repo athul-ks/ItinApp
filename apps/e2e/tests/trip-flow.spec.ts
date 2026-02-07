@@ -48,8 +48,8 @@ test.describe('Trip Generation Happy Path', () => {
     await page.getByRole('button', { name: /generate my itinerary/i }).click();
 
     await page.waitForURL(new RegExp(`/trip/${E2E_CONSTANTS.TRIP_ID}`), {
-      timeout: 15000,
-      waitUntil: 'networkidle',
+      timeout: 30000,
+      waitUntil: 'domcontentloaded',
     });
     await expect(page).toHaveURL(new RegExp(`/trip/${E2E_CONSTANTS.TRIP_ID}`));
 

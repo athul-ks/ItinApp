@@ -48,10 +48,11 @@ export const tripRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const areMocksEnabled =
-        process.env.NODE_ENV !== 'production' || process.env.ENABLE_E2E_MOCKS === 'true';
+      const forceMock = process.env.ENABLE_E2E_MOCKS === 'true';
+      const headerMock = ctx.headers.get('x-e2e-mock') === 'true';
 
-      if (areMocksEnabled && ctx.headers.get('x-e2e-mock') === 'true') {
+      if (forceMock || headerMock) {
+        console.log('⚡ E2E Mode Detected: Returning Mock Data immediately.');
         return {
           tripId: E2E_CONSTANTS.TRIP_ID,
           tripData: MOCK_TRIP_DATA,
@@ -72,7 +73,9 @@ export const tripRouter = createTRPCRouter({
           select: { createdAt: true },
         });
 
-        if (lastTrip) {
+        const shouldBypassLimit = process.env.ENABLE_E2E_MOCKS === 'true';
+
+        if (lastTrip && !shouldBypassLimit) {
           const timeSinceLastTrip = Date.now() - lastTrip.createdAt.getTime();
           if (timeSinceLastTrip < 60 * 1000) {
             throw new TRPCError({

@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@itinapp/configs": "workspace:*",
-    "@vitest/coverage-v8": "4.0.17",
+    "@vitest/coverage-v8": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }
