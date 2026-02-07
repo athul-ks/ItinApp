@@ -2,9 +2,9 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-async function main() {
-  console.log('🌱 Starting seed...');
+console.log('🌱 Starting seed...');
 
+try {
   // 1. Transactional Cleanup (Order matters for Foreign Keys!)
   console.log('🧹 Cleaning up database...');
   await prisma.$transaction([
@@ -89,14 +89,9 @@ async function main() {
   console.log(`✈️ Created trip to: ${trip.destination}`);
 
   console.log('✅ Seeding finished.');
+} catch (e) {
+  console.error('❌ Seed failed:', e);
+  process.exit(1);
+} finally {
+  await prisma.$disconnect();
 }
-
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error('❌ Seed failed:', e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });

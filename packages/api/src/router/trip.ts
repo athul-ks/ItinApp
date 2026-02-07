@@ -31,7 +31,7 @@ export const tripRouter = createTRPCRouter({
           .trim()
           .min(2, 'Destination must be at least 2 characters')
           .max(100, 'Destination must be under 100 characters')
-          .refine((val) => !/[\x00-\x1F\x7F]/.test(val), {
+          .refine((val) => !/\p{C}/u.test(val), {
             message: 'Destination cannot contain control characters (security restriction)',
           })
           .refine((val) => !val.includes('"""'), {
@@ -280,14 +280,17 @@ export const tripRouter = createTRPCRouter({
 
     // SECURITY: Filter out corrupted trips instead of crashing the entire request.
     // This prevents a persistent Denial of Service if one trip has invalid JSON.
-    return trips.reduce((acc, trip) => {
-      const result = TripSchema.safeParse(trip);
-      if (result.success) {
-        acc.push(result.data);
-      } else {
-        console.error(`Data corruption detected for trip ${trip.id}:`, result.error.message);
-      }
-      return acc;
-    }, [] as z.infer<typeof TripSchema>[]);
+    return trips.reduce(
+      (acc, trip) => {
+        const result = TripSchema.safeParse(trip);
+        if (result.success) {
+          acc.push(result.data);
+        } else {
+          console.error(`Data corruption detected for trip ${trip.id}:`, result.error.message);
+        }
+        return acc;
+      },
+      [] as z.infer<typeof TripSchema>[]
+    );
   }),
 });

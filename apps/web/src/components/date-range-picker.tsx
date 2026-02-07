@@ -36,6 +36,18 @@ export function DateRangePicker({ date, setDate }: DatePickerProps) {
     }
   };
 
+  const getDateLabel = () => {
+    if (!date?.from) return <span className="text-gray-500">Pick a date range</span>;
+    if (date.to) {
+      return (
+        <>
+          {format(date.from, 'LLL dd, y')} - {format(date.to, 'LLL dd, y')}
+        </>
+      );
+    }
+    return format(date.from, 'LLL dd, y');
+  };
+
   return (
     <div className="relative" ref={containerRef}>
       {/* Input Trigger */}
@@ -45,17 +57,7 @@ export function DateRangePicker({ date, setDate }: DatePickerProps) {
         className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-left text-sm font-normal shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-black focus:outline-none"
       >
         <CalendarIcon className="h-4 w-4 opacity-50" />
-        {date?.from ? (
-          date.to ? (
-            <>
-              {format(date.from, 'LLL dd, y')} - {format(date.to, 'LLL dd, y')}
-            </>
-          ) : (
-            format(date.from, 'LLL dd, y')
-          )
-        ) : (
-          <span className="text-gray-500">Pick a date range</span>
-        )}
+        {getDateLabel()}
       </button>
 
       {/* Calendar Popup */}

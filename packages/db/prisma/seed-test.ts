@@ -1,10 +1,11 @@
+/// <reference types="node" />
 import { E2E_CONSTANTS, MOCK_TRIP_DATA } from '@itinapp/schemas';
 
 import { prisma } from '../src';
 
-async function main() {
-  console.log('🌱 Seeding test data...');
+console.log('🌱 Seeding test data...');
 
+try {
   await prisma.user.upsert({
     where: { id: E2E_CONSTANTS.USER_ID },
     update: { email: E2E_CONSTANTS.EMAIL, credits: 100 },
@@ -34,18 +35,14 @@ async function main() {
       endDate: new Date(),
       budget: 'moderate',
       tripData: MOCK_TRIP_DATA,
-      status: 'generated'
+      status: 'generated',
     },
   });
 
   console.log('✅ Test data seeded!');
+} catch (e) {
+  console.error(e);
+  process.exit(1);
+} finally {
+  await prisma.$disconnect();
 }
-
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });

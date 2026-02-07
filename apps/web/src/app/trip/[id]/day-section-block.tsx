@@ -31,15 +31,18 @@ export default function DaySectionBlock({
 
       {/* Activities List */}
       <div className="ml-2 space-y-4">
-        {data.activities.map((act, i) => {
+        {data.activities.map((act) => {
           const isHighlighted = highlightedActivity === act.name;
           return (
-            <div
-              key={i}
+            <button
+              key={act.name}
+              type="button"
               id={`activity-${act.name.replace(/\s+/g, '-').toLowerCase()}`}
               onMouseEnter={() => onHover(act.name)}
               onMouseLeave={() => onHover(undefined)}
-              className={`group relative cursor-pointer rounded-xl border p-4 shadow-sm transition-all ${
+              onFocus={() => onHover(act.name)}
+              onBlur={() => onHover(undefined)}
+              className={`group relative w-full cursor-pointer rounded-xl border p-4 text-left shadow-sm transition-all ${
                 isHighlighted
                   ? 'border-primary ring-primary bg-blue-50/30 shadow-md ring-1'
                   : 'hover:border-primary/50 bg-white hover:shadow-md'
@@ -65,7 +68,7 @@ export default function DaySectionBlock({
                   <span>Travel: {act.travelTime}</span>
                 </div>
               )}
-            </div>
+            </button>
           );
         })}
       </div>
@@ -76,9 +79,9 @@ export default function DaySectionBlock({
           {mealLabel}
         </h4>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {data.restaurantSuggestions.map((resto, i) => (
+          {data.restaurantSuggestions.map((resto) => (
             <a
-              key={i}
+              key={resto.name}
               href={`https://www.google.com/maps/search/?api=1&query=${resto.lat},${resto.lng}`}
               target="_blank"
               rel="noreferrer"

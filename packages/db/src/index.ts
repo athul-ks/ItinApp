@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 
 import { env } from '@itinapp/env';
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 // Simple, Classic Initialization
 export const prisma =

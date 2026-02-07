@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { signIn } from 'next-auth/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -17,12 +17,12 @@ export function AuthModal() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Close modal by removing the ?auth param but keeping the user on the same page
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete('auth');
     params.delete('callbackUrl');
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  };
+  }, [router, pathname, searchParams]);
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
@@ -54,7 +54,7 @@ export function AuthModal() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, closeModal]);
 
   if (!isOpen) return null;
 
@@ -64,7 +64,7 @@ export function AuthModal() {
       <button
         type="button"
         aria-label="Close modal"
-        className="absolute inset-0 h-full w-full bg-black/30 backdrop-blur-sm transition-opacity cursor-default border-none"
+        className="absolute inset-0 h-full w-full cursor-default border-none bg-black/30 backdrop-blur-sm transition-opacity"
         onClick={closeModal}
       />
 
