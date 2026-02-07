@@ -88,3 +88,8 @@
 **Vulnerability:** A single corrupted record in the database (violating the Zod schema) caused the `getAll` endpoint to crash with a 500 error for the user, effectively locking them out of their dashboard.
 **Learning:** Strict schema validation on read (`.parse()`) is a double-edged sword. While it guarantees data integrity for the application, it creates a "Fragile Read" vulnerability where one bad apple spoils the bunch.
 **Prevention:** On list endpoints (`findMany`), use `.safeParse()` inside a `reduce` or `filter` operation to gracefully skip corrupted records while logging the anomaly for administrative repair, rather than crashing the entire request.
+
+## 2026-07-02 - Unrestricted Mock Mode Access
+**Vulnerability:** A development backdoor (`x-e2e-mock` header) was enabled in production, allowing any user to bypass credit deductions, rate limits, and potentially access mock data without authentication checks (though authentication is enforced by `protectedProcedure`, the mock logic bypassed business rules).
+**Learning:** Features intended for testing (e.g., E2E mocks) often lack the same strict access controls as production code, creating a "Shadow API" vulnerability if deployed.
+**Prevention:** Strictly limit debug/test features to non-production environments (`NODE_ENV !== 'production'`) or require explicit, secure configuration (e.g., secret keys) to enable them.
