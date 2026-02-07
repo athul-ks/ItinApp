@@ -23,6 +23,7 @@
     "@itinapp/schemas": "workspace:*",
     "@sentry/nextjs": "catalog:",
     "@trpc/server": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
     "next-auth": "catalog:",
     "openai": "catalog:",
     "superjson": "catalog:",

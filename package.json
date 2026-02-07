@@ -26,7 +26,7 @@
     "db:down": "docker compose down",
     "prepare": "husky",
     "commit": "cz",
-    "test": "dotenv -e .env -- pnpm turbo run test --log-order=grouped --",
+    "test": "dotenv -e .env -- pnpm turbo run test --log-order=grouped -- --coverage",
     "test:e2e": "dotenv -e .env -- pnpm turbo run test:e2e --log-order=grouped --",
     "type-check": "pnpm turbo run type-check --log-order=grouped --"
   },

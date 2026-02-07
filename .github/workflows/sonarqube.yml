@@ -28,7 +28,7 @@ jobs:
           find . -name "package.json" -not -path "**/node_modules/*" -exec sed -i 's/catalog:/*/g' {} +
 
       - name: Run Tests & Generate Coverage
-        run: pnpm turbo run test -- -- --coverage --passWithNoTests --force
+        run: pnpm turbo run test --force -- --coverage --passWithNoTests
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6

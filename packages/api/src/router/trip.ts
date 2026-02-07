@@ -73,9 +73,7 @@ export const tripRouter = createTRPCRouter({
           select: { createdAt: true },
         });
 
-        const shouldBypassLimit = process.env.ENABLE_E2E_MOCKS === 'true';
-
-        if (lastTrip && !shouldBypassLimit) {
+        if (lastTrip) {
           const timeSinceLastTrip = Date.now() - lastTrip.createdAt.getTime();
           if (timeSinceLastTrip < 60 * 1000) {
             throw new TRPCError({
