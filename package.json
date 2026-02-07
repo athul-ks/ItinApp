@@ -8,12 +8,12 @@
     }
   },
   "scripts": {
-    "build": "pnpm turbo run build",
+    "build": "pnpm turbo run build --log-order=grouped --",
     "build:ci": "pnpm turbo run build:ci",
     "build:local": "dotenv -e .env -- pnpm turbo run build",
     "dev": "dotenv -e .env -- pnpm turbo run dev",
-    "lint": "pnpm turbo run lint",
-    "clean": "pnpm turbo run clean",
+    "lint": "pnpm turbo run lint --log-order=grouped --",
+    "clean": "pnpm turbo run clean --log-order=grouped --",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "postinstall": "pnpm turbo run db:generate",
     "db:migrate": "dotenv -e .env -- pnpm turbo run db:migrate",
@@ -26,8 +26,9 @@
     "db:down": "docker compose down",
     "prepare": "husky",
     "commit": "cz",
-    "test": "dotenv -e .env -- pnpm turbo run test",
-    "type-check": "pnpm turbo run type-check"
+    "test": "dotenv -e .env -- pnpm turbo run test --log-order=grouped --",
+    "test:e2e": "dotenv -e .env -- pnpm turbo run test:e2e --log-order=grouped --",
+    "type-check": "pnpm turbo run type-check --log-order=grouped --"
   },
   "packageManager": "pnpm@10.26.2",
   "devDependencies": {

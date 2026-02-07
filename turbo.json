@@ -32,8 +32,13 @@
       "dependsOn": []
     },
     "test": {
+      "dependsOn": ["^db:generate"],
+      "outputs": ["coverage/**"],
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts"]
+    },
+    "test:e2e": {
       "dependsOn": ["db:generate", "db:seed:test"],
-      "outputs": []
+      "outputs": ["playwright-report/**"]
     },
     "type-check": {
       "dependsOn": ["^type-check"]
