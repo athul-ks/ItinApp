@@ -73,6 +73,20 @@ export const TripSchema = z.object({
   updatedAt: z.coerce.date().optional(),
 });
 
+// Optimized Schema for Dashboard Lists (excludes deep recursion)
+// PREVENTS: CPU Exhaustion / DoS on list endpoints by avoiding validation of deep nested structures
+// when we only need the top-level description for the UI.
+export const TripListSchema = TripSchema.extend({
+  tripData: z.array(
+    z
+      .object({
+        description: z.string(),
+      })
+      .passthrough()
+  ),
+});
+
 // Export Types derived from Zod
 export type TripOption = z.infer<typeof TripOptionSchema>;
 export type Trip = z.infer<typeof TripSchema>;
+export type TripList = z.infer<typeof TripListSchema>;

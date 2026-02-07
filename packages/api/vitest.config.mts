@@ -9,5 +9,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
     setupFiles: ['./vitest.setup.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.ts'],
+    },
   },
 });

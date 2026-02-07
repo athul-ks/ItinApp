@@ -4,7 +4,13 @@ import { zodTextFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 
 import { env } from '@itinapp/env';
-import { E2E_CONSTANTS, MOCK_TRIP_DATA, TripOptionSchema, TripSchema } from '@itinapp/schemas';
+import {
+  E2E_CONSTANTS,
+  MOCK_TRIP_DATA,
+  TripListSchema,
+  TripOptionSchema,
+  TripSchema,
+} from '@itinapp/schemas';
 
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
@@ -281,13 +287,16 @@ export const tripRouter = createTRPCRouter({
     // SECURITY: Filter out corrupted trips instead of crashing the entire request.
     // This prevents a persistent Denial of Service if one trip has invalid JSON.
     return trips.reduce((acc, trip) => {
-      const result = TripSchema.safeParse(trip);
+      // SECURITY: Use TripListSchema to avoid CPU exhaustion from validating deep nested JSON
+      // This protects against DoS where a user has many complex trips.
+      const result = TripListSchema.safeParse(trip);
+
       if (result.success) {
         acc.push(result.data);
       } else {
         console.error(`Data corruption detected for trip ${trip.id}:`, result.error.message);
       }
       return acc;
-    }, [] as z.infer<typeof TripSchema>[]);
+    }, [] as z.infer<typeof TripListSchema>[]);
   }),
 });
