@@ -12,7 +12,7 @@
     "build": "tsc",
     "lint": "eslint .",
     "format": "eslint . --fix",
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "test:watch": "vitest",
     "type-check": "tsc --noEmit"
   },
@@ -31,6 +31,7 @@
   "devDependencies": {
     "@itinapp/configs": "workspace:*",
     "@types/node": "catalog:",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "tsx": "catalog:",
