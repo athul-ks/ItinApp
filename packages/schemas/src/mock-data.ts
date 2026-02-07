@@ -60,22 +60,4 @@ export const MOCK_TRIP_DATA: TripOption[] = [
       },
     ],
   },
-  {
-    id: '2',
-    title: 'Fast',
-    vibe: 'Fast Paced',
-    totalCostEstimate: '£1500',
-    description: 'See everything in 3 days.',
-    highlights: [],
-    itinerary: [],
-  },
-  {
-    id: '3',
-    title: 'Relaxed',
-    vibe: 'Relaxed',
-    totalCostEstimate: '£1000',
-    description: 'Take it slow.',
-    highlights: [],
-    itinerary: [],
-  },
 ];

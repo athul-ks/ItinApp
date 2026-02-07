@@ -304,7 +304,7 @@ describe('tripRouter', () => {
         totalCostEstimate: '$100',
         vibe: 'Relaxed' as const,
         highlights: [],
-        itinerary: []
+        itinerary: [],
       };
 
       // Use the hoisted spy directly
@@ -338,18 +338,22 @@ describe('tripRouter', () => {
         data: { credits: { decrement: 1 } },
       });
       // Verify Create Pending
-      expect(mockDb.trip.create).toHaveBeenCalledWith(expect.objectContaining({
-        data: expect.objectContaining({
-          status: 'generating',
-        }),
-      }));
+      expect(mockDb.trip.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            status: 'generating',
+          }),
+        })
+      );
       // Verify Update Final
-      expect(mockDb.trip.update).toHaveBeenCalledWith(expect.objectContaining({
-        where: { id: pendingTripId },
-        data: expect.objectContaining({
-          status: 'generated',
-        }),
-      }));
+      expect(mockDb.trip.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: pendingTripId },
+          data: expect.objectContaining({
+            status: 'generated',
+          }),
+        })
+      );
     });
 
     it('should REFUND credits if OpenAI fails', async () => {
@@ -405,7 +409,15 @@ describe('tripRouter', () => {
       mocks.parse.mockResolvedValue({
         output_parsed: {
           destinationCoordinates: { lat: 48.8566, lng: 2.3522 },
-          itinerary: { id: '1', title: 'A', description: 'B', totalCostEstimate: 'C', vibe: 'Balanced', highlights: [], itinerary: [] },
+          itinerary: {
+            id: '1',
+            title: 'A',
+            description: 'B',
+            totalCostEstimate: 'C',
+            vibe: 'Balanced',
+            highlights: [],
+            itinerary: [],
+          },
         },
       });
 
@@ -425,6 +437,47 @@ describe('tripRouter', () => {
 
       // Safety limit caps at 10 days
       expect(userMessage).toContain('Duration: 10 Days');
+    });
+
+    describe('E2E / Mock Mode', () => {
+      const originalEnv = process.env;
+
+      beforeEach(() => {
+        vi.resetModules();
+        process.env = { ...originalEnv };
+      });
+
+      afterEach(() => {
+        process.env = originalEnv;
+      });
+
+      it('should return MOCK DATA immediately if ENABLE_E2E_MOCKS env var is set', async () => {
+        process.env.ENABLE_E2E_MOCKS = 'true';
+        const caller = createCaller();
+        const result = await caller.generate(validInput);
+
+        expect(result.tripId).toBe('e2e-test-trip-id');
+        expect(result.tripData).toHaveLength(1);
+
+        expect(mockDb.$transaction).not.toHaveBeenCalled();
+        expect(mocks.parse).not.toHaveBeenCalled();
+      });
+
+      it('should return MOCK DATA immediately if x-e2e-mock header is present', async () => {
+        const headers = new Headers();
+        headers.set('x-e2e-mock', 'true');
+
+        const caller = tripRouter.createCaller({
+          db: mockDb as unknown as PrismaClient,
+          session: mockSession,
+          headers: headers,
+        });
+
+        const result = await caller.generate(validInput);
+
+        expect(result.tripId).toBe('e2e-test-trip-id');
+        expect(mockDb.$transaction).not.toHaveBeenCalled();
+      });
     });
   });
 });
