@@ -356,6 +356,27 @@ describe('tripRouter', () => {
         expect(result.tripId).toBe('e2e-test-trip-id');
         expect(mockDb.$transaction).not.toHaveBeenCalled();
       });
+
+      it('should NOT return MOCK DATA if x-e2e-mock header is present BUT NODE_ENV is production', async () => {
+        process.env.NODE_ENV = 'production';
+        process.env.ENABLE_E2E_MOCKS = 'false';
+
+        const headers = new Headers();
+        headers.set('x-e2e-mock', 'true');
+
+        const caller = tripRouter.createCaller({
+          db: mockDb as unknown as PrismaClient,
+          session: mockSession,
+          headers: headers,
+        });
+
+        // Setup mock to fail inside transaction to prove it was called
+        mockDb.user.updateMany.mockRejectedValue(new Error('Transaction Called'));
+
+        await expect(caller.generate(validInput)).rejects.toThrow('Transaction Called');
+
+        expect(mockDb.$transaction).toHaveBeenCalled();
+      });
     });
   });
 });

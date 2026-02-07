@@ -17,8 +17,14 @@ import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 export const tripRouter = createTRPCRouter({
   generate: protectedProcedure.input(TripInputSchema).mutation(async ({ ctx, input }) => {
+    // Use process.env to allow tests to override it at runtime
     const forceMock = process.env.ENABLE_E2E_MOCKS === 'true';
-    const headerMock = ctx.headers.get('x-e2e-mock') === 'true';
+
+    // SECURITY: Only allow header-based mocking in non-production environments.
+    // In production, users must NOT be able to bypass credit checks/rate limits via a header.
+    // We use process.env.NODE_ENV so it can be mocked in tests if needed.
+    const isProduction = process.env.NODE_ENV === 'production';
+    const headerMock = !isProduction && ctx.headers.get('x-e2e-mock') === 'true';
 
     if (forceMock || headerMock) {
       console.log('⚡ E2E Mode Detected: Returning Mock Data immediately.');
