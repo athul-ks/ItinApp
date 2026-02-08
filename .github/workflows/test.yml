@@ -54,10 +54,10 @@ jobs:
         uses: dtinth/setup-github-actions-caching-for-turbo@v1
 
       - name: Lint & Type Check
-        run: pnpm turbo lint type-check
+        run: pnpm turbo run lint type-check --ui=stream
 
       - name: Run Unit & Integration Tests
-        run: pnpm turbo test --filter '!@itinapp/e2e'
+        run: pnpm turbo run test --ui=stream --filter '!@itinapp/e2e'
 
       - name: Build App
         run: pnpm build:ci --filter=@itinapp/web
@@ -92,10 +92,10 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "🚀 Running Chromium-only tests for PR"
-            pnpm turbo test:e2e -- --project=chromium
+            pnpm turbo run test:e2e --ui=stream -- --project=chromium
           else
             echo "🛡️ Running full cross-browser suite for Main"
-            pnpm turbo test:e2e
+            pnpm turbo run test:e2e --ui=stream
           fi
 
       - uses: actions/upload-artifact@v4

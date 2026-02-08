@@ -40,8 +40,18 @@
     "dotenv-cli": "catalog:",
     "eslint": "catalog:",
     "husky": "catalog:",
+    "lint-staged": "^16.2.7",
     "prettier": "catalog:",
     "prettier-plugin-tailwindcss": "catalog:",
     "turbo": "catalog:"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml}": [
+      "prettier --write"
+    ]
   }
 }
