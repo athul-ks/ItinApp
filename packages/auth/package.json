@@ -5,16 +5,21 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "next-auth": "catalog:",
-    "@auth/prisma-adapter": "catalog:",
+    "@itinapp/db": "workspace:*",
     "@itinapp/env": "workspace:*",
-    "@itinapp/db": "workspace:*"
+    "@auth/prisma-adapter": "catalog:",
+    "next-auth": "catalog:"
   },
   "devDependencies": {
     "@itinapp/configs": "workspace:*",
-    "typescript": "catalog:"
+    "@vitest/coverage-v8": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "vitest-mock-extended": "catalog:"
   }
 }
