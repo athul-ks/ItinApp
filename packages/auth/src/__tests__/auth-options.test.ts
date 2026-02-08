@@ -9,6 +9,14 @@ vi.mock('@itinapp/db', () => ({
   prisma: mockDeep<PrismaClient>(),
 }));
 
+vi.mock('@itinapp/env', () => ({
+  env: {
+    DISCORD_WEBHOOK_URL: 'https://discord.com/api/webhooks/fake-test-url',
+    GOOGLE_CLIENT_ID: 'mock-id',
+    GOOGLE_CLIENT_SECRET: 'mock-secret',
+  },
+}));
+
 const fetchSpy = vi.fn();
 globalThis.fetch = fetchSpy;
 
