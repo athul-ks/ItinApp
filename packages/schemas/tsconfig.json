@@ -1,0 +1,9 @@
+{
+  "extends": "@itinapp/configs/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": false
+  },
+  "include": ["src", "vitest.config.ts"],
+  "exclude": ["node_modules", "dist"]
+}

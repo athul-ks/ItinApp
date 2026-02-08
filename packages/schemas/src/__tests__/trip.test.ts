@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { TripOptionSchema, TripSchema } from './trip';
+import { TripOptionSchema, TripSchema } from '../trip';
 
 // --- MOCK DATA GENERATORS (Helpers to keep tests clean) ---
 
