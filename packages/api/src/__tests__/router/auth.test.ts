@@ -3,7 +3,7 @@ import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended';
 
 import { PrismaClient } from '@itinapp/db';
 
-import { authRouter } from './auth';
+import { authRouter } from '../../router/auth';
 
 let mockDb: DeepMockProxy<PrismaClient>;
 

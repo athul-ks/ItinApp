@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { appRouter } from './root';
+import { appRouter } from '../root';
 
 describe('appRouter (Root)', () => {
   const createCaller = () => {

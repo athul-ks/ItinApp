@@ -4,10 +4,9 @@ import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended';
 
 import { PrismaClient } from '@itinapp/db';
 
-import { tripRouter } from './trip';
+import { tripRouter } from '../../router/trip';
 
 // HOISTED MOCK HELPER
-// Only hoist the specific spy function we need to track.
 const mocks = vi.hoisted(() => {
   return {
     parse: vi.fn(),
@@ -23,9 +22,6 @@ vi.mock('openai', () => {
       responses = {
         parse: mocks.parse,
       };
-
-      // The constructor doesn't need to do anything, but it must exist
-      constructor(_config: any) {}
     },
   };
 });

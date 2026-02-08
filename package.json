@@ -8,14 +8,14 @@
     }
   },
   "scripts": {
-    "build": "pnpm turbo run build --log-order=grouped --",
+    "build": "turbo run build --ui=stream",
     "build:ci": "pnpm turbo run build:ci",
-    "build:local": "dotenv -e .env -- pnpm turbo run build",
+    "build:local": "dotenv -e .env -- turbo run build --ui=stream",
     "dev": "dotenv -e .env -- pnpm turbo run dev",
-    "lint": "pnpm turbo run lint --log-order=grouped --",
-    "clean": "pnpm turbo run clean --log-order=grouped --",
+    "lint": "turbo run lint --ui=stream",
+    "clean": "turbo run clean --ui=stream",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "postinstall": "pnpm turbo run db:generate",
+    "postinstall": "turbo run db:generate",
     "db:migrate": "dotenv -e .env -- pnpm turbo run db:migrate",
     "db:deploy": "dotenv -e .env -- pnpm turbo run db:deploy",
     "db:push": "dotenv -e .env -- pnpm turbo run db:push",
@@ -26,9 +26,9 @@
     "db:down": "docker compose down",
     "prepare": "husky",
     "commit": "cz",
-    "test": "dotenv -e .env -- pnpm turbo run test --log-order=grouped -- --coverage",
-    "test:e2e": "dotenv -e .env -- pnpm turbo run test:e2e --log-order=grouped --",
-    "type-check": "pnpm turbo run type-check --log-order=grouped --"
+    "test": "dotenv -e .env -- turbo run test --ui=stream -- --coverage",
+    "test:e2e": "dotenv -e .env -- turbo run test:e2e --ui=stream -- --project=chromium",
+    "type-check": "turbo run type-check --ui=stream"
   },
   "packageManager": "pnpm@10.26.2",
   "devDependencies": {
