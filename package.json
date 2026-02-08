@@ -41,7 +41,7 @@
     "dotenv-cli": "catalog:",
     "eslint": "catalog:",
     "husky": "catalog:",
-    "lint-staged": "^16.2.7",
+    "lint-staged": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-tailwindcss": "catalog:",
     "turbo": "catalog:"
