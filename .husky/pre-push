@@ -2,4 +2,5 @@
 . "$(dirname "$0")/_/husky.sh"
 
 echo "Running checks before push..."
-pnpm turbo run type-check test
+pnpm type-check
+pnpm test
