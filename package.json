@@ -17,6 +17,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "postinstall": "turbo run db:generate",
     "db:migrate": "dotenv -e .env -- pnpm turbo run db:migrate",
+    "db:migrate:create": "dotenv -e .env -- pnpm --filter @itinapp/db exec prisma migrate dev --create-only --name",
     "db:deploy": "dotenv -e .env -- pnpm turbo run db:deploy",
     "db:push": "dotenv -e .env -- pnpm turbo run db:push",
     "db:seed": "dotenv -e .env -- pnpm turbo run db:seed",
