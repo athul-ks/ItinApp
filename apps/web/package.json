@@ -8,8 +8,8 @@
     "build:ci": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run --coverage",
-    "test:watch": "vitest --coverage",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
