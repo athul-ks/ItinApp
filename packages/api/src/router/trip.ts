@@ -48,8 +48,10 @@ export const tripRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const forceMock = process.env.ENABLE_E2E_MOCKS === 'true';
-      const headerMock = ctx.headers.get('x-e2e-mock') === 'true';
+      const isProduction = env.NODE_ENV === 'production';
+      // SECURITY: Strictly disable E2E mocks in production to prevent credit bypass
+      const forceMock = !isProduction && process.env.ENABLE_E2E_MOCKS === 'true';
+      const headerMock = !isProduction && ctx.headers.get('x-e2e-mock') === 'true';
 
       if (forceMock || headerMock) {
         console.log('⚡ E2E Mode Detected: Returning Mock Data immediately.');
