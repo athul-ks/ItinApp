@@ -22,8 +22,8 @@ try {
     update: {
       userId: E2E_CONSTANTS.USER_ID,
       destination: 'Paris',
-      tripData: MOCK_TRIP_DATA,
-      status: 'generated',
+      itinerary: MOCK_TRIP_DATA,
+      status: 'COMPLETED',
     },
     create: {
       id: E2E_CONSTANTS.TRIP_ID,
@@ -34,8 +34,8 @@ try {
       startDate: new Date(),
       endDate: new Date(),
       budget: 'moderate',
-      tripData: MOCK_TRIP_DATA,
-      status: 'generated',
+      itinerary: MOCK_TRIP_DATA,
+      status: 'COMPLETED',
     },
   });
 

@@ -8,6 +8,7 @@ export const env = createEnv({
    */
   server: {
     DATABASE_URL: z.url(),
+    REDIS_URL: z.url(),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     OPENAI_API_KEY: z.string().min(1),
     UNSPLASH_ACCESS_KEY: z.string().min(1),
@@ -39,6 +40,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    REDIS_URL: process.env.REDIS_URL,
     NODE_ENV: process.env.NODE_ENV,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     UNSPLASH_ACCESS_KEY: process.env.UNSPLASH_ACCESS_KEY,

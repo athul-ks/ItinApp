@@ -1,14 +1,13 @@
 import { Bed, Bus, Coffee, Moon, Utensils } from 'lucide-react';
 
+import { Itinerary } from '@itinapp/schemas';
 import { ScrollArea } from '@itinapp/ui/components/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@itinapp/ui/components/tabs';
-
-import { TripOption } from '@/types/trpc';
 
 import DaySectionBlock from './day-section-block';
 
 type TripContentProps = {
-  plan: TripOption;
+  itinerary: Itinerary;
   activeDay: string;
   setActiveDay: (day: string) => void;
   hoveredActivity: string | undefined;
@@ -16,7 +15,7 @@ type TripContentProps = {
 };
 
 export default function TripContent({
-  plan,
+  itinerary,
   activeDay,
   setActiveDay,
   hoveredActivity,
@@ -32,7 +31,7 @@ export default function TripContent({
       <div className="z-10 border-b bg-white px-4 py-3 shadow-sm">
         <div className="w-full overflow-x-auto scroll-smooth pb-1 whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <TabsList className="h-auto gap-2 bg-transparent p-0">
-            {plan.itinerary.map((day) => (
+            {itinerary.days.map((day) => (
               <TabsTrigger
                 key={day.day}
                 value={`day-${day.day}`}
@@ -47,7 +46,7 @@ export default function TripContent({
 
       <ScrollArea className="flex-1 bg-white">
         <div className="mx-auto max-w-3xl p-6 pb-24">
-          {plan.itinerary.map((day) => (
+          {itinerary.days.map((day) => (
             <TabsContent
               key={day.day}
               value={`day-${day.day}`}

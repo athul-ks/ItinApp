@@ -13,10 +13,18 @@ describe('authRouter', () => {
     mockDb = mockDeep<PrismaClient>();
   });
 
-  const createCaller = (sessionUser: { id: string } | null) => {
+  const createCaller = (sessionUser: { id: string; credits?: number } | null) => {
     return authRouter.createCaller({
       db: mockDb as unknown as PrismaClient,
-      session: sessionUser ? { user: sessionUser, expires: '2099-01-01' } : null,
+      session: sessionUser
+        ? {
+            user: {
+              ...sessionUser,
+              credits: sessionUser.credits ?? 0,
+            },
+            expires: '2099-01-01',
+          }
+        : null,
       headers: new Headers(),
     });
   };

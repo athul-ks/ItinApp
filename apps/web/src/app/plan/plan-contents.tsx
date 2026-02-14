@@ -6,8 +6,8 @@ import { Armchair, Coffee, CreditCard, DollarSign, Loader2, Wallet, Zap } from '
 import { useRouter, useSearchParams } from 'next/navigation';
 import { DateRange } from 'react-day-picker';
 
-import { TripLoading } from '@/app/plan/trip-loading';
 import { UpgradeModal } from '@/app/plan/upgrade-modal';
+import { TripLoading } from '@/app/trip/[id]/trip-loading';
 import { DateRangePicker } from '@/components/date-range-picker';
 import { api } from '@/trpc/react';
 

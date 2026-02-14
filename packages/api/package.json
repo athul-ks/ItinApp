@@ -12,6 +12,7 @@
     "build": "tsc",
     "lint": "eslint .",
     "format": "eslint . --fix",
+    "smoke": "tsx scripts/smoke-test-worker.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "type-check": "tsc --noEmit"
@@ -24,6 +25,8 @@
     "@sentry/nextjs": "catalog:",
     "@trpc/server": "catalog:",
     "@vitest/coverage-v8": "catalog:",
+    "bullmq": "catalog:",
+    "ioredis": "catalog:",
     "next-auth": "catalog:",
     "openai": "catalog:",
     "superjson": "catalog:",

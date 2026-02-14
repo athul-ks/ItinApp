@@ -15,25 +15,28 @@
     "dev": "tsx src/index.ts",
     "db:studio": "prisma studio",
     "db:migrate": "prisma migrate dev",
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate",
+    "db:generate": "dotenv -e ../../.env -- prisma generate",
+    "db:push": "prisma db push",
     "db:deploy": "prisma migrate deploy",
     "db:pull": "prisma db pull",
     "db:seed": "tsx prisma/seed.ts",
-    "db:seed:test": "tsx prisma/seed-test.ts",
+    "db:seed:test": "dotenv -e ../../.env -- tsx prisma/seed-test.ts",
     "db:reset": "prisma migrate reset --force",
-    "postinstall": "prisma generate",
+    "postinstall": "dotenv -e ../../.env -- prisma generate",
     "test": "echo 'No tests in db package' && exit 0",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@itinapp/env": "workspace:*",
     "@itinapp/schemas": "workspace:*",
-    "@prisma/client": "catalog:"
+    "@prisma/adapter-pg": "catalog:",
+    "@prisma/client": "catalog:",
+    "pg": "catalog:"
   },
   "devDependencies": {
     "@itinapp/configs": "workspace:*",
     "@types/node": "catalog:",
+    "@types/pg": "catalog:",
     "dotenv": "catalog:",
     "prisma": "catalog:",
     "tsx": "catalog:",

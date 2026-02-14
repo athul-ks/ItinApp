@@ -3,28 +3,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended';
 
 import { PrismaClient } from '@itinapp/db';
+import { Itinerary } from '@itinapp/schemas';
 
+import { itineraryQueue } from '../../lib/queue';
+import { redis } from '../../lib/redis';
 import { tripRouter } from '../../router/trip';
-
-// HOISTED MOCK HELPER
-const mocks = vi.hoisted(() => {
-  return {
-    parse: vi.fn(),
-  };
-});
-
-// MOCK OPENAI MODULE
-vi.mock('openai', () => {
-  // Define a real class for the default export
-  return {
-    default: class OpenAI {
-      // Mimic the structure: openai.responses.parse()
-      responses = {
-        parse: mocks.parse,
-      };
-    },
-  };
-});
 
 // Test Setup
 let mockDb: DeepMockProxy<PrismaClient>;
@@ -40,9 +23,6 @@ describe('tripRouter', () => {
       if (typeof arg === 'function') {
         return arg(mockDb);
       }
-      if (Array.isArray(arg)) {
-        return Promise.all(arg);
-      }
       return arg;
     });
 
@@ -51,7 +31,7 @@ describe('tripRouter', () => {
   });
 
   const mockSession = {
-    user: { id: 'user_1', name: 'Test User', email: 'test@example.com' },
+    user: { id: 'user_1', name: 'Test User', email: 'test@example.com', credits: 10 },
     expires: '2099-01-01',
   };
 
@@ -70,6 +50,15 @@ describe('tripRouter', () => {
     vibe: 'relaxed' as const,
   };
 
+  const mockItinerary: Itinerary = {
+    title: 'Paris Trip',
+    description: 'A nice trip',
+    totalCostEstimate: '£1000',
+    vibe: 'Relaxed',
+    highlights: ['Eiffel'],
+    days: [],
+  };
+
   describe('getAll', () => {
     it('should not return failed trips', async () => {
       const caller = createCaller();
@@ -81,7 +70,7 @@ describe('tripRouter', () => {
         expect.objectContaining({
           where: expect.objectContaining({
             userId: 'user_1',
-            status: { not: 'failed' },
+            status: { not: 'FAILED' },
           }),
         })
       );
@@ -89,54 +78,48 @@ describe('tripRouter', () => {
 
     it('should handle corrupted trip data gracefully', async () => {
       const caller = createCaller();
-      // Corrupted trip: itinerary is missing required fields (e.g. empty object)
+
       const corruptedTrip = {
-        id: 'corrupted',
+        id: 'bad',
         userId: 'user_1',
         destination: 'Nowhere',
-        destinationLat: 0,
-        destinationLng: 0,
-        startDate: new Date(),
-        endDate: new Date(),
-        budget: 'low',
-        tripData: [{}], // Invalid TripOption
+        status: 'COMPLETED',
         createdAt: new Date(),
-        updatedAt: new Date(),
-        status: 'generated',
+        itinerary: { bad_field: true }, // Invalid Schema
       };
 
       const validTrip = {
-        id: 'valid',
+        id: 'good',
         userId: 'user_1',
         destination: 'Paris',
-        destinationLat: 0,
-        destinationLng: 0,
-        startDate: new Date(),
-        endDate: new Date(),
-        budget: 'low',
-        tripData: [
-          {
-            id: '1',
-            title: 'Valid',
-            description: 'Desc',
-            totalCostEstimate: '$100',
-            vibe: 'Relaxed',
-            highlights: [],
-            itinerary: [],
-          },
-        ],
+        status: 'COMPLETED',
         createdAt: new Date(),
-        updatedAt: new Date(),
-        status: 'generated',
+        itinerary: mockItinerary, // Valid Schema
       };
 
       mockDb.trip.findMany.mockResolvedValue([corruptedTrip, validTrip] as any);
 
       const result = await caller.getAll();
 
-      // SECURITY: Expect the corrupted trip to be filtered out
       expect(result).toHaveLength(1);
-      expect(result[0].id).toBe('valid');
+      expect(result[0].id).toBe('good');
+    });
+
+    it('should include PENDING trips with null itinerary', async () => {
+      const caller = createCaller();
+      const pendingTrip = {
+        id: 'pending',
+        userId: 'user_1',
+        status: 'PENDING',
+        createdAt: new Date(),
+        itinerary: null,
+      };
+
+      mockDb.trip.findMany.mockResolvedValue([pendingTrip] as any);
+
+      const result = await caller.getAll();
+      expect(result).toHaveLength(1);
+      expect(result[0].status).toBe('PENDING');
     });
   });
 
@@ -188,24 +171,15 @@ describe('tripRouter', () => {
 
     it('should throw INTERNAL_SERVER_ERROR if trip data is corrupted', async () => {
       const caller = createCaller();
-      const tripId = 'corrupted_trip';
 
       mockDb.trip.findUnique.mockResolvedValue({
-        id: tripId,
+        id: 'trip_bad',
         userId: 'user_1',
-        destination: 'Paris',
-        destinationLat: 48.8566,
-        destinationLng: 2.3522,
-        startDate: new Date(),
-        endDate: new Date(),
-        budget: 'moderate',
-        tripData: [{}], // Invalid data
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        itinerary: { missing_fields: true }, // Invalid
       } as any);
 
       // SECURITY: Expect a safe, generic error message
-      await expect(caller.getById({ id: tripId })).rejects.toThrow(
+      await expect(caller.getById({ id: 'trip_bad' })).rejects.toThrow(
         'Trip data is corrupted and cannot be displayed.'
       );
     });
@@ -286,153 +260,79 @@ describe('tripRouter', () => {
       await expect(caller.generate(validInput)).rejects.toThrow('INSUFFICIENT_CREDITS');
     });
 
-    it('should generate a trip and decrement credits on success', async () => {
+    it('should return COMPLETED trip immediately on Cache Hit', async () => {
       const caller = createCaller();
 
-      // Mock DB: Credits check and deduct
-      mockDb.user.updateMany.mockResolvedValue({ count: 1 });
-
-      // Mock OpenAI: Success
-      const mockTripItinerary = {
-        id: '3',
-        title: 'Relaxed',
-        description: 'Desc',
-        totalCostEstimate: '$100',
-        vibe: 'Relaxed' as const,
-        highlights: [],
-        itinerary: [],
+      const cachedData = {
+        itinerary: mockItinerary,
+        coordinates: { lat: 10, lng: 20 },
       };
+      (redis.get as any).mockResolvedValue(JSON.stringify(cachedData));
 
-      // Use the hoisted spy directly
-      mocks.parse.mockResolvedValue({
-        output_parsed: {
-          destinationCoordinates: { lat: 48.8566, lng: 2.3522 },
-          itinerary: mockTripItinerary,
-        },
-      });
+      mockDb.user.update.mockResolvedValue({ credits: 5 } as any);
+      mockDb.trip.create.mockResolvedValue({ id: 'instant_trip' } as any);
 
-      // Mock Create Pending
-      const pendingTripId = 'trip_123';
+      const result = await caller.generate(validInput);
+
+      expect(redis.get).toHaveBeenCalled(); // Checked cache
+      expect(itineraryQueue.add).not.toHaveBeenCalled(); // Did NOT queue job
+      expect(mockDb.trip.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            status: 'COMPLETED', // Instant success
+            itinerary: expect.anything(),
+          }),
+        })
+      );
+      expect(result.tripId).toBe('instant_trip');
+    });
+
+    it('should queue a job and return PENDING trip on Cache Miss', async () => {
+      const caller = createCaller();
+      (redis.get as any).mockResolvedValue(null);
+
+      mockDb.user.updateMany.mockResolvedValue({ count: 1 });
       mockDb.trip.create.mockResolvedValue({
-        id: pendingTripId,
-        status: 'generating',
-        tripData: [],
-      } as any);
-
-      // Mock Update Success
-      mockDb.trip.update.mockResolvedValue({
-        id: pendingTripId,
-        status: 'generated',
-        tripData: [mockTripItinerary],
+        id: 'job_trip',
+        status: 'PENDING',
       } as any);
 
       const result = await caller.generate(validInput);
 
-      expect(result.tripId).toBe('trip_123');
-      expect(mockDb.user.updateMany).toHaveBeenCalledWith({
-        where: { id: 'user_1', credits: { gt: 0 } },
-        data: { credits: { decrement: 1 } },
-      });
-      // Verify Create Pending
+      expect(redis.get).toHaveBeenCalled();
+      expect(itineraryQueue.add).toHaveBeenCalledWith(
+        'generate-itinerary',
+        expect.objectContaining({
+          tripId: 'job_trip',
+          userId: 'user_1',
+          input: expect.objectContaining({ destination: 'Paris' }),
+        })
+      );
+
       expect(mockDb.trip.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
-            status: 'generating',
+            status: 'PENDING',
           }),
         })
       );
-      // Verify Update Final
-      expect(mockDb.trip.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { id: pendingTripId },
-          data: expect.objectContaining({
-            status: 'generated',
-          }),
-        })
-      );
-    });
 
-    it('should REFUND credits if OpenAI fails', async () => {
-      const caller = createCaller();
-      mockDb.user.updateMany.mockResolvedValue({ count: 1 });
-
-      // Mock Create Pending
-      const pendingTripId = 'trip_123';
-      mockDb.trip.create.mockResolvedValue({ id: pendingTripId } as any);
-
-      // Mock OpenAI: Failure
-      mocks.parse.mockRejectedValue(new Error('AI Service Down'));
-
-      await expect(caller.generate(validInput)).rejects.toThrow('Failed to generate trip');
-
-      // Verify Refund
-      expect(mockDb.user.update).toHaveBeenCalledWith({
-        where: { id: 'user_1' },
-        data: { credits: { increment: 1 } },
-      });
-      // Verify Status Update to 'failed' (instead of deletion, for rate limiting)
-      expect(mockDb.trip.update).toHaveBeenCalledWith({
-        where: { id: pendingTripId },
-        data: { status: 'failed' },
-      });
+      expect(result.tripId).toBe('job_trip');
     });
 
     it('should rate limit subsequent requests even if the previous trip failed', async () => {
       const caller = createCaller();
+      (redis.get as any).mockResolvedValue(null);
 
       // Mock that a trip was created 30 seconds ago (and FAILED)
       mockDb.trip.findFirst.mockResolvedValue({
-        id: 'recent_failed_trip',
-        userId: 'user_1',
-        status: 'failed',
+        id: 'recent',
         createdAt: new Date(Date.now() - 30 * 1000), // 30s ago
       } as any);
 
       await expect(caller.generate(validInput)).rejects.toThrow(
         'Please wait before generating another trip'
       );
-    });
-
-    it('should cap duration at 10 days (SAFETY LIMIT)', async () => {
-      const caller = createCaller();
-      mockDb.user.updateMany.mockResolvedValue({ count: 1 });
-
-      const longDateRange = {
-        from: new Date('2024-06-01'),
-        to: new Date('2024-06-16'), // 15 days
-      };
-
-      mocks.parse.mockResolvedValue({
-        output_parsed: {
-          destinationCoordinates: { lat: 48.8566, lng: 2.3522 },
-          itinerary: {
-            id: '1',
-            title: 'A',
-            description: 'B',
-            totalCostEstimate: 'C',
-            vibe: 'Balanced',
-            highlights: [],
-            itinerary: [],
-          },
-        },
-      });
-
-      mockDb.trip.create.mockResolvedValue({
-        id: 'trip_123',
-        tripData: [],
-      } as any);
-
-      mockDb.trip.update.mockResolvedValue({} as any);
-
-      await caller.generate({ ...validInput, dateRange: longDateRange });
-
-      const calls = mocks.parse.mock.calls;
-      const lastCall = calls[calls.length - 1];
-      const inputArg = lastCall[0].input;
-      const userMessage = inputArg.find((msg: any) => msg.role === 'user').content;
-
-      // Safety limit caps at 10 days
-      expect(userMessage).toContain('Duration: 10 Days');
     });
 
     describe('E2E / Mock Mode', () => {
@@ -453,10 +353,7 @@ describe('tripRouter', () => {
         const result = await caller.generate(validInput);
 
         expect(result.tripId).toBe('e2e-test-trip-id');
-        expect(result.tripData).toHaveLength(1);
-
         expect(mockDb.$transaction).not.toHaveBeenCalled();
-        expect(mocks.parse).not.toHaveBeenCalled();
       });
 
       it('should return MOCK DATA immediately if x-e2e-mock header is present', async () => {

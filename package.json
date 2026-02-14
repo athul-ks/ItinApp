@@ -22,11 +22,12 @@
     "db:push": "dotenv -e .env -- pnpm turbo run db:push",
     "db:seed": "dotenv -e .env -- pnpm turbo run db:seed",
     "db:seed:test": "dotenv -e .env -- pnpm turbo run db:seed:test",
-    "db:studio": "dotenv -e .env -- pnpm turbo run db:studio",
+    "db:studio": "dotenv -e .env -- pnpm turbo run db:studio --ui=stream",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "prepare": "husky",
     "commit": "cz",
+    "smoke": "dotenv -e .env -- pnpm --filter @itinapp/api smoke",
     "test": "dotenv -e .env -- turbo run test --ui=stream",
     "test:e2e": "dotenv -e .env -- turbo run test:e2e --ui=stream -- --project=chromium",
     "type-check": "turbo run type-check --ui=stream"

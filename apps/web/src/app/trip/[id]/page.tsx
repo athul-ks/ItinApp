@@ -4,42 +4,43 @@ import { getDestinationImage } from '@/lib/unsplash';
 import { api } from '@/trpc/server';
 import { Trip } from '@/types/trpc';
 
+import { TripPoller } from './trip-poller';
 import { TripView } from './trip-view';
 
 export default async function TripPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-
   let trip: Trip;
-  let image;
 
   try {
     trip = await api.trip.getById({ id });
-    image = await getDestinationImage(trip.destination);
   } catch {
     // We treat both NOT_FOUND and FORBIDDEN as 404 to avoid leaking existence of trips.
     return notFound();
   }
 
-  const tripOption = trip.tripData[0];
+  if (trip.status === 'PENDING' || trip.status === 'PROCESSING') {
+    return <TripPoller tripId={id} destination={trip.destination} />;
+  }
 
-  if (!tripOption) {
+  if (trip.status === 'COMPLETED' && trip.itinerary) {
+    const image = await getDestinationImage(trip.destination);
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <p className="text-muted-foreground">No itinerary found for this trip.</p>
+      <div className="container mx-auto max-w-4xl py-8">
+        <TripView
+          itinerary={trip.itinerary}
+          image={image}
+          destinationLocation={{
+            lat: trip.destinationLat ?? 0,
+            lng: trip.destinationLng ?? 0,
+          }}
+        />
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto max-w-4xl py-8">
-      <TripView
-        plan={tripOption}
-        image={image}
-        destinationLocation={{
-          lat: trip.destinationLat ?? 0,
-          lng: trip.destinationLng ?? 0,
-        }}
-      />
+    <div className="flex h-screen w-full items-center justify-center">
+      <p className="text-muted-foreground">No itinerary found for this trip.</p>
     </div>
   );
 }

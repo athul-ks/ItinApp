@@ -6,10 +6,9 @@ import { Badge } from '@itinapp/ui/components/badge';
 import { Button } from '@itinapp/ui/components/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@itinapp/ui/components/card';
 
+import { DeleteAccountButton } from '@/components/delete-account-button';
 import { auth } from '@/server/auth';
 import { api } from '@/trpc/server';
-
-import { DeleteAccountButton } from '@/components/delete-account-button';
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -48,7 +47,7 @@ export default async function DashboardPage() {
           {trips.map((trip) => {
             // Get the first option to show a preview (usually the "Fast Paced" one)
             // or just use generic trip data
-            const firstOption = trip.tripData[0];
+            const itinerary = trip.itinerary;
 
             return (
               <Card
@@ -63,6 +62,12 @@ export default async function DashboardPage() {
                   >
                     {trip.budget.charAt(0).toUpperCase() + trip.budget.slice(1)} Budget
                   </Badge>
+
+                  {trip.status !== 'COMPLETED' && (
+                    <Badge className="absolute top-4 left-4 bg-yellow-500 text-white">
+                      {trip.status}
+                    </Badge>
+                  )}
                 </div>
 
                 <CardHeader>
@@ -79,15 +84,17 @@ export default async function DashboardPage() {
                     </span>
                   </div>
 
-                  {firstOption && (
-                    <p className="line-clamp-3 text-sm text-gray-600">{firstOption.description}</p>
+                  {itinerary ? (
+                    <p className="line-clamp-3 text-sm text-gray-600">{itinerary.description}</p>
+                  ) : (
+                    <p className="text-sm text-gray-400 italic">Generating your perfect trip...</p>
                   )}
                 </CardContent>
 
                 <CardFooter className="bg-muted/20 p-4">
                   <Link href={`/trip/${trip.id}`} className="w-full">
                     <Button variant="outline" className="group w-full gap-2">
-                      View Itinerary
+                      {trip.status === 'COMPLETED' ? 'View Itinerary' : 'Check Status'}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Button>
                   </Link>

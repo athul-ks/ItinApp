@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../src';
 
 console.log('🌱 Starting seed...');
 
@@ -82,8 +80,8 @@ try {
       startDate: new Date('2024-04-01'),
       endDate: new Date('2024-04-05'),
       budget: 'Medium',
-      status: 'generated',
-      tripData: mockItinerary,
+      status: 'COMPLETED',
+      itinerary: mockItinerary,
     },
   });
   console.log(`✈️ Created trip to: ${trip.destination}`);

@@ -4,6 +4,6 @@ import { sharedConfig } from '@itinapp/configs/eslint.config.mjs';
 export default [
   ...sharedConfig,
   {
-    ignores: ['dist/**', 'node_modules/**'],
+    ignores: ['dist/**'],
   },
 ];

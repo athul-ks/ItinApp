@@ -5,13 +5,12 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // --- NEXT AUTH (Auth.js) REQUIRED MODELS ---
@@ -90,7 +89,7 @@ model Trip {
 
   // We store the huge AI JSON response here.
   // This allows us to save the complex structure without creating 20 different SQL tables.
-  tripData Json
+  itinerary Json
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
