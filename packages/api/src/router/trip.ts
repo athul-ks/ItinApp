@@ -4,7 +4,6 @@ import { z } from 'zod';
 import {
   E2E_CONSTANTS,
   ItinerarySchema,
-  MOCK_TRIP_DATA,
   TripInputSchema,
   TripResponseSchema,
 } from '@itinapp/schemas';
@@ -25,7 +24,6 @@ export const tripRouter = createTRPCRouter({
       console.log('⚡ E2E Mode Detected: Returning Mock Data immediately.');
       return {
         tripId: E2E_CONSTANTS.TRIP_ID,
-        tripData: MOCK_TRIP_DATA,
       };
     }
 

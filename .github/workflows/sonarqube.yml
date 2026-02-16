@@ -6,6 +6,8 @@ jobs:
   sonarqube:
     name: SonarQube Scan
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: 'postgresql://postgres:password@localhost:5432/itinapp'
     steps:
       - uses: actions/checkout@v4
         with:
