@@ -16,7 +16,8 @@
     "NEXTAUTH_SECRET",
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
-    "DISCORD_WEBHOOK_URL"
+    "DISCORD_WEBHOOK_URL",
+    "CRON_SECRET"
   ],
   "tasks": {
     "build": {

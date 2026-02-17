@@ -47,6 +47,7 @@ jobs:
       DISCORD_WEBHOOK_URL: 'https://discord.com/mock-webhook-url'
       UNSPLASH_ACCESS_KEY: 'mock-key'
       ENABLE_E2E_MOCKS: 'true'
+      CRON_SECRET: 'mock-cron-secret'
 
     steps:
       - uses: actions/checkout@v4

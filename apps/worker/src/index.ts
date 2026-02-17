@@ -52,7 +52,8 @@ const worker = new Worker(
     } catch (error) {
       console.error(`[Worker] Job ${job.id} attempt ${job.attemptsMade + 1} failed`, error);
 
-      if (job.attemptsMade >= 2) {
+      const maxRetries = job.opts.attempts || 1;
+      if (job.attemptsMade >= maxRetries - 1) {
         await db.$transaction([
           db.user.update({
             where: { id: userId },
