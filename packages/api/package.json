@@ -22,6 +22,7 @@
     "@itinapp/db": "workspace:*",
     "@itinapp/env": "workspace:*",
     "@itinapp/schemas": "workspace:*",
+    "@logtail/node": "catalog:",
     "@sentry/nextjs": "catalog:",
     "@trpc/server": "catalog:",
     "@vitest/coverage-v8": "catalog:",

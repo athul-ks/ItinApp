@@ -8,4 +8,5 @@ export { createTRPCContext } from './trpc';
 
 export { generateCacheKey } from './lib/cache-key';
 export { redis } from './lib/redis';
+export * from './logger';
 export { generateItineraryWithAI } from './services/ai-itinerary';

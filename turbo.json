@@ -17,7 +17,8 @@
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "DISCORD_WEBHOOK_URL",
-    "CRON_SECRET"
+    "CRON_SECRET",
+    "LOGTAIL_SOURCE_TOKEN"
   ],
   "tasks": {
     "build": {

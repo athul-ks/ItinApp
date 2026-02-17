@@ -1,5 +1,7 @@
+import * as Sentry from '@sentry/nextjs';
 import { NextResponse } from 'next/server';
 
+import { flushLogs, logger, normalizeError } from '@itinapp/api';
 import { prisma } from '@itinapp/db';
 
 export const dynamic = 'force-dynamic'; // CRITICAL: Cron jobs must not be cached!
@@ -11,6 +13,8 @@ export async function GET(req: Request) {
   }
 
   try {
+    logger.info('Cron job started');
+
     const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
@@ -36,9 +40,13 @@ export async function GET(req: Request) {
       })
     );
 
+    logger.info('Cron job finished');
+    await flushLogs();
     return NextResponse.json({ success: true, processed: stuckTrips.length, results });
   } catch (error) {
-    console.error('Cron failed:', error);
+    logger.error('Cron job failed', { ...normalizeError(error) });
+    Sentry.captureException(error);
+    await Promise.all([flushLogs(), Sentry.flush(2000)]);
     return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
   }
 }

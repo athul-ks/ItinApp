@@ -1,7 +1,13 @@
 import { Job, Worker } from 'bullmq';
 import { Redis } from 'ioredis';
 
-import { generateCacheKey, generateItineraryWithAI, redis } from '@itinapp/api';
+import {
+  generateCacheKey,
+  generateItineraryWithAI,
+  logger,
+  normalizeError,
+  redis,
+} from '@itinapp/api';
 import { prisma as db } from '@itinapp/db';
 import { env } from '@itinapp/env';
 import { TripJob, TripResponse } from '@itinapp/schemas';
@@ -14,8 +20,7 @@ const worker = new Worker(
   'itinerary-generation',
   async (job: Job<TripJob>) => {
     const { tripId, userId, input } = job.data;
-
-    console.log(`[Worker] Starting job ${job.id} for Trip ${tripId}`);
+    logger.info('Worker picked up job', { jobId: job.id, tripId });
 
     // 1. Mark as PROCESSING in Supabase
     await db.trip.update({
@@ -48,9 +53,14 @@ const worker = new Worker(
       };
       await redis.set(cacheKey, JSON.stringify(cachePayload), 'EX', 86400);
 
-      console.log(`[Worker] Job ${job.id} finished successfully.`);
-    } catch (error) {
-      console.error(`[Worker] Job ${job.id} attempt ${job.attemptsMade + 1} failed`, error);
+      logger.info('Worker completed job', { jobId: job.id, tripId });
+    } catch (err) {
+      logger.error('Worker failed job', {
+        jobId: job.id,
+        tripId,
+        attempt: job.attemptsMade + 1,
+        ...normalizeError(err),
+      });
 
       const maxRetries = job.opts.attempts || 1;
       if (job.attemptsMade >= maxRetries - 1) {
@@ -64,25 +74,28 @@ const worker = new Worker(
             data: { status: 'FAILED' },
           }),
         ]);
-        console.log(`[Worker] Refunded credit for Trip ${tripId} after max retries.`);
+        logger.info(`Worker refunded credit after max retries.`, { tripId, userId });
       }
 
-      throw error; // Essential for BullMQ to handle the retry backoff
+      throw err; // Essential for BullMQ to handle the retry backoff
     }
   },
   { connection }
 );
 
 worker.on('completed', (job) => {
-  console.log(`Job ${job.id} has been completed!`);
+  logger.info(`Job completed successfully.`, { jobId: job.id });
 });
 
 worker.on('failed', (job, err) => {
-  console.log(`Job ${job?.id} has failed with ${err.message}`);
+  logger.error(`Job failed after all retries.`, {
+    jobId: job?.id,
+    ...normalizeError(err),
+  });
 });
 
 const gracefulShutdown = async (signal: string) => {
-  console.log(`\n[${signal}] Received. Closing worker and connection...`);
+  logger.info(`Worker shutting down gracefully...`, { signal });
   await worker.close(); // Stop taking new jobs
   await connection.quit(); // Close Redis connection
   process.exit(0);

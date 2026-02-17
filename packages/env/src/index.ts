@@ -25,6 +25,7 @@ export const env = createEnv({
     DISCORD_WEBHOOK_URL: z.url(),
     ENABLE_E2E_MOCKS: z.enum(['true', 'false']).optional(),
     CRON_SECRET: z.string().min(1),
+    LOGTAIL_SOURCE_TOKEN: z.string().optional(),
   },
 
   /**
@@ -54,6 +55,7 @@ export const env = createEnv({
     DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
     ENABLE_E2E_MOCKS: process.env.ENABLE_E2E_MOCKS,
     CRON_SECRET: process.env.CRON_SECRET,
+    LOGTAIL_SOURCE_TOKEN: process.env.LOGTAIL_SOURCE_TOKEN,
   },
 
   /**

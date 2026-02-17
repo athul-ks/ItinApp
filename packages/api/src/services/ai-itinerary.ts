@@ -3,9 +3,13 @@ import { zodTextFormat } from 'openai/helpers/zod';
 
 import { TripInput, TripResponseSchema } from '@itinapp/schemas';
 
+import { logger } from '../logger';
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function generateItineraryWithAI(input: TripInput) {
+  logger.info('Starting AI generation', { input });
+
   const from = new Date(input.dateRange.from);
   const to = new Date(input.dateRange.to);
 
@@ -84,5 +88,6 @@ export async function generateItineraryWithAI(input: TripInput) {
     },
   });
 
+  logger.info('AI generation successful');
   return response.output_parsed;
 }
