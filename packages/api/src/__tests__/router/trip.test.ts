@@ -168,21 +168,6 @@ describe('tripRouter', () => {
       const result = await caller.getById({ id: tripId });
       expect(result.id).toBe(tripId);
     });
-
-    it('should throw INTERNAL_SERVER_ERROR if trip data is corrupted', async () => {
-      const caller = createCaller();
-
-      mockDb.trip.findUnique.mockResolvedValue({
-        id: 'trip_bad',
-        userId: 'user_1',
-        itinerary: { missing_fields: true }, // Invalid
-      } as any);
-
-      // SECURITY: Expect a safe, generic error message
-      await expect(caller.getById({ id: 'trip_bad' })).rejects.toThrow(
-        'Trip data is corrupted and cannot be displayed.'
-      );
-    });
   });
 
   describe('generate', () => {

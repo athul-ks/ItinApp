@@ -26,7 +26,7 @@ export default async function DashboardPage() {
           <h1 className="text-3xl font-bold tracking-tight">My Trips</h1>
           <p className="text-muted-foreground mt-1">Manage and view your generated itineraries.</p>
         </div>
-        <Link href="/plan">
+        <Link href="/">
           <Button>+ Plan New Trip</Button>
         </Link>
       </div>
@@ -37,7 +37,7 @@ export default async function DashboardPage() {
           <p className="text-muted-foreground mb-6">
             You haven&apos;t generated any itineraries yet.
           </p>
-          <Link href="/plan">
+          <Link href="/">
             <Button variant="default">Start your first adventure</Button>
           </Link>
         </div>
