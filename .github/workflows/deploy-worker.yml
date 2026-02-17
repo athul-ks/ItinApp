@@ -68,9 +68,10 @@ jobs:
             # 1. Login to GHCR (GitHub Container Registry)
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            # 2. Stop and Remove Old Container (ignore errors if it doesn't exist)
-            docker stop itinapp-worker || true
-            docker rm itinapp-worker || true
+            # 2. CREATE/UPDATE .env.production
+            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env.production
+            echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env.production
+            echo "NODE_ENV=production" >> .env.production
 
             # 3. Pull the Latest Image
             # Note: We specifically pull 'latest' or the specific tag depending on your strategy.
@@ -78,7 +79,19 @@ jobs:
             # Here we pull the specific image built in the previous step via the repository name.
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-            # 4. Run New Container
+            # 4. RUN MIGRATIONS
+            # We spin up a temporary container just to run the migration.
+            # NOTE: We use 'npm exec' because 'pnpm' might not be in the runner image PATH.
+            docker run --rm \
+              --env-file .env.production \
+              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+              npm exec -- turbo run db:deploy
+
+            # 5. Stop and Remove Old Container (ignore errors if it doesn't exist)
+            docker stop itinapp-worker || true
+            docker rm itinapp-worker || true
+              
+            # 6. Run New Container
             # We mount the .env.production file we created earlier
             docker run -d \
               --name itinapp-worker \
@@ -87,5 +100,5 @@ jobs:
               --memory="900m" \
               ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-            # 5. Clean up old images to save disk space
+            # 7. Clean up old images to save disk space
             docker image prune -f

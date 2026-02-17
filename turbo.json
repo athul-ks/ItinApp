@@ -20,12 +20,7 @@
   ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "db:generate", "db:deploy"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
-    },
-    "build:ci": {
-      "dependsOn": ["^build:ci", "db:generate", "db:push"],
+      "dependsOn": ["^build", "db:generate"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
@@ -38,7 +33,7 @@
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts"]
     },
     "test:e2e": {
-      "dependsOn": ["db:generate", "db:seed:test"],
+      "dependsOn": ["db:generate", "db:push", "db:seed:test"],
       "outputs": ["playwright-report/**"]
     },
     "type-check": {

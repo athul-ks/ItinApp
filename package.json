@@ -9,7 +9,6 @@
   },
   "scripts": {
     "build": "turbo run build --ui=stream",
-    "build:ci": "pnpm turbo run build:ci",
     "build:local": "dotenv -e .env -- turbo run build --ui=stream",
     "dev": "dotenv -e .env -- pnpm turbo run dev",
     "lint": "turbo run lint --ui=stream",

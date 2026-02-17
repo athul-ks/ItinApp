@@ -38,9 +38,7 @@ jobs:
       VERCEL_URL: 'localhost:3000'
 
       # 4. Sentry (Fixes the 401 crash)
-      # KEEP the DSN (so the code doesn't crash importing it)
       NEXT_PUBLIC_SENTRY_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0'
-      # REMOVE SENTRY_AUTH_TOKEN (so it skips the upload step)
 
       # 5. Other Mocks
       OPENAI_API_KEY: 'mock-key'
@@ -49,6 +47,7 @@ jobs:
       DISCORD_WEBHOOK_URL: 'https://discord.com/mock-webhook-url'
       UNSPLASH_ACCESS_KEY: 'mock-key'
       ENABLE_E2E_MOCKS: 'true'
+
     steps:
       - uses: actions/checkout@v4
 
@@ -66,6 +65,9 @@ jobs:
       - name: Turbo Repo Cache
         uses: dtinth/setup-github-actions-caching-for-turbo@v1
 
+      - name: Setup CI Database
+        run: pnpm turbo run db:push
+
       - name: Lint & Type Check
         run: pnpm turbo run lint type-check --ui=stream
 
@@ -73,7 +75,7 @@ jobs:
         run: pnpm turbo run test --ui=stream --filter '!@itinapp/e2e'
 
       - name: Build App
-        run: pnpm build:ci --filter=@itinapp/web
+        run: pnpm turbo run build --filter=@itinapp/web
 
       - name: Cache Playwright Browsers
         uses: actions/cache@v4
