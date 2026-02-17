@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "dotenv -e ../../.env -- tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "build": "tsup src/index.ts --format esm --clean",
+    "build": "tsup",
     "lint": "eslint .",
     "type-check": "tsc --noEmit"
   },

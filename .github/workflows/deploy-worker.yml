@@ -14,7 +14,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-worker
+  IMAGE_NAME: athul-ks/itinapp-worker
 
 jobs:
   # JOB 1: BUILD AND PUBLISH
@@ -69,9 +69,7 @@ jobs:
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
             # 2. CREATE/UPDATE .env.production
-            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env.production
-            echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env.production
-            echo "NODE_ENV=production" >> .env.production
+            printf "%s" "${{ secrets.ENV_FILE_PRODUCTION }}" > .env.production
 
             # 3. Pull the Latest Image
             # Note: We specifically pull 'latest' or the specific tag depending on your strategy.
