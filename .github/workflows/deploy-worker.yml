@@ -79,19 +79,11 @@ jobs:
             # Here we pull the specific image built in the previous step via the repository name.
             docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-            # 4. RUN MIGRATIONS
-            # We spin up a temporary container just to run the migration.
-            # NOTE: We use 'npm exec' because 'pnpm' might not be in the runner image PATH.
-            docker run --rm \
-              --env-file .env.production \
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-              npm exec -- turbo run db:deploy
-
-            # 5. Stop and Remove Old Container (ignore errors if it doesn't exist)
+            # 4. Stop and Remove Old Container (ignore errors if it doesn't exist)
             docker stop itinapp-worker || true
             docker rm itinapp-worker || true
               
-            # 6. Run New Container
+            # 5. Run New Container
             # We mount the .env.production file we created earlier
             docker run -d \
               --name itinapp-worker \
@@ -100,5 +92,5 @@ jobs:
               --memory="900m" \
               ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-            # 7. Clean up old images to save disk space
+            # 6. Clean up old images to save disk space
             docker image prune -f

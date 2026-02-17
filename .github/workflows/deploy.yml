@@ -29,9 +29,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run Database Migrations
-        run: pnpm turbo run db:deploy
-
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 

@@ -18,6 +18,7 @@
     "db:migrate": "dotenv -e .env -- pnpm turbo run db:migrate",
     "db:migrate:create": "dotenv -e .env -- pnpm --filter @itinapp/db exec prisma migrate dev --create-only --name",
     "db:deploy": "dotenv -e .env -- pnpm turbo run db:deploy",
+    "db:deploy:prod": "dotenv -e .env.production -- pnpm turbo run db:deploy",
     "db:push": "dotenv -e .env -- pnpm turbo run db:push",
     "db:seed": "dotenv -e .env -- pnpm turbo run db:seed",
     "db:seed:test": "dotenv -e .env -- pnpm turbo run db:seed:test",
