@@ -47,5 +47,9 @@ export function TripPoller({ tripId, destination }: TripPollerProps) {
     );
   }
 
-  return <TripLoading destination={destination} />;
+  return (
+    <div className="container mx-auto max-w-3xl flex-1 px-4 py-12">
+      <TripLoading destination={destination} />
+    </div>
+  );
 }

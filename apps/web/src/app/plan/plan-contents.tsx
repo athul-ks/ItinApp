@@ -7,7 +7,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { DateRange } from 'react-day-picker';
 
 import { UpgradeModal } from '@/app/plan/upgrade-modal';
-import { TripLoading } from '@/app/trip/[id]/trip-loading';
 import { DateRangePicker } from '@/components/date-range-picker';
 import { api } from '@/trpc/react';
 
@@ -47,10 +46,6 @@ export function PlanContents() {
       vibe,
     });
   };
-
-  if (generateTrip.isPending) {
-    return <TripLoading destination={destination} />;
-  }
 
   return (
     <div className="w-full max-w-2xl">

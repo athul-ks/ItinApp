@@ -130,7 +130,7 @@ export const tripRouter = createTRPCRouter({
           startDate: input.dateRange.from,
           endDate: input.dateRange.to,
           budget: input.budget,
-          itinerary: [], // Placeholder
+          itinerary: {}, // Placeholder
           status: 'PENDING',
         },
       });
@@ -170,7 +170,7 @@ export const tripRouter = createTRPCRouter({
 
     let parsedItinerary = null;
     if (trip.itinerary) {
-      const result = ItinerarySchema.safeParse(trip.itinerary);
+      const result = ItinerarySchema.or(z.object({})).safeParse(trip.itinerary);
       if (!result.success) {
         // SECURITY: Log the validation error sanitized, but do not expose details to user
         console.error(`Data corruption detected for trip ${trip.id}:`, result.error.message);

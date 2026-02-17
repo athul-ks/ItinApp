@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { getDestinationImage } from '@/lib/unsplash';
+import { isValidItinerary } from '@/lib/utils';
 import { api } from '@/trpc/server';
 import { Trip } from '@/types/trpc';
 
@@ -22,7 +23,7 @@ export default async function TripPage({ params }: { params: Promise<{ id: strin
     return <TripPoller tripId={id} destination={trip.destination} />;
   }
 
-  if (trip.status === 'COMPLETED' && trip.itinerary) {
+  if (trip.status === 'COMPLETED' && isValidItinerary(trip.itinerary)) {
     const image = await getDestinationImage(trip.destination);
     return (
       <div className="container mx-auto max-w-4xl py-8">
