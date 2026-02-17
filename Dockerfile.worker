@@ -21,13 +21,14 @@ COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 
 # Install deps (including devDeps for building)
-RUN pnpm install --frozen-lockfile
+# Skip scripts to prevent 'postinstall' from running too early (missing source files)
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # Copy the actual source code
 COPY --from=pruner /app/out/full/ .
 
 # Generate Prisma Client
-RUN pnpm turbo run db:generate
+RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" pnpm turbo run db:generate
 
 # Build the worker (TypeScript -> JS)
 RUN pnpm turbo run build --filter=@itinapp/worker...
