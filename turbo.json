@@ -18,7 +18,8 @@
     "GOOGLE_CLIENT_SECRET",
     "DISCORD_WEBHOOK_URL",
     "CRON_SECRET",
-    "LOGTAIL_SOURCE_TOKEN"
+    "LOGTAIL_SOURCE_TOKEN",
+    "BETTER_STACK_HEARTBEAT_URL"
   ],
   "tasks": {
     "build": {

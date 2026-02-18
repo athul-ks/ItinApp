@@ -36,6 +36,7 @@ jobs:
       # 3. URL Mocks (Fixes the 'startsWith' crash)
       NEXT_PUBLIC_APP_URL: 'http://localhost:3000'
       VERCEL_URL: 'localhost:3000'
+      BETTER_STACK_HEARTBEAT_URL: 'http://localhost:4000/heartbeat'
 
       # 4. Sentry (Fixes the 401 crash)
       NEXT_PUBLIC_SENTRY_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0'

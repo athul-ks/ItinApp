@@ -12,6 +12,8 @@ import { prisma as db } from '@itinapp/db';
 import { env } from '@itinapp/env';
 import { TripJob, TripResponse } from '@itinapp/schemas';
 
+import { startHeartbeat } from './heartbeat';
+
 const connection = new Redis(env.REDIS_URL, {
   maxRetriesPerRequest: null,
 });
@@ -93,6 +95,8 @@ worker.on('failed', (job, err) => {
     ...normalizeError(err),
   });
 });
+
+startHeartbeat();
 
 const gracefulShutdown = async (signal: string) => {
   logger.info(`Worker shutting down gracefully...`, { signal });
