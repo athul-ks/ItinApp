@@ -49,6 +49,8 @@ jobs:
       UNSPLASH_ACCESS_KEY: 'mock-key'
       ENABLE_E2E_MOCKS: 'true'
       CRON_SECRET: 'mock-cron-secret'
+      NEXT_PUBLIC_POSTHOG_KEY: 'phc_mock_key_for_testing'
+      NEXT_PUBLIC_POSTHOG_HOST: 'http://localhost:3000'
 
     steps:
       - uses: actions/checkout@v4

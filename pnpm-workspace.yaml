@@ -59,6 +59,7 @@ catalog:
   next-auth: 4.24.13
   openai: ^6.15.0
   pg: '^8.18.0'
+  'posthog-js': '^1.351.1'
   prettier: 3.7.4
   prettier-plugin-tailwindcss: 0.7.2
   prisma: ^7.4.0

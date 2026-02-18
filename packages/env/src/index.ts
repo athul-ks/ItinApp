@@ -35,6 +35,8 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: z.string().min(1),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
+    NEXT_PUBLIC_POSTHOG_HOST: z.url().optional(),
   },
 
   /**
@@ -52,12 +54,14 @@ export const env = createEnv({
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
     ENABLE_E2E_MOCKS: process.env.ENABLE_E2E_MOCKS,
     CRON_SECRET: process.env.CRON_SECRET,
     LOGTAIL_SOURCE_TOKEN: process.env.LOGTAIL_SOURCE_TOKEN,
     BETTER_STACK_HEARTBEAT_URL: process.env.BETTER_STACK_HEARTBEAT_URL,
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   },
 
   /**
