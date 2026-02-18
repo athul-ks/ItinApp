@@ -358,8 +358,8 @@ describe('tripRouter', () => {
       });
 
       it('should NOT return MOCK DATA if x-e2e-mock header is present BUT NODE_ENV is production', async () => {
-        process.env.NODE_ENV = 'production';
-        process.env.ENABLE_E2E_MOCKS = 'false';
+        vi.stubEnv('NODE_ENV', 'production');
+        vi.stubEnv('ENABLE_E2E_MOCKS', 'false');
 
         const headers = new Headers();
         headers.set('x-e2e-mock', 'true');
@@ -372,10 +372,10 @@ describe('tripRouter', () => {
 
         // Setup mock to fail inside transaction to prove it was called
         mockDb.user.updateMany.mockRejectedValue(new Error('Transaction Called'));
-
         await expect(caller.generate(validInput)).rejects.toThrow('Transaction Called');
-
         expect(mockDb.$transaction).toHaveBeenCalled();
+
+        vi.unstubAllEnvs();
       });
     });
   });
