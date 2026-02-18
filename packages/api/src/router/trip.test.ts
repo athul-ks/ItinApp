@@ -440,19 +440,16 @@ describe('tripRouter', () => {
     });
 
     describe('E2E / Mock Mode', () => {
-      const originalEnv = process.env;
-
       beforeEach(() => {
         vi.resetModules();
-        process.env = { ...originalEnv };
       });
 
       afterEach(() => {
-        process.env = originalEnv;
+        vi.unstubAllEnvs();
       });
 
       it('should return MOCK DATA immediately if ENABLE_E2E_MOCKS env var is set', async () => {
-        process.env.ENABLE_E2E_MOCKS = 'true';
+        vi.stubEnv('ENABLE_E2E_MOCKS', 'true');
         const caller = createCaller();
         const result = await caller.generate(validInput);
 
@@ -480,8 +477,8 @@ describe('tripRouter', () => {
       });
 
       it('should NOT return MOCK DATA if x-e2e-mock header is present BUT NODE_ENV is production', async () => {
-        process.env.NODE_ENV = 'production';
-        process.env.ENABLE_E2E_MOCKS = 'false';
+        vi.stubEnv('NODE_ENV', 'production');
+        vi.stubEnv('ENABLE_E2E_MOCKS', 'false');
 
         const headers = new Headers();
         headers.set('x-e2e-mock', 'true');
