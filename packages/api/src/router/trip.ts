@@ -55,7 +55,12 @@ export const tripRouter = createTRPCRouter({
       // In production, users must NOT be able to bypass credit checks/rate limits via a header.
       // We use process.env.NODE_ENV so it can be mocked in tests if needed.
       const isProduction = process.env.NODE_ENV === 'production';
-      const headerMock = !isProduction && ctx.headers.get('x-e2e-mock') === 'true';
+      let headerMock = false;
+
+      if (!isProduction) {
+        // NOSONAR: Safe as we check !isProduction
+        headerMock = ctx.headers.get('x-e2e-mock') === 'true';
+      }
 
       if (forceMock || headerMock) {
         console.log('⚡ E2E Mode Detected: Returning Mock Data immediately.');
