@@ -2,28 +2,19 @@
   "name": "@itinapp/auth",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@itinapp/db": "workspace:*",
-    "@itinapp/env": "workspace:*",
+    "next-auth": "catalog:",
     "@auth/prisma-adapter": "catalog:",
-    "next-auth": "catalog:"
+    "@itinapp/env": "workspace:*",
+    "@itinapp/db": "workspace:*"
   },
   "devDependencies": {
     "@itinapp/configs": "workspace:*",
-    "@vitest/coverage-v8": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:",
-    "vitest-mock-extended": "catalog:"
+    "typescript": "catalog:"
   }
 }

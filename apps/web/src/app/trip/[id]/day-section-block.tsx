@@ -1,6 +1,6 @@
 import { Bus, Clock } from 'lucide-react';
 
-import { Activity, DaySection, Restaurant } from '@itinapp/schemas';
+import { DaySection } from '@/types/trpc';
 
 type DaySectionBlockProps = {
   title: string;
@@ -31,7 +31,7 @@ export default function DaySectionBlock({
 
       {/* Activities List */}
       <div className="ml-2 space-y-4">
-        {data.activities.map((act: Activity) => {
+        {data.activities.map((act) => {
           const isHighlighted = highlightedActivity === act.name;
           return (
             <button
@@ -79,7 +79,7 @@ export default function DaySectionBlock({
           {mealLabel}
         </h4>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {data.restaurantSuggestions.map((resto: Restaurant) => (
+          {data.restaurantSuggestions.map((resto) => (
             <a
               key={resto.name}
               href={`https://www.google.com/maps/search/?api=1&query=${resto.lat},${resto.lng}`}

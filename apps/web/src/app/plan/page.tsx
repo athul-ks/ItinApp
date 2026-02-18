@@ -1,21 +1,8 @@
 import { Suspense } from 'react';
 
-import { redirect } from 'next/navigation';
-
 import { PlanContents } from './plan-contents';
 
-type PageProps = {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
-
-export default async function PlanPage({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const destination = params.destination;
-
-  if (!destination || typeof destination !== 'string' || destination.trim() === '') {
-    redirect('/');
-  }
-
+export default function PlanPage() {
   return (
     <main className="container mx-auto max-w-3xl flex-1 px-4 py-12">
       <Suspense fallback={<PlanSkeleton />}>

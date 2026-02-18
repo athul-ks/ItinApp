@@ -13,9 +13,7 @@ export const authOptions: NextAuthOptions = {
   },
 
   providers: [
-    // FIX: Check for .default to handle ESM/CJS mismatch
-    // @ts-expect-error - TypeScript might complain about .default, but Node needs it
-    (GoogleProvider.default || GoogleProvider)({
+    GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),

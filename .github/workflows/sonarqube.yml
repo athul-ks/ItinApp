@@ -6,48 +6,6 @@ jobs:
   sonarqube:
     name: SonarQube Scan
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: itinapp
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      # 1. Bypass T3 Env Validation
-      SKIP_ENV_VALIDATION: true
-
-      # 2. Database & Auth Mocks
-      DATABASE_URL: 'postgresql://postgres:password@localhost:5432/itinapp'
-      REDIS_URL: 'redis://localhost:6379'
-      NEXTAUTH_SECRET: 'dummy-secret-for-ci-tests'
-      NEXTAUTH_URL: 'http://localhost:3000'
-
-      # 3. URL Mocks (Fixes the 'startsWith' crash)
-      NEXT_PUBLIC_APP_URL: 'http://localhost:3000'
-      VERCEL_URL: 'localhost:3000'
-
-      # 4. Sentry (Fixes the 401 crash)
-      NEXT_PUBLIC_SENTRY_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0'
-
-      # 5. Other Mocks
-      OPENAI_API_KEY: 'mock-key'
-      GOOGLE_CLIENT_ID: 'mock-id'
-      GOOGLE_CLIENT_SECRET: 'mock-secret'
-      DISCORD_WEBHOOK_URL: 'https://discord.com/mock-webhook-url'
-      UNSPLASH_ACCESS_KEY: 'mock-key'
-      ENABLE_E2E_MOCKS: 'true'
-      CRON_SECRET: 'mock-cron-secret'
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -65,15 +23,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Setup CI Database
-        run: pnpm turbo run db:push
-
       - name: Fix pnpm catalogs for Sonar
         run: |
           find . -name "package.json" -not -path "**/node_modules/*" -exec sed -i 's/catalog:/*/g' {} +
 
       - name: Run Tests & Generate Coverage
-        run: pnpm turbo run test --ui=stream --force -- --coverage --passWithNoTests
+        run: pnpm turbo run test --force -- --coverage --passWithNoTests
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
@@ -86,4 +41,5 @@ jobs:
             -Dsonar.organization=athul-ks
             -Dsonar.sources=apps,packages
             -Dsonar.inclusions=apps/web/src/**,packages/**/*.ts,packages/**/*.tsx
+            -Dsonar.exclusions=**/node_modules/**,**/.next/**,**/.turbo/**,**/dist/**
             -Dsonar.typescript.tsconfigPaths=apps/web/tsconfig.json,packages/api/tsconfig.json,packages/db/tsconfig.json,packages/auth/tsconfig.json,packages/env/tsconfig.json,packages/ui/tsconfig.json

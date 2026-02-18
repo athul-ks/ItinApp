@@ -3,7 +3,7 @@ import { type DeepMockProxy, mockDeep } from 'vitest-mock-extended';
 
 import { PrismaClient } from '@itinapp/db';
 
-import { authRouter } from '../../router/auth';
+import { authRouter } from './auth';
 
 let mockDb: DeepMockProxy<PrismaClient>;
 
@@ -13,18 +13,10 @@ describe('authRouter', () => {
     mockDb = mockDeep<PrismaClient>();
   });
 
-  const createCaller = (sessionUser: { id: string; credits?: number } | null) => {
+  const createCaller = (sessionUser: { id: string } | null) => {
     return authRouter.createCaller({
       db: mockDb as unknown as PrismaClient,
-      session: sessionUser
-        ? {
-            user: {
-              ...sessionUser,
-              credits: sessionUser.credits ?? 0,
-            },
-            expires: '2099-01-01',
-          }
-        : null,
+      session: sessionUser ? { user: sessionUser, expires: '2099-01-01' } : null,
       headers: new Headers(),
     });
   };

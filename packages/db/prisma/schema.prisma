@@ -5,12 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // --- NEXT AUTH (Auth.js) REQUIRED MODELS ---
@@ -53,7 +54,7 @@ model User {
   sessions      Session[]
 
   // Relation to your Trips
-  trips Trip[]
+  trips         Trip[]
 }
 
 model VerificationToken {
@@ -66,30 +67,23 @@ model VerificationToken {
 
 // --- ITINAPP MODELS ---
 
-enum JobStatus {
-  PENDING
-  PROCESSING
-  COMPLETED
-  FAILED
-}
-
 model Trip {
-  id        String   @id @default(cuid())
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  status         JobStatus @default(PENDING)
-  destination    String
-  destinationLat Float?
-  destinationLng Float?
-  startDate      DateTime
-  endDate        DateTime
-  budget         String
+  status          String   @default("generated") // generated, saved, booked
+  destination     String
+  destinationLat  Float?
+  destinationLng  Float?
+  startDate       DateTime
+  endDate         DateTime
+  budget          String
 
   // We store the huge AI JSON response here.
   // This allows us to save the complex structure without creating 20 different SQL tables.
-  itinerary Json
+  tripData    Json
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

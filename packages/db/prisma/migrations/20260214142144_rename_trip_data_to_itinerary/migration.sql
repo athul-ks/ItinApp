@@ -1,2 +1,0 @@
--- SAFE MANUAL RENAME
-ALTER TABLE "Trip" RENAME COLUMN "tripData" TO "itinerary";

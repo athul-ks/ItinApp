@@ -32,16 +32,15 @@ const nextConfig: NextConfig = {
             value: `
               default-src 'self';
               script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com https://maps.googleapis.com;
-              style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-              img-src 'self' blob: data: https://images.unsplash.com https://lh3.googleusercontent.com https://maps.gstatic.com https://maps.googleapis.com https://*.googleapis.com;
-              font-src 'self' data: https://fonts.gstatic.com;
-              worker-src 'self' blob:;
+              style-src 'self' 'unsafe-inline';
+              img-src 'self' blob: data: https://images.unsplash.com https://lh3.googleusercontent.com https://maps.gstatic.com;
+              font-src 'self' data:;
               object-src 'none';
               base-uri 'self';
               form-action 'self';
               frame-ancestors 'self';
               upgrade-insecure-requests;
-              connect-src 'self' https://*.ingest.de.sentry.io https://maps.googleapis.com https://maps.gstatic.com;
+              connect-src 'self' https://*.ingest.de.sentry.io https://maps.googleapis.com;
             `
               .replace(/\s{2,}/g, ' ')
               .trim(),

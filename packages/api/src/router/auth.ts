@@ -1,4 +1,4 @@
-import { createTRPCRouter, protectedProcedure } from '../trpc';
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const authRouter = createTRPCRouter({
   deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {

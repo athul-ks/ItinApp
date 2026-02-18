@@ -4,29 +4,28 @@ import { useState } from 'react';
 
 import { List, Map as MapIcon } from 'lucide-react';
 
-import { DayPlan, Itinerary } from '@itinapp/schemas';
-
 import { MapView } from '@/app/trip/[id]/map-view';
+import { TripOption } from '@/types/trpc';
 
 import TripContent from './trip-content';
 import TripHeader from './trip-header';
 
 interface TripViewProps {
-  itinerary: Itinerary;
+  plan: TripOption;
   image: { url: string; alt: string; credit: { name: string; link: string } } | null;
   destinationLocation: { lat: number; lng: number };
 }
 
-export function TripView({ itinerary, image, destinationLocation }: TripViewProps) {
+export function TripView({ plan, image, destinationLocation }: TripViewProps) {
   const [hoveredActivity, setHoveredActivity] = useState<string>();
-  const [activeDay, setActiveDay] = useState<string>(`day-${itinerary.days[0]?.day}`);
+  const [activeDay, setActiveDay] = useState<string>(`day-${plan.itinerary[0]?.day}`);
   const [mobileView, setMobileView] = useState<'list' | 'map'>('list');
 
   const handleMarkerClick = (activityName: string) => {
     setMobileView('list');
 
     // Find the day
-    const dayData = itinerary.days.find((day: DayPlan) => {
+    const dayData = plan.itinerary.find((day) => {
       const allDayActivities = [
         ...day.morning.activities,
         ...day.afternoon.activities,
@@ -53,7 +52,7 @@ export function TripView({ itinerary, image, destinationLocation }: TripViewProp
   };
 
   // Flatten activities for the Map
-  const allActivities = itinerary.days.flatMap((day: DayPlan) => [
+  const allActivities = plan.itinerary.flatMap((day) => [
     ...day.morning.activities,
     ...day.afternoon.activities,
     ...day.evening.activities,
@@ -71,10 +70,10 @@ export function TripView({ itinerary, image, destinationLocation }: TripViewProp
         className={`flex h-full w-full flex-col border-r bg-white shadow-xl lg:w-[55%] ${mobileView === 'map' ? 'hidden' : 'flex'}`}
       >
         <div className="relative z-10 flex-none overflow-hidden border-b bg-gray-900 text-white shadow-md">
-          <TripHeader itinerary={itinerary} image={image} />
+          <TripHeader plan={plan} image={image} />
         </div>
         <TripContent
-          itinerary={itinerary}
+          plan={plan}
           activeDay={activeDay}
           setActiveDay={setActiveDay}
           hoveredActivity={hoveredActivity}

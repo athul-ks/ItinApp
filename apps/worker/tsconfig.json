@@ -1,9 +1,0 @@
-{
-  "extends": "@itinapp/configs/base.json",
-  "compilerOptions": {
-    "lib": ["ES2022"], // No "DOM" lib needed (it's a backend worker)
-    "outDir": "dist"
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
-}

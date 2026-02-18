@@ -24,30 +24,17 @@ jobs:
           --health-retries 5
 
     env:
-      # 1. Bypass T3 Env Validation
-      SKIP_ENV_VALIDATION: true
-
-      # 2. Database & Auth Mocks
       DATABASE_URL: 'postgresql://postgres:password@localhost:5432/itinapp'
-      REDIS_URL: 'redis://localhost:6379'
       NEXTAUTH_SECRET: 'dummy-secret-for-ci-tests'
       NEXTAUTH_URL: 'http://localhost:3000'
-
-      # 3. URL Mocks (Fixes the 'startsWith' crash)
-      NEXT_PUBLIC_APP_URL: 'http://localhost:3000'
-      VERCEL_URL: 'localhost:3000'
-
-      # 4. Sentry (Fixes the 401 crash)
-      NEXT_PUBLIC_SENTRY_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0'
-
-      # 5. Other Mocks
       OPENAI_API_KEY: 'mock-key'
       GOOGLE_CLIENT_ID: 'mock-id'
       GOOGLE_CLIENT_SECRET: 'mock-secret'
       DISCORD_WEBHOOK_URL: 'https://discord.com/mock-webhook-url'
       UNSPLASH_ACCESS_KEY: 'mock-key'
       ENABLE_E2E_MOCKS: 'true'
-      CRON_SECRET: 'mock-cron-secret'
+      NEXT_PUBLIC_SENTRY_DSN: ''
+      SENTRY_AUTH_TOKEN: '' # Prevents source map upload attempts
 
     steps:
       - uses: actions/checkout@v4
@@ -66,17 +53,14 @@ jobs:
       - name: Turbo Repo Cache
         uses: dtinth/setup-github-actions-caching-for-turbo@v1
 
-      - name: Setup CI Database
-        run: pnpm turbo run db:push
-
       - name: Lint & Type Check
-        run: pnpm turbo run lint type-check --ui=stream
+        run: pnpm turbo lint type-check
 
       - name: Run Unit & Integration Tests
-        run: pnpm turbo run test --ui=stream --filter '!@itinapp/e2e'
+        run: pnpm turbo test --filter '!@itinapp/e2e'
 
       - name: Build App
-        run: pnpm turbo run build --filter=@itinapp/web
+        run: pnpm build:ci --filter=@itinapp/web
 
       - name: Cache Playwright Browsers
         uses: actions/cache@v4
@@ -87,13 +71,32 @@ jobs:
 
       - name: Install Playwright Browser(s)
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm --filter @itinapp/e2e exec playwright install chromium
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "PR detected: Installing only Chromium"
+            pnpm --filter @itinapp/e2e exec playwright install chromium
+          else
+            echo "Main/Push detected: Installing all browsers"
+            pnpm --filter @itinapp/e2e exec playwright install
+          fi
 
       - name: Install Playwright System Dependencies
-        run: pnpm --filter @itinapp/e2e exec playwright install-deps chromium
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            pnpm --filter @itinapp/e2e exec playwright install-deps chromium
+          else
+            pnpm --filter @itinapp/e2e exec playwright install-deps
+          fi
 
       - name: Run Playwright tests
-        run: pnpm turbo run test:e2e --ui=stream -- --project=chromium
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "🚀 Running Chromium-only tests for PR"
+            pnpm turbo test:e2e -- --project=chromium
+          else
+            echo "🛡️ Running full cross-browser suite for Main"
+            pnpm turbo test:e2e
+          fi
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

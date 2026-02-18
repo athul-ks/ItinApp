@@ -1,28 +1,24 @@
-import { JWT } from 'next-auth/jwt';
 import { withAuth } from 'next-auth/middleware';
-import { NextRequest } from 'next/server';
-
-export const authLogic = ({ req, token }: { req: NextRequest; token: JWT | null }) => {
-  const pathname = req.nextUrl.pathname;
-
-  // If user is logged in, let them go anywhere.
-  if (token) return true;
-
-  // If user is NOT logged in, ONLY allow the Home Page.
-  if (pathname === '/') {
-    return true;
-  }
-
-  // Block everything else
-  return false;
-};
 
 export default withAuth({
   callbacks: {
     // "authorized" is the logic function.
     // If it returns true, the user sees the page.
     // If false, they are redirected to login.
-    authorized: authLogic,
+    authorized: ({ req, token }) => {
+      const pathname = req.nextUrl.pathname;
+
+      // If user is logged in, let them go anywhere.
+      if (token) return true;
+
+      // If user is NOT logged in, ONLY allow the Home Page.
+      if (pathname === '/') {
+        return true;
+      }
+
+      // Block everything else (redirects to login)
+      return false;
+    },
   },
   pages: {
     signIn: '/?auth=login',

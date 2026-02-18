@@ -8,33 +8,30 @@
     }
   },
   "scripts": {
-    "build": "turbo run build --ui=stream",
-    "build:local": "dotenv -e .env -- turbo run build --ui=stream",
+    "build": "pnpm turbo run build --log-order=grouped --",
+    "build:ci": "pnpm turbo run build:ci",
+    "build:local": "dotenv -e .env -- pnpm turbo run build",
     "dev": "dotenv -e .env -- pnpm turbo run dev",
-    "lint": "turbo run lint --ui=stream",
-    "clean": "turbo run clean --ui=stream",
+    "lint": "pnpm turbo run lint --log-order=grouped --",
+    "clean": "pnpm turbo run clean --log-order=grouped --",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "postinstall": "turbo run db:generate",
+    "postinstall": "pnpm turbo run db:generate",
     "db:migrate": "dotenv -e .env -- pnpm turbo run db:migrate",
-    "db:migrate:create": "dotenv -e .env -- pnpm --filter @itinapp/db exec prisma migrate dev --create-only --name",
     "db:deploy": "dotenv -e .env -- pnpm turbo run db:deploy",
-    "db:deploy:prod": "dotenv -e .env.production -- pnpm turbo run db:deploy",
     "db:push": "dotenv -e .env -- pnpm turbo run db:push",
     "db:seed": "dotenv -e .env -- pnpm turbo run db:seed",
     "db:seed:test": "dotenv -e .env -- pnpm turbo run db:seed:test",
-    "db:studio": "dotenv -e .env -- pnpm turbo run db:studio --ui=stream",
+    "db:studio": "dotenv -e .env -- pnpm turbo run db:studio",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "prepare": "husky",
     "commit": "cz",
-    "smoke": "dotenv -e .env -- pnpm --filter @itinapp/api smoke",
-    "test": "dotenv -e .env -- turbo run test --ui=stream",
-    "test:e2e": "dotenv -e .env -- turbo run test:e2e --ui=stream -- --project=chromium",
-    "type-check": "turbo run type-check --ui=stream"
+    "test": "dotenv -e .env -- pnpm turbo run test --log-order=grouped -- --coverage",
+    "test:e2e": "dotenv -e .env -- pnpm turbo run test:e2e --log-order=grouped --",
+    "type-check": "pnpm turbo run type-check --log-order=grouped --"
   },
   "packageManager": "pnpm@10.26.2",
   "devDependencies": {
-    "@itinapp/configs": "workspace:*",
     "@commitlint/cli": "catalog:",
     "@commitlint/config-conventional": "catalog:",
     "@trivago/prettier-plugin-sort-imports": "catalog:",
@@ -43,18 +40,8 @@
     "dotenv-cli": "catalog:",
     "eslint": "catalog:",
     "husky": "catalog:",
-    "lint-staged": "catalog:",
     "prettier": "catalog:",
     "prettier-plugin-tailwindcss": "catalog:",
     "turbo": "catalog:"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml}": [
-      "prettier --write"
-    ]
   }
 }

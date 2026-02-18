@@ -12,17 +12,20 @@
     "OPENAI_API_KEY",
     "SENTRY_AUTH_TOKEN",
     "DATABASE_URL",
-    "REDIS_URL",
     "NEXTAUTH_SECRET",
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "DISCORD_WEBHOOK_URL",
-    "CRON_SECRET",
-    "LOGTAIL_SOURCE_TOKEN"
+    "ENABLE_E2E_MOCKS"
   ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "db:generate"],
+      "dependsOn": ["^build", "db:generate", "db:deploy"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+    },
+    "build:ci": {
+      "dependsOn": ["^build:ci", "db:generate", "db:push"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
@@ -35,7 +38,7 @@
       "inputs": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts"]
     },
     "test:e2e": {
-      "dependsOn": ["db:generate", "db:push", "db:seed:test"],
+      "dependsOn": ["db:generate", "db:seed:test"],
       "outputs": ["playwright-report/**"]
     },
     "type-check": {

@@ -1,12 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { z } from 'zod';
 
-import {
-  createCallerFactory,
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from '../trpc';
+import { createCallerFactory, createTRPCRouter, protectedProcedure, publicProcedure } from './trpc';
 
 // Mock Sentry to verify it gets called
 vi.mock('@sentry/nextjs', () => ({
@@ -19,7 +14,9 @@ const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 describe('tRPC Middleware & Error Handling', () => {
   it('should format Zod errors correctly', async () => {
     const testRouter = createTRPCRouter({
-      testValidation: publicProcedure.input(z.object({ email: z.email() })).query(() => 'success'),
+      testValidation: publicProcedure
+        .input(z.object({ email: z.string().email() }))
+        .query(() => 'success'),
     });
 
     const caller = createCallerFactory(testRouter)({

@@ -6,9 +6,10 @@ import { Badge } from '@itinapp/ui/components/badge';
 import { Button } from '@itinapp/ui/components/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@itinapp/ui/components/card';
 
-import { DeleteAccountButton } from '@/components/delete-account-button';
 import { auth } from '@/server/auth';
 import { api } from '@/trpc/server';
+
+import { DeleteAccountButton } from '@/components/delete-account-button';
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -26,7 +27,7 @@ export default async function DashboardPage() {
           <h1 className="text-3xl font-bold tracking-tight">My Trips</h1>
           <p className="text-muted-foreground mt-1">Manage and view your generated itineraries.</p>
         </div>
-        <Link href="/">
+        <Link href="/plan">
           <Button>+ Plan New Trip</Button>
         </Link>
       </div>
@@ -37,7 +38,7 @@ export default async function DashboardPage() {
           <p className="text-muted-foreground mb-6">
             You haven&apos;t generated any itineraries yet.
           </p>
-          <Link href="/">
+          <Link href="/plan">
             <Button variant="default">Start your first adventure</Button>
           </Link>
         </div>
@@ -47,7 +48,7 @@ export default async function DashboardPage() {
           {trips.map((trip) => {
             // Get the first option to show a preview (usually the "Fast Paced" one)
             // or just use generic trip data
-            const itinerary = trip.itinerary;
+            const firstOption = trip.tripData[0];
 
             return (
               <Card
@@ -62,12 +63,6 @@ export default async function DashboardPage() {
                   >
                     {trip.budget.charAt(0).toUpperCase() + trip.budget.slice(1)} Budget
                   </Badge>
-
-                  {trip.status !== 'COMPLETED' && (
-                    <Badge className="absolute top-4 left-4 bg-yellow-500 text-white">
-                      {trip.status}
-                    </Badge>
-                  )}
                 </div>
 
                 <CardHeader>
@@ -84,17 +79,15 @@ export default async function DashboardPage() {
                     </span>
                   </div>
 
-                  {itinerary ? (
-                    <p className="line-clamp-3 text-sm text-gray-600">{itinerary.description}</p>
-                  ) : (
-                    <p className="text-sm text-gray-400 italic">Generating your perfect trip...</p>
+                  {firstOption && (
+                    <p className="line-clamp-3 text-sm text-gray-600">{firstOption.description}</p>
                   )}
                 </CardContent>
 
                 <CardFooter className="bg-muted/20 p-4">
                   <Link href={`/trip/${trip.id}`} className="w-full">
                     <Button variant="outline" className="group w-full gap-2">
-                      {trip.status === 'COMPLETED' ? 'View Itinerary' : 'Check Status'}
+                      View Itinerary
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Button>
                   </Link>
