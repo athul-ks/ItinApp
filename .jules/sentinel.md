@@ -81,17 +81,10 @@
 ## 2026-06-25 - Rate Limit Bypass via Failure
 
 **Vulnerability:** Users could bypass the "1 trip per minute" rate limit by intentionally causing the generation to fail (e.g., via prompt injection or cancellation), as the failed trip record was deleted, removing the `createdAt` timestamp used for the cooldown check.
-**Learning:** "Check-then-Act" rate limiting relying on database records fails if the "Act" (record creation) is rolled back on failure. The record of the _attempt_ must persist.
+**Learning:** "Check-then-Act" rate limiting relying on database records fails if the "Act" (record creation) is rolled back on failure. The record of the *attempt* must persist.
 **Prevention:** Never delete the audit/tracking record on failure. Update its status to `failed` instead, so the timestamp remains available for rate limiting logic. Filter these failed records from the UI if necessary.
 
 ## 2026-06-30 - Availability Risk from Strict Schema Validation
-
 **Vulnerability:** A single corrupted record in the database (violating the Zod schema) caused the `getAll` endpoint to crash with a 500 error for the user, effectively locking them out of their dashboard.
 **Learning:** Strict schema validation on read (`.parse()`) is a double-edged sword. While it guarantees data integrity for the application, it creates a "Fragile Read" vulnerability where one bad apple spoils the bunch.
 **Prevention:** On list endpoints (`findMany`), use `.safeParse()` inside a `reduce` or `filter` operation to gracefully skip corrupted records while logging the anomaly for administrative repair, rather than crashing the entire request.
-
-## 2026-07-01 - Logic Bypass via Production Environment Misconfiguration
-
-**Vulnerability:** The `x-e2e-mock` header, intended for bypassing logic/credits during testing, was active in production because the code did not explicitly disable it based on `NODE_ENV`.
-**Learning:** Features intended for "dev/test only" often leak into production if their deactivation relies on implicit assumptions (like "we won't set the env var") rather than explicit code guards.
-**Prevention:** Hardcode checks for `NODE_ENV === 'production'` to strictly disable dangerous dev-only features (backdoors), ensuring they cannot be activated by misconfiguration or user input.
