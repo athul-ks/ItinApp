@@ -18,16 +18,31 @@
 
 It is engineered as a high-performance **Monorepo** to ensure strict type safety from the database schema (Prisma) all the way to the frontend client (Next.js), deployed on a **Serverless** architecture.
 
-### ✨ Key Features (Implemented)
+### 🏗️ Evolution to Distributed Architecture
 
-- **🔐 Secure Authentication:** Robust Google Sign-In via NextAuth.js with protected route middleware.
-- **🧠 AI-Powered Engine:** Connects to OpenAI to generate context-aware travel plans based on "Vibe" (Relaxed, Balanced, Fast).
-- **⚡ Serverless Infrastructure:** Deployed on Vercel with Supabase Connection Pooling (PgBouncer) for massive scalability.
-- **🛡️ Enterprise-Grade Safety:** Real-time error tracking via Sentry and automated testing pipelines (Vitest for logic, Playwright for E2E).
-- **📊 Observability:** Built-in Vercel Analytics and Real-time Discord Alerts for new user signups.
-- **⏳ Progressive UX:** Smart loading states that keep users engaged while the AI curates the trip.
-- **💰 Smart Budgeting:** Input your budget level (Economy, Standard, Luxury) to get tailored recommendations.
-- **⚡ End-to-End Type Safety:** Fully typed API communication using tRPC and Zod.
+Initially a simple serverless application, ItinApp has evolved into a robust **Asynchronous Distributed System**. To handle the latency of AI generation without blocking the user interface, we decoupled the "Generation Logic" from the "Web Server."
+
+- **Web App (Vercel):** Handles UI, Authentication, and fast read operations.
+- **Worker Node (Docker/VM):** A dedicated background worker that processes long-running AI jobs via a **Redis Queue**.
+
+This ensures the UI remains snappy even when hundreds of users are generating complex trips simultaneously.
+
+### ✨ Key Features
+
+- **🔐 Enterprise-Grade Security:**
+  - **Snyk:** Automated vulnerability scanning for dependencies.
+  - **NextAuth.js:** Secure Google OAuth with protected middleware.
+- **⚡ Asynchronous AI Engine:**
+  - **BullMQ & Redis:** Decoupled job processing prevents timeouts on Serverless functions.
+  - **Worker Isolation:** AI generation runs on a dedicated worker service, scalable independently from the web app.
+- **🛡️ Quality & Reliability:**
+  - **SonarQube:** Continuous code quality analysis and "Clean Code" enforcement.
+  - **End-to-End Testing:** **Playwright** suite running in CI to verify critical user flows.
+  - **Unit Testing:** **Vitest** for robust logic verification.
+- **📊 Deep Observability:**
+  - **Better Stack:** Centralized structured logging (Web + Worker) and uptime monitoring.
+  - **Sentry:** Full-stack error tracking with source map integration.
+  - **Analytics:** Built-in Vercel Analytics and Real-time Discord Alerts for new user signups.
 
 ---
 
@@ -38,13 +53,14 @@ Built with the **T3 Stack** philosophy, optimized for deployment and scale.
 - **Monorepo Tool:** [Turborepo](https://turbo.build/)
 - **Package Manager:** [pnpm](https://pnpm.io/)
 - **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+- **Async Processing:** Redis + BullMQ (Job Queue)
 - **Styling:** Tailwind CSS v4 + Shadcn UI
 - **Authentication:** [NextAuth.js](https://next-auth.js.org/) (v4 Adapter)
 - **AI Provider:** OpenAI API
 - **API Layer:** [tRPC](https://trpc.io/)
 - **Database:** PostgreSQL with [Prisma ORM](https://www.prisma.io/)
 - **Testing:** [Vitest](https://vitest.dev/) (Unit) & [Playwright](https://playwright.dev/) (E2E)
-- **Monitoring:** [Sentry](https://sentry.io/) & Vercel Analytics
+- **Monitoring:** [Sentry](https://sentry.io/), Vercel Analytics & Better Stack (Logs/Uptime)
 
 ---
 
@@ -54,7 +70,10 @@ The codebase is organized as a Turborepo monorepo:
 
 ```text
 .
-├── web/                # Main Next.js frontend application
+├── apps/
+│   ├── web/                # Next.js Frontend (Vercel)
+│   ├── worker/             # Node.js Background Worker (Docker/VM)
+│   └── e2e/                # Playwright End-to-End Tests
 ├── packages/
 │   ├── api/            # tRPC routers (Trip generation logic)
 │   ├── auth/           # NextAuth configuration & session logic
@@ -92,20 +111,13 @@ Follow these steps to set up the project locally.
     ```
 
 3.  **Set up Environment Variables:**
-    Create a .env file with your credentials (see .env.example). You will need API keys for OpenAI, Google OAuth, and a Supabase database URL.
+    Copy the example file to create your local configuration.
 
+    ```bash
+    cp .env.example .env
     ```
-    DATABASE_URL="postgresql://user:password@localhost:5432/itinapp"
 
-    # Authentication (NextAuth)
-    NEXTAUTH_URL="http://localhost:3000"
-    NEXTAUTH_SECRET="your-super-secret-key"
-    AUTH_GOOGLE_ID="your-google-client-id"
-    AUTH_GOOGLE_SECRET="your-google-client-secret"
-
-    # AI
-    OPENAI_API_KEY="sk-..."
-    ```
+    Open `.env` and fill in the missing values:
 
 4.  **Initialize the Database:**
     Push the Prisma schema to your database:
@@ -137,7 +149,7 @@ Follow these steps to set up the project locally.
 
 - [x] **Dynamic Imagery:** Fetch destination photos via Unsplash/Google Places API.
 - [x] **Interactive Maps:** Split-screen view with pins for daily activities.
-- [ ] **Day-by-Day UI:** Tabbed interface for easier itinerary navigation.
+- [x] **Day-by-Day UI:** Tabbed interface for easier itinerary navigation.
 
 ### 🔮 Phase 3: The "Editor" Experience
 
