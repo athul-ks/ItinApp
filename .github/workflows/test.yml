@@ -7,8 +7,6 @@ jobs:
     name: Run Tests & Lint
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.58.2-noble
 
     services:
       postgres:
@@ -24,23 +22,14 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     env:
       # 1. Bypass T3 Env Validation
       SKIP_ENV_VALIDATION: true
 
       # 2. Database & Auth Mocks
-      DATABASE_URL: 'postgresql://postgres:password@postgres:5432/itinapp'
-      REDIS_URL: 'redis://redis:6379'
+      DATABASE_URL: 'postgresql://postgres:password@localhost:5432/itinapp'
+      REDIS_URL: 'redis://localhost:6379'
       NEXTAUTH_SECRET: 'dummy-secret-for-ci-tests'
       NEXTAUTH_URL: 'http://localhost:3000'
 
@@ -72,7 +61,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Turbo Repo Cache
         uses: dtinth/setup-github-actions-caching-for-turbo@v1
@@ -89,6 +78,32 @@ jobs:
       - name: Build App
         run: pnpm turbo run build --filter=@itinapp/web
 
+      - name: Cache Playwright Browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install Playwright Browser(s)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "PR detected: Installing only Chromium"
+            pnpm --filter @itinapp/e2e exec playwright install chromium
+          else
+            echo "Main/Push detected: Installing all browsers"
+            pnpm --filter @itinapp/e2e exec playwright install
+          fi
+
+      - name: Install Playwright System Dependencies
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            pnpm --filter @itinapp/e2e exec playwright install-deps chromium
+          else
+            pnpm --filter @itinapp/e2e exec playwright install-deps
+          fi
+
       - name: Run Playwright tests
         run: |
           if [ "${{ github.event_name }}" == "pull_request" ]; then
@@ -98,11 +113,6 @@ jobs:
             echo "🛡️ Running full cross-browser suite for Main"
             pnpm turbo run test:e2e --ui=stream
           fi
-        env:
-          # Tell Playwright to look for browsers in the system folders
-          # (Standard for the official docker image)
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-          PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
