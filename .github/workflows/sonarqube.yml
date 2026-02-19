@@ -76,6 +76,11 @@ jobs:
       - name: Run Tests & Generate Coverage
         run: pnpm turbo run test --ui=stream --force -- --coverage --passWithNoTests
 
+      - name: Extract Sonar Exclusions
+        run: |
+          EXCLUSIONS=$(node --input-type=module -e "import { sharedExclusions } from './coverage-exclusions.js'; console.log(sharedExclusions.join(','));")
+          echo "SONAR_EXCLUSIONS=$EXCLUSIONS" >> $GITHUB_ENV
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
@@ -88,3 +93,4 @@ jobs:
             -Dsonar.sources=apps,packages
             -Dsonar.inclusions=apps/web/src/**,packages/**/*.ts,packages/**/*.tsx
             -Dsonar.typescript.tsconfigPaths=apps/web/tsconfig.json,packages/api/tsconfig.json,packages/db/tsconfig.json,packages/auth/tsconfig.json,packages/env/tsconfig.json,packages/ui/tsconfig.json
+            -Dsonar.coverage.exclusions=${{ env.SONAR_EXCLUSIONS }}

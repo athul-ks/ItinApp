@@ -3,6 +3,8 @@ import path from 'path';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { coverageConfigDefaults, defineConfig } from 'vitest/config';
 
+import { sharedExclusions } from '../../coverage-exclusions.js';
+
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   resolve: {
@@ -19,33 +21,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       include: ['**/src/**/*.{ts,tsx}'],
-      exclude: [
-        ...coverageConfigDefaults.exclude,
-        '**/src/app/**/layout.tsx',
-        '**/src/components/ui/**',
-        '**/*.d.ts',
-        '**/*.config.*',
-        '**/src/instrumentation.ts',
-        '**/src/instrumentation-client.ts',
-        '**/src/lib/destination.ts',
-        '**/src/server/auth.ts',
-        '**/src/trpc/**',
-        '**/src/app/**/not-found.tsx',
-        '**/src/app/**/global-error.tsx',
-        '**/src/app/providers.tsx',
-        '**/src/app/(home)/page.tsx',
-        '**/src/app/api/auth/[...nextauth]/route.ts',
-        '**/src/app/api/trpc/[trpc]/route.ts',
-        '**/src/app/dashboard/page.tsx',
-        '**/src/app/plan/page.tsx',
-        '**/src/app/plan/upgrade-modal.tsx',
-        '**/src/app/trip/[id]/map-view.tsx',
-        '**/src/app/trip/[id]/page.tsx',
-        '**/src/app/trip/[id]/trip-header.tsx',
-        '**/src/providers/**',
-        '**/src/server/auth.ts',
-        '**/src/components/footer.tsx',
-      ],
+      exclude: [...coverageConfigDefaults.exclude, ...sharedExclusions],
     },
   },
 });
