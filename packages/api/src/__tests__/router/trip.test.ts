@@ -11,11 +11,13 @@ import { tripRouter } from '../../router/trip';
 
 // Test Setup
 let mockDb: DeepMockProxy<PrismaClient>;
+const originalEnv = process.env;
 
 describe('tripRouter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockDb = mockDeep<PrismaClient>();
+    process.env.ENABLE_E2E_MOCKS = 'false';
 
     // MOCK TRANSACTION
     // Execute callback immediately
@@ -28,6 +30,10 @@ describe('tripRouter', () => {
 
     // MOCK QUERYRAW
     mockDb.$queryRaw.mockResolvedValue([1]);
+  });
+
+  afterAll(() => {
+    process.env = originalEnv;
   });
 
   const mockSession = {

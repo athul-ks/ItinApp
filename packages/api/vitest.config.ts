@@ -12,7 +12,7 @@ export default defineConfig({
         '**/*.test.ts',
         '**/*.spec.ts',
         'dist/**',
-        'scripts/smoke-test-worker.ts',
+        '**/scripts/smoke-test-worker.ts',
       ],
     },
     setupFiles: ['./vitest.setup.ts'],
