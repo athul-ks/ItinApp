@@ -24,9 +24,3 @@ jobs:
     name: 🔮 SonarQube Analysis
     uses: ./.github/workflows/sonarqube.yml
     secrets: inherit
-
-  # 3. Run Snyk Security
-  snyk:
-    name: 🐶 Snyk Security
-    uses: ./.github/workflows/snyk.yml
-    secrets: inherit

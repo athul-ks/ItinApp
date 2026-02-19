@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/'
+    # Check for non-security version updates once a week
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    # Group updates so it opens 1 PR instead of 20 separate PRs
+    groups:
+      all-dependencies:
+        patterns:
+          - '*'
