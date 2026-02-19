@@ -2,7 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { type ReadonlyURLSearchParams, useRouter, useSearchParams } from 'next/navigation';
 import type { DateRange } from 'react-day-picker';
-import { vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PlanContents } from '@/app/plan/plan-contents';
 import { api } from '@/trpc/react';
@@ -171,7 +171,6 @@ describe('PlanContents', () => {
     // We need to capture the callbacks passed to useMutation
     let capturedOptions: { onSuccess: (data: { tripId: string }) => void; onError: (error: Error) => void };
     vi.mocked(api.trip.generate.useMutation).mockImplementation((options) => {
-      // @ts-expect-error - options is untyped in mock implementation
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       capturedOptions = options as any;
       return createMockMutationResult({
@@ -204,7 +203,6 @@ describe('PlanContents', () => {
     const mutateMock = vi.fn();
     let capturedOptions: { onSuccess: (data: { tripId: string }) => void; onError: (error: Error) => void };
     vi.mocked(api.trip.generate.useMutation).mockImplementation((options) => {
-      // @ts-expect-error - options is untyped in mock implementation
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       capturedOptions = options as any;
       return createMockMutationResult({
@@ -225,7 +223,7 @@ describe('PlanContents', () => {
     expect(mutateMock).toHaveBeenCalled();
 
     // Verify error handling
-    const mockError = { message: 'INSUFFICIENT_CREDITS: You need more credits' };
+    const mockError = new Error('INSUFFICIENT_CREDITS: You need more credits');
     act(() => {
       capturedOptions.onError(mockError);
     });
@@ -239,7 +237,6 @@ describe('PlanContents', () => {
     const mutateMock = vi.fn();
     let capturedOptions: { onSuccess: (data: { tripId: string }) => void; onError: (error: Error) => void };
     vi.mocked(api.trip.generate.useMutation).mockImplementation((options) => {
-      // @ts-expect-error - options is untyped in mock implementation
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       capturedOptions = options as any;
       return createMockMutationResult({
@@ -258,7 +255,7 @@ describe('PlanContents', () => {
     fireEvent.click(generateBtn);
 
     // Verify error handling
-    const mockError = { message: 'Some other error' };
+    const mockError = new Error('Some other error');
     act(() => {
       capturedOptions.onError(mockError);
     });
