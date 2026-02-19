@@ -42,6 +42,8 @@ export default defineConfig({
         '**/src/app/trip/[id]/map-view.tsx',
         '**/src/app/trip/[id]/page.tsx',
         '**/src/app/trip/[id]/trip-header.tsx',
+        '**/src/providers/**',
+        '**/src/server/auth.ts',
       ],
     },
   },
