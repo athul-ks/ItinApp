@@ -88,7 +88,11 @@ describe('Header', () => {
 
     expect(screen.getAllByText('My Trips').length).toBeGreaterThan(0);
 
-    expect(screen.getByTestId('credit-badge')).toBeInTheDocument();
+    // There can be multiple credit badges (desktop and mobile)
+    const creditBadges = screen.getAllByTestId('credit-badge');
+    expect(creditBadges.length).toBeGreaterThan(0);
+    expect(creditBadges[0]).toBeInTheDocument();
+
     expect(screen.getAllByText('Sign Out').length).toBeGreaterThan(0);
   });
 

@@ -48,6 +48,9 @@ vi.mock('@itinapp/ui/components/button', () => ({
   ),
 }));
 
+// Helper type to avoid repeating long return type
+type DeleteAccountMutationResult = ReturnType<typeof api.auth.deleteAccount.useMutation>;
+
 describe('DeleteAccountButton', () => {
   const mockMutate = vi.fn();
   let onSuccessCallback: (() => Promise<void>) | undefined;
@@ -56,11 +59,9 @@ describe('DeleteAccountButton', () => {
     vi.clearAllMocks();
     onSuccessCallback = undefined;
 
-    // Use vi.mocked to get strict typing if possible, or cast appropriately
     const useMutationMock = vi.mocked(api.auth.deleteAccount.useMutation);
 
     useMutationMock.mockImplementation((options: unknown) => {
-       // We know options has onSuccess but TS doesn't
        const opts = options as { onSuccess?: () => Promise<void> };
        onSuccessCallback = opts?.onSuccess;
 
@@ -81,34 +82,27 @@ describe('DeleteAccountButton', () => {
         isPaused: false,
         mutateAsync: vi.fn(),
         submittedAt: 0,
-       };
+       } as unknown as DeleteAccountMutationResult;
     });
   });
 
   it('renders the delete account button', () => {
     render(<DeleteAccountButton />);
-    expect(screen.getByText('Delete Account')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Delete Account' })).toBeInTheDocument();
   });
 
   it('opens confirmation dialog and triggers delete', () => {
     render(<DeleteAccountButton />);
 
-    // Open dialog
     fireEvent.click(screen.getByTestId('force-open-dialog'));
-
-    // Check text
     expect(screen.getByText('Delete Account', { selector: 'h2' })).toBeInTheDocument();
 
-    // Click confirm
     fireEvent.click(screen.getByText('Yes, delete my account'));
-
     expect(mockMutate).toHaveBeenCalled();
   });
 
   it('calls signOut after successful deletion', async () => {
     render(<DeleteAccountButton />);
-
-    // Ensure mutation hook was called and we captured the callback
     expect(onSuccessCallback).toBeDefined();
 
     if (onSuccessCallback) {
@@ -138,11 +132,9 @@ describe('DeleteAccountButton', () => {
         isPaused: false,
         mutateAsync: vi.fn(),
         submittedAt: 0,
-    });
+    } as unknown as DeleteAccountMutationResult);
 
     render(<DeleteAccountButton />);
-
-    // Open dialog to see the button
     fireEvent.click(screen.getByTestId('force-open-dialog'));
 
     const button = screen.getByText('Deleting...');
