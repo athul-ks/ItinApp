@@ -28,8 +28,7 @@ describe('DaySectionBlock', () => {
     travelTime: '10 mins',
     lat: 0,
     lng: 0,
-    rating: 4.5,
-    location: 'Park',
+    // Removed rating and location
   };
 
   const mockActivity2: Activity = {
@@ -41,8 +40,7 @@ describe('DaySectionBlock', () => {
     travelTime: '15 mins',
     lat: 0,
     lng: 0,
-    rating: 4.8,
-    location: 'Museum',
+    // Removed rating and location
   };
 
   const mockData: DaySection = {
@@ -52,11 +50,10 @@ describe('DaySectionBlock', () => {
         name: 'Tasty Cafe',
         cuisine: 'Coffee',
         cost: '$',
-        rating: 4.5,
+        rating: '4.5', // String
         lat: 0,
         lng: 0,
-        location: 'Downtown',
-        description: 'Great coffee',
+        // Removed location and description (Restaurant schema: name, cuisine, cost, rating, lat, lng)
       },
     ],
   };

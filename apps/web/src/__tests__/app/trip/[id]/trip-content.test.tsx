@@ -61,18 +61,17 @@ describe('TripContent', () => {
     travelTime: '10 mins',
     lat: 10,
     lng: 10,
-    rating: 4.5,
-    location: 'Location',
+    // Removed rating and location as they are not in the schema
   };
 
   const mockRestaurant: Restaurant = {
     name: 'Restaurant',
     cuisine: 'Cuisine',
     cost: '$',
-    rating: 4.5,
+    rating: '4.5', // String in schema
     lat: 10,
     lng: 10,
-    location: 'Location',
+    // Removed location
   };
 
   const mockDaySection: DaySection = {
@@ -81,13 +80,11 @@ describe('TripContent', () => {
   };
 
   const mockItinerary: Itinerary = {
-    id: 'trip-1',
-    userId: 'user-1',
-    destination: 'Paris',
-    startDate: '2023-01-01',
-    endDate: '2023-01-02',
-    budget: 1000,
-    status: 'generated',
+    title: 'Trip to Paris',
+    description: 'A wonderful trip',
+    totalCostEstimate: '1000',
+    vibe: 'Balanced',
+    highlights: ['Eiffel Tower'],
     days: [
       {
         day: 1,
@@ -101,10 +98,7 @@ describe('TripContent', () => {
           name: 'Hotel Paris',
           location: 'Central Paris',
           reason: 'Good view',
-          rating: 4.8,
-          cost: '$$',
-          lat: 10,
-          lng: 10,
+          // Removed cost, rating, lat, lng as they are not in the schema
         },
       },
       {
@@ -119,10 +113,6 @@ describe('TripContent', () => {
           name: 'Hotel Art',
           location: 'Left Bank',
           reason: 'Close to museums',
-          rating: 4.5,
-          cost: '$$$',
-          lat: 10,
-          lng: 10,
         },
       },
     ],

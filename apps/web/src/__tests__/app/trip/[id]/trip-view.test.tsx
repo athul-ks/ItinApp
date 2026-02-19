@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { Activity, DaySection, Itinerary, Restaurant } from '@itinapp/schemas';
+import { Activity, DaySection, Itinerary } from '@itinapp/schemas';
 import { TripView } from '@/app/trip/[id]/trip-view';
 
 // Mock dependencies
@@ -44,8 +44,7 @@ describe('TripView', () => {
     travelTime: '10 mins',
     lat: 10,
     lng: 10,
-    rating: 4.5,
-    location: 'Loc 1',
+    // Removed rating and location
   };
 
   const mockActivity2: Activity = {
@@ -57,8 +56,7 @@ describe('TripView', () => {
     travelTime: '20 mins',
     lat: 20,
     lng: 20,
-    rating: 4.0,
-    location: 'Loc 2',
+    // Removed rating and location
   };
 
   const mockDaySection1: DaySection = {
@@ -72,13 +70,11 @@ describe('TripView', () => {
   };
 
   const mockItinerary: Itinerary = {
-    id: 'trip-1',
-    userId: 'user-1',
-    destination: 'Paris',
-    startDate: '2023-01-01',
-    endDate: '2023-01-02',
-    budget: 1000,
-    status: 'generated',
+    title: 'Trip to Paris',
+    description: 'A wonderful trip',
+    totalCostEstimate: '1000',
+    vibe: 'Balanced',
+    highlights: ['Eiffel Tower'],
     days: [
       {
         day: 1,
@@ -92,10 +88,7 @@ describe('TripView', () => {
           name: 'Hotel 1',
           location: 'Loc 1',
           reason: 'Reason 1',
-          rating: 4.5,
-          cost: '$$',
-          lat: 10,
-          lng: 10,
+          // Removed rating, cost, lat, lng
         },
       },
       {
@@ -110,10 +103,6 @@ describe('TripView', () => {
           name: 'Hotel 2',
           location: 'Loc 2',
           reason: 'Reason 2',
-          rating: 4.0,
-          cost: '$$$',
-          lat: 20,
-          lng: 20,
         },
       },
     ],
