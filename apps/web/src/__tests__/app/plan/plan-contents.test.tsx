@@ -34,7 +34,7 @@ vi.mock('@/app/plan/upgrade-modal', () => ({
 }));
 
 vi.mock('@/components/date-range-picker', () => ({
-  DateRangePicker: ({ date, setDate }: { date: DateRange | undefined; setDate: (date: DateRange | undefined) => void }) => (
+  DateRangePicker: ({ setDate }: { date: DateRange | undefined; setDate: (date: DateRange | undefined) => void }) => (
     <input
       data-testid="date-range-picker"
       onChange={(e) => {
@@ -153,10 +153,9 @@ describe('PlanContents', () => {
   it('shows alert if date range is missing when generating', () => {
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
     // Mock useMutation return value
-    vi.mocked(api.trip.generate.useMutation).mockReturnValue({
-      mutate: vi.fn(),
-      isPending: false,
-    } as any);
+    vi.mocked(api.trip.generate.useMutation).mockReturnValue(
+      createMockMutationResult() as unknown as ReturnType<typeof api.trip.generate.useMutation>
+    );
 
     render(<PlanContents />);
 
@@ -172,7 +171,9 @@ describe('PlanContents', () => {
     // We need to capture the callbacks passed to useMutation
     let capturedOptions: { onSuccess: (data: { tripId: string }) => void; onError: (error: Error) => void };
     vi.mocked(api.trip.generate.useMutation).mockImplementation((options) => {
-      capturedOptions = options as unknown as typeof capturedOptions;
+      // @ts-expect-error - options is untyped in mock implementation
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      capturedOptions = options as any;
       return createMockMutationResult({
         mutate: mutateMock,
       }) as unknown as ReturnType<typeof api.trip.generate.useMutation>;
@@ -203,7 +204,9 @@ describe('PlanContents', () => {
     const mutateMock = vi.fn();
     let capturedOptions: { onSuccess: (data: { tripId: string }) => void; onError: (error: Error) => void };
     vi.mocked(api.trip.generate.useMutation).mockImplementation((options) => {
-      capturedOptions = options as unknown as typeof capturedOptions;
+      // @ts-expect-error - options is untyped in mock implementation
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      capturedOptions = options as any;
       return createMockMutationResult({
         mutate: mutateMock,
       }) as unknown as ReturnType<typeof api.trip.generate.useMutation>;
@@ -236,7 +239,9 @@ describe('PlanContents', () => {
     const mutateMock = vi.fn();
     let capturedOptions: { onSuccess: (data: { tripId: string }) => void; onError: (error: Error) => void };
     vi.mocked(api.trip.generate.useMutation).mockImplementation((options) => {
-      capturedOptions = options as unknown as typeof capturedOptions;
+      // @ts-expect-error - options is untyped in mock implementation
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      capturedOptions = options as any;
       return createMockMutationResult({
         mutate: mutateMock,
       }) as unknown as ReturnType<typeof api.trip.generate.useMutation>;
