@@ -1,9 +1,11 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { HeroSearch } from '../../../app/(home)/hero-search';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { POPULAR_DESTINATIONS } from '@/lib/destinations';
+
+import { HeroSearch } from '../../../app/(home)/hero-search';
 
 // Mock ResizeObserver for cmdk
 global.ResizeObserver = class ResizeObserver {
@@ -27,9 +29,9 @@ vi.mock('next/navigation', () => ({
 
 // Mock Lucide icons
 vi.mock('lucide-react', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof import('lucide-react')>();
   return {
-    ...actual as any,
+    ...actual,
     MapPinIcon: () => <div data-testid="map-pin-icon" />,
     ChevronsUpDown: () => <div data-testid="chevrons-up-down" />,
     Check: () => <div data-testid="check-icon" />,
@@ -46,11 +48,22 @@ describe('HeroSearch', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useRouter as any).mockReturnValue({ push: mockPush });
+    vi.mocked(useRouter).mockReturnValue({
+      push: mockPush,
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+    });
   });
 
   it('renders correctly with default state', () => {
-    (useSession as any).mockReturnValue({ data: null });
+    vi.mocked(useSession).mockReturnValue({
+      data: null,
+      status: 'unauthenticated',
+      update: vi.fn(),
+    });
     render(<HeroSearch />);
 
     expect(screen.getByRole('combobox')).toBeInTheDocument();
@@ -59,7 +72,11 @@ describe('HeroSearch', () => {
   });
 
   it('opens popover and lists destinations', async () => {
-    (useSession as any).mockReturnValue({ data: null });
+    vi.mocked(useSession).mockReturnValue({
+      data: null,
+      status: 'unauthenticated',
+      update: vi.fn(),
+    });
     render(<HeroSearch />);
 
     const trigger = screen.getByRole('combobox');
@@ -67,12 +84,16 @@ describe('HeroSearch', () => {
 
     const firstDestination = POPULAR_DESTINATIONS[0];
     await waitFor(() => {
-        expect(screen.getByText(firstDestination.label)).toBeInTheDocument();
+      expect(screen.getByText(firstDestination.label)).toBeInTheDocument();
     });
   });
 
   it('selects a destination and enables button', async () => {
-    (useSession as any).mockReturnValue({ data: null });
+    vi.mocked(useSession).mockReturnValue({
+      data: null,
+      status: 'unauthenticated',
+      update: vi.fn(),
+    });
     render(<HeroSearch />);
 
     const trigger = screen.getByRole('combobox');
@@ -88,7 +109,11 @@ describe('HeroSearch', () => {
   });
 
   it('redirects to auth when user is not logged in', async () => {
-    (useSession as any).mockReturnValue({ data: null });
+    vi.mocked(useSession).mockReturnValue({
+      data: null,
+      status: 'unauthenticated',
+      update: vi.fn(),
+    });
     render(<HeroSearch />);
 
     // Select destination
@@ -111,7 +136,18 @@ describe('HeroSearch', () => {
   });
 
   it('redirects to plan page when user is logged in', async () => {
-    (useSession as any).mockReturnValue({ data: { user: { name: 'Test User' } } });
+    vi.mocked(useSession).mockReturnValue({
+      data: {
+        user: {
+          name: 'Test User',
+          id: 'user_123',
+          credits: 10,
+        },
+        expires: '9999-12-31T23:59:59.999Z',
+      },
+      status: 'authenticated',
+      update: vi.fn(),
+    });
     render(<HeroSearch />);
 
     // Select destination
@@ -133,7 +169,11 @@ describe('HeroSearch', () => {
   });
 
   it('does nothing if search is empty', async () => {
-     (useSession as any).mockReturnValue({ data: null });
+    vi.mocked(useSession).mockReturnValue({
+      data: null,
+      status: 'unauthenticated',
+      update: vi.fn(),
+    });
     render(<HeroSearch />);
 
     const button = screen.getByText('Plan my Trip');
