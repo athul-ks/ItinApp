@@ -88,10 +88,6 @@ describe('TripPoller', () => {
 
     render(<TripPoller {...defaultProps} />);
 
-    // Logic in component:
-    // useEffect(() => { if (trip?.status === 'COMPLETED') router.refresh() }, [trip, router]);
-    // So refresh is called in useEffect.
-
     await waitFor(() => {
       expect(mockRouter.refresh).toHaveBeenCalled();
     });

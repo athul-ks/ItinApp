@@ -61,7 +61,6 @@ describe('TripContent', () => {
     travelTime: '10 mins',
     lat: 10,
     lng: 10,
-    // Removed rating and location as they are not in the schema
   };
 
   const mockRestaurant: Restaurant = {
@@ -71,7 +70,6 @@ describe('TripContent', () => {
     rating: '4.5', // String in schema
     lat: 10,
     lng: 10,
-    // Removed location
   };
 
   const mockDaySection: DaySection = {
@@ -98,7 +96,6 @@ describe('TripContent', () => {
           name: 'Hotel Paris',
           location: 'Central Paris',
           reason: 'Good view',
-          // Removed cost, rating, lat, lng as they are not in the schema
         },
       },
       {

@@ -32,14 +32,6 @@ describe('TripLoading', () => {
   it('updates progress over time but caps at 90%', () => {
     render(<TripLoading destination="Paris" />);
 
-    // Initial progress is 10
-    // Interval is 1500ms
-
-    // Advance time by a lot to reach cap
-    // 90 - 10 = 80 to go. Increments by random(0, 5). Avg 2.5.
-    // 80 / 2.5 = 32 steps. 32 * 1500 = 48000ms.
-    // Let's advance by 60 seconds to be sure.
-
     act(() => {
       vi.advanceTimersByTime(60000);
     });

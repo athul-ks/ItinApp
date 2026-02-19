@@ -44,7 +44,6 @@ describe('TripView', () => {
     travelTime: '10 mins',
     lat: 10,
     lng: 10,
-    // Removed rating and location
   };
 
   const mockActivity2: Activity = {
@@ -56,7 +55,6 @@ describe('TripView', () => {
     travelTime: '20 mins',
     lat: 20,
     lng: 20,
-    // Removed rating and location
   };
 
   const mockDaySection1: DaySection = {
@@ -88,7 +86,6 @@ describe('TripView', () => {
           name: 'Hotel 1',
           location: 'Loc 1',
           reason: 'Reason 1',
-          // Removed rating, cost, lat, lng
         },
       },
       {

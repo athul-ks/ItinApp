@@ -4,14 +4,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { Activity, DaySection } from '@itinapp/schemas';
 import DaySectionBlock from '@/app/trip/[id]/day-section-block';
 
-// Mock dependencies
-vi.mock('@itinapp/schemas', () => ({
-  // Assuming these are just types, we might not need to mock them if they are just interfaces
-  // but if they are classes or zod schemas we might need to.
-  // The component imports them as types: `import { Activity, DaySection, Restaurant } from '@itinapp/schemas';`
-  // So we don't need to mock the module itself for types, but we need to construct valid objects.
-}));
-
 // Mock Lucide icons to avoid rendering issues
 vi.mock('lucide-react', () => ({
   Clock: () => <div data-testid="clock-icon" />,
@@ -28,7 +20,6 @@ describe('DaySectionBlock', () => {
     travelTime: '10 mins',
     lat: 0,
     lng: 0,
-    // Removed rating and location
   };
 
   const mockActivity2: Activity = {
@@ -40,7 +31,6 @@ describe('DaySectionBlock', () => {
     travelTime: '15 mins',
     lat: 0,
     lng: 0,
-    // Removed rating and location
   };
 
   const mockData: DaySection = {
@@ -53,7 +43,6 @@ describe('DaySectionBlock', () => {
         rating: '4.5', // String
         lat: 0,
         lng: 0,
-        // Removed location and description (Restaurant schema: name, cuisine, cost, rating, lat, lng)
       },
     ],
   };
