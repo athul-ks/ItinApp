@@ -20,6 +20,6 @@ export function generateCacheKey(input: CacheInput): string {
     input.dateRange.to instanceof Date ? input.dateRange.to.toISOString() : input.dateRange.to;
 
   const cacheString = `${input.destination.toLowerCase()}|${fromDate}|${toDate}|${input.budget}|${input.vibe}`;
-  const hash = createHash('md5').update(cacheString).digest('hex');
+  const hash = createHash('sha256').update(cacheString).digest('hex');
   return `itinerary:${hash}`;
 }
