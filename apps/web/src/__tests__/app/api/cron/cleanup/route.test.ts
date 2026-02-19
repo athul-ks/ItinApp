@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { GET } from '@/app/api/cron/cleanup/route';
-import { NextResponse } from 'next/server';
 
 // Hoist mocks
 const { prismaMock, loggerMock, flushLogsMock, normalizeErrorMock, sentryMock } = vi.hoisted(() => {
