@@ -22,15 +22,19 @@ export const sharedExclusions = [
   'apps/web/src/app/trip/[id]/trip-header.tsx',
   'apps/web/src/components/footer.tsx',
 
+  'packages/api/scripts/smoke-test-worker.ts',
+
   'packages/ui/**/*',
   'packages/db/**/*',
   'packages/env/**/*',
 
+  '**/*.d.ts',
   '**/*.stories.tsx',
   '**/*.setup.ts',
-  '**/mocks/**',
+  '**/*.test.ts',
+  '**/*.spec.ts',
   '**/mock-data.ts',
-  '**/*.d.ts',
+  '**/mocks/**',
   '**/*.config.*',
   '**/node_modules/**',
   '**/.next/**',

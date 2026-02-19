@@ -1,5 +1,7 @@
 import { defineConfig } from 'vitest/config';
 
+import { sharedExclusions } from '../../coverage-exclusions.js';
+
 export default defineConfig({
   test: {
     globals: true,
@@ -7,13 +9,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      exclude: [
-        'vitest.setup.ts',
-        '**/*.test.ts',
-        '**/*.spec.ts',
-        'dist/**',
-        '**/scripts/smoke-test-worker.ts',
-      ],
+      exclude: [...sharedExclusions],
     },
     setupFiles: ['./vitest.setup.ts'],
   },
