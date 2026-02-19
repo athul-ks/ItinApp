@@ -7,8 +7,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PlanContents } from '@/app/plan/plan-contents';
 import { api } from '@/trpc/react';
 
-// NOTE: falling back to fireEvent due to missing dependency (@testing-library/user-event) and restricted environment.
-
 // Mock dependencies
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
