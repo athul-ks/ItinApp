@@ -364,7 +364,7 @@ describe('tripRouter', () => {
       });
 
       it('should IGNORE x-e2e-mock header if NODE_ENV is production', async () => {
-        process.env.NODE_ENV = 'production';
+        vi.stubEnv('NODE_ENV', 'production');
         const headers = new Headers();
         headers.set('x-e2e-mock', 'true');
 
