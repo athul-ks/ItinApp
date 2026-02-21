@@ -362,6 +362,29 @@ describe('tripRouter', () => {
         expect(result.tripId).toBe('e2e-test-trip-id');
         expect(mockDb.$transaction).not.toHaveBeenCalled();
       });
+
+      it('should IGNORE x-e2e-mock header if NODE_ENV is production', async () => {
+        vi.stubEnv('NODE_ENV', 'production');
+        const headers = new Headers();
+        headers.set('x-e2e-mock', 'true');
+
+        const caller = tripRouter.createCaller({
+          db: mockDb as unknown as PrismaClient,
+          session: mockSession,
+          headers: headers,
+        });
+
+        // Mock normal flow to ensure it proceeds past the mock check
+        (redis.get as any).mockResolvedValue(null);
+        mockDb.user.updateMany.mockResolvedValue({ count: 1 });
+        mockDb.trip.create.mockResolvedValue({ id: 'job_trip', status: 'PENDING' } as any);
+
+        const result = await caller.generate(validInput);
+
+        // Should NOT return E2E mock ID
+        expect(result.tripId).toBe('job_trip');
+        expect(mockDb.$transaction).toHaveBeenCalled();
+      });
     });
   });
 });
