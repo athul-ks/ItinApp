@@ -18,7 +18,8 @@ import { createTRPCRouter, protectedProcedure } from '../trpc';
 export const tripRouter = createTRPCRouter({
   generate: protectedProcedure.input(TripInputSchema).mutation(async ({ ctx, input }) => {
     const forceMock = process.env.ENABLE_E2E_MOCKS === 'true';
-    const headerMock = ctx.headers.get('x-e2e-mock') === 'true';
+    const headerMock =
+      ctx.headers.get('x-e2e-mock') === 'true' && process.env.NODE_ENV !== 'production';
 
     if (forceMock || headerMock) {
       console.log('⚡ E2E Mode Detected: Returning Mock Data immediately.');
