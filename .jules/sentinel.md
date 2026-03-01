@@ -88,3 +88,8 @@
 **Vulnerability:** A single corrupted record in the database (violating the Zod schema) caused the `getAll` endpoint to crash with a 500 error for the user, effectively locking them out of their dashboard.
 **Learning:** Strict schema validation on read (`.parse()`) is a double-edged sword. While it guarantees data integrity for the application, it creates a "Fragile Read" vulnerability where one bad apple spoils the bunch.
 **Prevention:** On list endpoints (`findMany`), use `.safeParse()` inside a `reduce` or `filter` operation to gracefully skip corrupted records while logging the anomaly for administrative repair, rather than crashing the entire request.
+
+## 2026-07-10 - Authorization Bypass via E2E Testing Header
+**Vulnerability:** The application allowed users to bypass credit deductions and rate limiting by supplying the `x-e2e-mock` header in production environments.
+**Learning:** Diagnostic and testing headers left unprotected in production APIs can be easily discovered or guessed by malicious actors to abuse or bypass core business logic.
+**Prevention:** Always restrict testing/debug features to non-production environments using an explicit check (e.g., `process.env.NODE_ENV !== 'production'`) and append comments like `// NOSONAR` to suppress false positives where intended.
