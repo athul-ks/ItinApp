@@ -88,3 +88,9 @@
 **Vulnerability:** A single corrupted record in the database (violating the Zod schema) caused the `getAll` endpoint to crash with a 500 error for the user, effectively locking them out of their dashboard.
 **Learning:** Strict schema validation on read (`.parse()`) is a double-edged sword. While it guarantees data integrity for the application, it creates a "Fragile Read" vulnerability where one bad apple spoils the bunch.
 **Prevention:** On list endpoints (`findMany`), use `.safeParse()` inside a `reduce` or `filter` operation to gracefully skip corrupted records while logging the anomaly for administrative repair, rather than crashing the entire request.
+
+## 2026-07-05 - E2E Mock Header Bypass in Production
+
+**Vulnerability:** The API endpoint `tripRouter.generate` accepted the `x-e2e-mock` header directly from the client without checking the environment. This allowed attackers to bypass rate limiting, credit deduction, and OpenAI calls by forcing the API to return static mock data in the production environment.
+**Learning:** Development/testing overrides (like E2E mock headers) introduced for testing convenience are severe security vulnerabilities if accidentally deployed or left accessible in production.
+**Prevention:** Always explicitly guard testing headers or overrides with an environment check (e.g., `process.env.NODE_ENV !== 'production'`) to ensure they cannot be exploited in live environments.

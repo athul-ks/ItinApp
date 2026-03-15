@@ -15,10 +15,12 @@ vi.mock('lucide-react', () => ({
 describe('TripLoading', () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockReturnValue(0.5); // Add exactly 2.5 per tick
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
   it('renders initial state correctly', () => {
