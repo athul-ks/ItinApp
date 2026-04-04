@@ -21,7 +21,7 @@ export function TripLoading({ destination }: { destination: string }) {
 
   useEffect(() => {
     const progressInterval = setInterval(() => {
-      setProgress((prev) => (prev >= 90 ? 90 : prev + Math.random() * 5));
+      setProgress((prev) => Math.min(90, prev + Math.random() * 5));
     }, 1500);
 
     const stepInterval = setInterval(() => {
