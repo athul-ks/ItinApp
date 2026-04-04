@@ -88,3 +88,8 @@
 **Vulnerability:** A single corrupted record in the database (violating the Zod schema) caused the `getAll` endpoint to crash with a 500 error for the user, effectively locking them out of their dashboard.
 **Learning:** Strict schema validation on read (`.parse()`) is a double-edged sword. While it guarantees data integrity for the application, it creates a "Fragile Read" vulnerability where one bad apple spoils the bunch.
 **Prevention:** On list endpoints (`findMany`), use `.safeParse()` inside a `reduce` or `filter` operation to gracefully skip corrupted records while logging the anomaly for administrative repair, rather than crashing the entire request.
+
+## 2026-07-01 - Mock Header Authorization Bypass
+**Vulnerability:** The application accepted a custom `x-e2e-mock` HTTP header to bypass core business logic (credit deduction and AI generation) without verifying the environment, allowing unauthorized mock data access and logic bypass in production.
+**Learning:** Testing backdoors and mock flags are extremely dangerous if left unguarded. Any logic relying on client-provided headers for testing must be explicitly stripped or disabled in production environments.
+**Prevention:** Always guard testing or mock headers with strict environment checks (`process.env.NODE_ENV !== 'production'`) and use linting rules/SonarCloud to enforce review of direct header access.

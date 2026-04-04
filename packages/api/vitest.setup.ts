@@ -48,5 +48,9 @@ process.env.GOOGLE_CLIENT_SECRET = 'mock-google-secret';
 process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY = 'mock-google-maps-key';
 process.env.DISCORD_WEBHOOK_URL = 'https://discord.com/mock-webhook-url';
 process.env.REDIS_URL = 'redis://localhost:6379';
+process.env.CRON_SECRET = 'mock-cron-secret';
+process.env.BETTER_STACK_HEARTBEAT_URL = 'https://mock.betterstack.com/heartbeat';
+process.env.NEXT_PUBLIC_POSTHOG_KEY = 'mock-posthog-key';
+process.env.ENABLE_E2E_MOCKS = 'false';
 
 // Optional: specific global mocks if needed later
